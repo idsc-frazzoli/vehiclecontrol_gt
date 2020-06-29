@@ -27,9 +27,10 @@ function dx = interstagedx(x,u)
     dx(index.y-index.nu)=v*sin(theta);
     dx(index.theta-index.nu)=v/l*tan(ackermannAngle);
     dx(index.v-index.nu)=ab;
+    dx(index.ab-index.nu)=dotab;
     dx(index.beta-index.nu)=dotbeta;
     dx(index.s-index.nu)=ds;
-    dx(index.ab-index.nu)=dotab;
+    
     
     %dx = [v*cos(theta);
     %v*sin(theta);

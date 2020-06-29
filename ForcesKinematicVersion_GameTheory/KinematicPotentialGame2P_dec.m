@@ -29,8 +29,8 @@ pab=0.0004;
 pdotbeta=0.05;
 pspeedcost=0.2;
 pslack=5;
-pslack2=10;
-dist=2;
+pslack2=15;
+dist=3;
 
 % Splines
 pointsO = 16;
@@ -259,7 +259,7 @@ FORCES_NLP(model, codeoptions,output);
 %% CodeOptions for FORCES solver
 model2 = model;
 for i=1:model2.N
-   model2.objective{i} = @(z,p)objective_PG(...
+   model2.objective{i} = @(z,p)objective_PG_2(...
        z,...
        getPointsFromParameters(p, pointsO, pointsN),...
        getRadiiFromParameters(p, pointsO, pointsN),...

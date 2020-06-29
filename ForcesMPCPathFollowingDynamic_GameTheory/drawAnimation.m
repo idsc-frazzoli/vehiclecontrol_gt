@@ -1,6 +1,6 @@
 
 frames = tend;
-vidfile = VideoWriter('Intersection1','Motion JPEG AVI');
+vidfile = VideoWriter('IBR','Motion JPEG AVI');
 vidfile.FrameRate = 10;
 open(vidfile);
 set(gcf,'position',[100,100,1000,800])

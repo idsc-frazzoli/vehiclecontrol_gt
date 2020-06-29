@@ -5,6 +5,8 @@
 % 2 vehicle running in the same track in opponent direction, without any 
 % constraints on collisions
 %add force path (change that for yourself)
+
+
 addpath('..');
 userDir = getuserdir;
 addpath('casadi');
@@ -22,6 +24,7 @@ latacclim = 6;
 rotacceffect  = 2;
 torqueveceffect = 3;
 brakeeffect = 0; 
+% objective function costs
 plagerror=1;
 platerror=0.01;
 pprog=0.2;
@@ -142,7 +145,7 @@ index.pointsN2=pointsN2;
 integrator_stepsize = 0.1;
 trajectorytimestep = integrator_stepsize;
 
-%% model definition
+%% Model definition
 model.N = 31;                       % Forward horizon Length
 model.nvar = index.nv;
 model.neq = index.ns;

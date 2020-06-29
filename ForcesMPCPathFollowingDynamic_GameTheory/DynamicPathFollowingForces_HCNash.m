@@ -33,8 +33,8 @@ RD = 10;
 J_steer=0.8875;
 b_steer=0.1625;
 k_steer=0.0125;
-dist=1.5;
-pslack2=1;
+dist=2;
+pslack2=10;
 pointsO = 24; % number of Parameters
 pointsN = 10; % Number of points for B-splines (10 in 3 coordinates)
 splinestart = 1;
@@ -42,7 +42,7 @@ splinestart2 = 1;
 nextsplinepoints = 0;
 nextsplinepoints2 = 0;
 % Number of iterations
-tend = 100;
+tend = 60;
 N=10; % Nash iteration
 %% global parameters index
 global index
@@ -131,15 +131,20 @@ model.hl = [-inf;-inf;-inf;-inf;-inf;0];
 %           2.5,2.5,2.5,2.5,2.5,2.5,2.5]';     
 % points(:,3)=points(:,3)-0.2;
 % points2=flip(points);
-points = [41.8,36.2,52,57.2,53,52,47;...          %x
-          38.33,44.933,58.2,53.8,49,44,43; ...    %y
-          2.5,2.5,2.5,2.5,2.5,2.5,2.5]';         %width 
-points2 = [57.2,52,36.2,41.8,47,52,53;...          %x
-          53.8,58.2,44.933,38.33,43,44,49; ...    %y
-          2.5,2.5,2.5,2.5,2.5,2.5,2.5]';       
+% points = [41.8,36.2,52,57.2,53,52,47;...          %x
+%           38.33,44.933,58.2,53.8,49,44,43; ...    %y
+%           2.5,2.5,2.5,2.5,2.5,2.5,2.5]';         %width 
+% points2 = [57.2,52,36.2,41.8,47,52,53;...          %x
+%           53.8,58.2,44.933,38.33,43,44,49; ...    %y
+%           2.5,2.5,2.5,2.5,2.5,2.5,2.5]';       
 
-points(:,3)=points(:,3)-0.2;
-points2(:,3)=points2(:,3)-0.2;
+points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+
 
 %% Objective function
 trajectorytimestep = integrator_stepsize;
@@ -189,8 +194,8 @@ model.lb(index.s)=0;
 
 %% CodeOptions for FORCES solver
 codeoptions = getOptions('MPCPathFollowing'); % Need FORCES License to run
-codeoptions.maxit = 4000;    % Maximum number of iterations
-codeoptions.printlevel = 2; % Use printlevel = 2 to print progress (but not for timings)
+codeoptions.maxit = 500;    % Maximum number of iterations
+codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions.cleanup = false;
 codeoptions.timing = 1;
@@ -347,7 +352,9 @@ for i =1:tend
         if(exitflag~=1 && exitflag ~=0)
            keyboard
         end
-        
+        outputM = reshape(output.alldata,[model.nvar,model.N])';
+        problem2.all_parameters(index.xComp:model.npar:end)=outputM(:,index.x);
+        problem2.all_parameters(index.yComp:model.npar:end)=outputM(:,index.y);
         %go kart 2
         [output2,exitflag2,info2] = MPCPathFollowing(problem2);
         solvetimes2(end+1)=info2.solvetime;
@@ -359,7 +366,7 @@ for i =1:tend
             keyboard           
         end
         
-        outputM = reshape(output.alldata,[model.nvar,model.N])';
+
         outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
 %         if jj>=2 %% check
 %             if sum((AAA(:,index.x)-outputM(:,index.x))<=1e-5)==model.N &&sum((AAA(:,index.y)-outputM(:,index.y))<=1e-5)==model.N && sum((BBB(:,index.x)-outputM2(:,index.x))<=1e-5)==model.N &&sum((BBB(:,index.y)-outputM2(:,index.y))<=1e-5)==model.N
@@ -368,9 +375,7 @@ for i =1:tend
 %         end
         problem.all_parameters(index.xComp:model.npar:end)=outputM2(:,index.x);
         problem.all_parameters(index.yComp:model.npar:end)=outputM2(:,index.y);
-        
-        problem2.all_parameters(index.xComp:model.npar:end)=outputM(:,index.x);
-        problem2.all_parameters(index.yComp:model.npar:end)=outputM(:,index.y);
+
         
         AAA=outputM;
         BBB=outputM2;

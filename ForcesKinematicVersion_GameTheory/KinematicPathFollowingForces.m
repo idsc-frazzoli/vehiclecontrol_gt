@@ -34,7 +34,7 @@ nextsplinepoints = 0;
 integrator_stepsize = 0.1;
 
 % Simulation length
-tend = 1000;
+tend = 100;
 eulersteps = 10;
 planintervall = 1;
 
