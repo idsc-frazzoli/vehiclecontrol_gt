@@ -259,7 +259,7 @@ FORCES_NLP(model, codeoptions,output);
 %% CodeOptions for FORCES solver
 model2 = model;
 for i=1:model2.N
-   model2.objective{i} = @(z,p)objective_PG_2(...
+   model2.objective{i} = @(z,p)objective_PG(...
        z,...
        getPointsFromParameters(p, pointsO, pointsN),...
        getRadiiFromParameters(p, pointsO, pointsN),...
@@ -377,7 +377,12 @@ a=0;
 history2 = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist2 = zeros(tend,pointsN*3+pointsN2*3+1);
 a2=0;
-
+optA = zeros(tend,1);
+optB = zeros(tend,1);
+opt = zeros(tend,1);
+optA2 = zeros(tend,1);
+optB2 = zeros(tend,1);
+opt2 = zeros(tend,1);
 cost1 = zeros(tend,1);
 cost2 = zeros(tend,1);
 Progress1 = zeros(tend,1);
@@ -508,6 +513,8 @@ for i =1:tend
     %nextSplinePoints
     %get output
     outputM = reshape(output.alldata,[model.nvar,model.N])';
+   
+    %%
     x0 = outputM';
     u = repmat(outputM(1,1:index.nu),eulersteps,1);
     [xhist,time] = euler(@(x,u)interstagedx_PG(x,u),xs,u,integrator_stepsize/eulersteps);
@@ -529,6 +536,27 @@ for i =1:tend
         targets2 = [targets2;tx2,ty2];
     end        
     outputM2 = reshape(output2.alldata,[model2.nvar,model2.N])';
+    %% Evaluation cost function
+    for jj=1:length(outputM)
+        [lagcost_A,latcost_A,reg_A,prog_A,slack_A,speedcost_A,lagcost_A_k2,...
+        latcost_A_k2,reg_A_k2,prog_A_k2,slack_A_k2,speedcost_A_k2,f,f1,f2] =...
+        objective_PG_Test(outputM(jj,:),nextSplinePoints,nextSplinePoints_k2,...
+        maxSpeed,plagerror, platerror, pprog, pab, pdotbeta,...
+        pspeedcost,pslack,pslack2);
+        [lagcost_B,latcost_B,reg_B,prog_B,slack_B,speedcost_B,lagcost_B_k2,...
+        latcost_B_k2,reg_B_k2,prog_B_k2,slack_B_k2,speedcost_B_k2,f3,f4,f5] =...
+        objective_PG_Test(outputM2(jj,:),nextSplinePoints3,nextSplinePoints4_k2,...
+        maxSpeed,plagerror, platerror, pprog, pab, pdotbeta,...
+        pspeedcost,pslack,pslack2);
+        optA(i)= optA(i)+ f1;
+        optB(i)= optB(i)+ f2;
+        opt(i) = opt(i)+ f;
+        optA2(i)= optA2(i)+ f4;
+        optB2(i)= optB2(i)+ f5;
+        opt2(i) = opt2(i)+ f3;
+    end
+    
+
     x02 = outputM2';
     u2 = repmat(outputM2(1,1:index.nu),eulersteps,1);
     [xhist2,time2] = euler(@(x,u)interstagedx_PG(x,u),xs2,u2,integrator_stepsize/eulersteps);
@@ -571,3 +599,13 @@ hold on
 plot(Progress1,'b')
 plot(Progress2,'r')
 legend('Kart1','Kart2')
+
+figure
+plot(opt,'b')
+hold on
+plot(optA,'c')
+plot(optA2,'r')
+plot(optB,'y')
+plot(optB2,'k')
+plot(cost1,'g')
+legend
