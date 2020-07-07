@@ -14,7 +14,7 @@ addpath('casadi');
 clear model
 clear problem
 clear all
-close all
+%close all
 
 %% Parameters Definitions
 maxSpeed = 10;

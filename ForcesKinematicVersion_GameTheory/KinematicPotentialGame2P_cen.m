@@ -295,6 +295,10 @@ planc = 10;
 tstart = 1;
 x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 
+cost1 = zeros(tend,1);
+cost2 = zeros(tend,1);
+Progress1 = zeros(tend,1);
+Progress2 = zeros(tend,1);
 
 %% Simulation
 history = zeros(tend*eulersteps,model.nvar+1);

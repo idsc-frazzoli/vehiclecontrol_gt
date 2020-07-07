@@ -12,7 +12,7 @@ addpath('casadi');
 clear model
 clear problem
 clear all
-close all
+%close all
 
 %% Parameters Definitions
 maxSpeed = 10;
@@ -29,8 +29,8 @@ pab=0.0004;
 pdotbeta=0.05;
 pspeedcost=0.2;
 pslack=5;
-pslack2=15;
-dist=3;
+pslack2=50;
+dist=2;
 
 % Splines
 pointsO = 16;
@@ -61,12 +61,12 @@ planintervall = 1;
 % %points(:,3)=points(:,3)-0.2;
 % 
 % points2=flip(points);
-points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
 %points(:,3)=points(:,3)-0.2;
 
 solvetimes = [];
@@ -377,6 +377,12 @@ a=0;
 history2 = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist2 = zeros(tend,pointsN*3+pointsN2*3+1);
 a2=0;
+
+cost1 = zeros(tend,1);
+cost2 = zeros(tend,1);
+Progress1 = zeros(tend,1);
+Progress2 = zeros(tend,1);
+
 for i =1:tend
     tstart = i;
     tstart2 = i;
@@ -544,6 +550,24 @@ for i =1:tend
         targets4 = [targets4;tx4,ty4];
     end        
     Percentage=i/tend*100
+    cost1(i)=info.pobj;
+    cost2(i)=info2.pobj;
+    %costS(i)=costS;
+    Progress1(i)=outputM(1,index.s);
+    Progress2(i)=outputM2(1,index.s_k2);
+    
 end
 
 draw2P_dec
+
+figure
+hold on
+plot(cost1,'b')
+plot(cost2,'r')
+plot(cost1+cost2,'g')
+legend('Kart1','Kart2','Tot')
+figure
+hold on
+plot(Progress1,'b')
+plot(Progress2,'r')
+legend('Kart1','Kart2')
