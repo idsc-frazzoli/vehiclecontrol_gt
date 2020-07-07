@@ -46,18 +46,18 @@ splinestart2 = 1;
 
 % Simulation length
 tend = 90;
-Nit=10;
+Nit=1;
 eulersteps = 10;
 planintervall = 1;
 
 %% Spline Points
 %     
-points = [25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
 % points = [41.8,36.2,52,57.2,53,52,47;...          %x
 %           38.33,44.933,58.2,53.8,49,44,43; ...    %y
 %           2.5,2.5,2.5,2.5,2.5,2.5,2.5]';         %width 
@@ -279,8 +279,8 @@ cost1 = zeros(tend,1);
 cost2 = zeros(tend,1);
 Progress1 = zeros(tend,1);
 Progress2 = zeros(tend,1);
-costS = zeros(tend,1);
-
+costT1 = zeros(tend,Nit);
+costT2 = zeros(tend,Nit);
 %% Simulation
 for i =1:tend
     tstart = i;
@@ -375,7 +375,6 @@ for i =1:tend
         if(exitflag~=1 && exitflag ~=0)
            keyboard
         end
-        
         outputM = reshape(output.alldata,[model.nvar,model.N])';
         problem2.all_parameters(index.xComp:model.npar:end)=...
             outputM(:,index.x);
@@ -398,8 +397,10 @@ for i =1:tend
             outputM2(:,index.x);
         problem.all_parameters(index.yComp:model.npar:end)=...
             outputM2(:,index.y);
-
+        costT1(i,jj)=info.pobj;
+        costT2(i,jj)=info2.pobj;
         jj=jj+1;
+
     end
     %outputM = reshape(output.alldata,[model.nvar,model.N])';
 
