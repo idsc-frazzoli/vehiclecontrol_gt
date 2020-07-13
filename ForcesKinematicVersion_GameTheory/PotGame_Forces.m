@@ -15,7 +15,9 @@ clear all
 close all
 
 %% Parameters Definitions
-pslack=100;
+pslack=70;
+pacc=1;
+psteer=1;
 dist=1;
 xend1=23;
 yend1=20;
@@ -68,7 +70,8 @@ index.xend1 = 3;
 index.xend2 = 4;
 index.yend1 = 5;
 index.yend2 = 6;
-
+index.psteer=7;
+index.pacc=8;
 % Stepsize
 integrator_stepsize = 0.2;
 %trajectorytimestep = integrator_stepsize;
@@ -94,13 +97,13 @@ model.hu = 0;
 model.hl = -inf;
 
 %% Number of parameters required
-model.npar = 6;
+model.npar = 8;
 
 %% Objective Function
 for i=1:model.N
    model.objective{i} = @(z,p)objective_simplePG(z,p(index.pslack),...
                         p(index.xend1),p(index.xend2),p(index.yend1),...
-                        p(index.yend2));
+                        p(index.yend2),p(index.pacc),p(index.psteer));
 end
 
 %% Equality Constraints
@@ -201,11 +204,11 @@ for i =1:tend
     
     % parameters
     problem.all_parameters = repmat(getParameters_simplePG(pslack,...
-        dist,xend1,yend1,xend2,yend2), model.N ,1);
+        dist,xend1,yend1,xend2,yend2,pacc,psteer), model.N ,1);
     problem.x0 = x0(:);       
     % parameters
     problem2.all_parameters = repmat(getParameters_simplePG(pslack,...
-        dist,xend1,yend1,xend2,yend2), model.N ,1);
+        dist,xend1,yend1,xend2,yend2,pacc,psteer), model.N ,1);
     problem2.x0 = x02(:);   
     % solve mpc
     [output,exitflag,info] = MPCPathFollowing_PgSimple1(problem);
@@ -243,7 +246,7 @@ for i =1:tend
             out=outputM(jj,:);
             [u1cost_v1,u2cost_v1,u1cost_v2,u2cost_v2,xcost1,xcost2,ycost1,...
              ycost2,slackcost,f,f1,f2] = objective_PG_simpleTest(...
-                                out,pslack,xend1,xend2,yend1,yend2);
+                                out,pslack,xend1,xend2,yend1,yend2,pacc,psteer);
             optA(i)= optA(i) + f1;
             optB(i)= optB(i) + f2;
             opt(i) = opt(i)  + f;

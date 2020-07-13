@@ -320,13 +320,5 @@ plot(x_v1,y_v1,'.-','Color',[0,0,1])
 plot(x_v2,y_v2,'.-','Color',[1,0,0])
 
 figure(2)
-plot(u1_v1,'.-','Color',[0,0,1])
-plot(u1_v2,'.-','Color',[1,0,0])
 
 figure(3)
-plot(u2_v2,'.-','Color',[0,0,1])
-plot(u2_v2,'.-','Color',[1,0,0])
-
-figure(4)
-plot(0,Cost_v1,'*','Color',[0,0,1])
-plot(0,Cost_v2,'*','Color',[1,0,0])
