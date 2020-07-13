@@ -19,7 +19,7 @@ pslack=70;
 pacc=1;
 psteer=1;
 dist=1;
-xend1=23;
+xend1=24;
 yend1=20;
 xend2=20;
 yend2=23;
@@ -149,7 +149,12 @@ model2.lb(index.y_v1)=0;
 
 model2.ub(index.x_v1)=21.5;
 model2.lb(index.x_v1)=18;
-
+for i=1:model2.N
+   model2.objective{i} = @(z,p)objective_simpleIBR(z,p(index.pslack),...
+                        p(index.xend2),p(index.yend2),...
+                        p(index.pacc),...
+                        p(index.psteer));
+end
 codeoptions = getOptions('MPCPathFollowing_SimpleIBR2');
 codeoptions.maxit = 200;    % Maximum number of iterations
 codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
@@ -162,7 +167,7 @@ output = newOutput('alldata', 1:model.N, 1:model.nvar);
 FORCES_NLP(model2, codeoptions,output);
 %% Initialization for simulation kart 1
 
-pstart = [16,20];
+pstart = [17,20];
 xs(index.x_v1-index.nu)=pstart(1);
 xs(index.y_v1-index.nu)=pstart(2);
 
@@ -198,7 +203,7 @@ for i =1:tend
                                                     Pos2(end,2)];
     % parameters
     problem2.all_parameters = repmat(getParameters_simpleIBR(pslack,...
-        dist,xend2,yend2,xend1,yend1,pacc,psteer,xs(1),xs(2)), model.N ,1);
+        dist,xend1,yend1,xend2,yend2,pacc,psteer,xs(1),xs(2)), model.N ,1);
 
     problem2.all_parameters(index.x_v2:model.npar:end)=[Pos1(:,1);...
                                                      Pos1(end,1)];
@@ -311,9 +316,9 @@ x_v2=outputM2(:,index.x_v1);
 y_v2=outputM2(:,index.y_v1);
 
 u1_v1=outputM(:,index.u_acc_v1);
-u2_v1=outputM2(:,index.u_acc_v1);
+u1_v2=outputM2(:,index.u_acc_v1);
 
-u1_v2=outputM(:,index.u_steer_v1);
+u2_v1=outputM(:,index.u_steer_v1);
 u2_v2=outputM2(:,index.u_steer_v1);
 
 Cost_v1=cost1(1);

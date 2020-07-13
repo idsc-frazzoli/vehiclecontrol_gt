@@ -19,12 +19,15 @@ pslack=70;
 pacc=1;
 psteer=1;
 dist=1;
-xend1=23;
+xend1=24;
 yend1=20;
 xend2=20;
 yend2=23;
 %alpha=0.001;
-
+pstart = [17,20];
+pstart3 = pstart;
+pstart2 = [20,16];
+pstart4 = pstart2;
 % Simulation length
 tend = 1;
 eulersteps=1;
@@ -171,21 +174,18 @@ FORCES_NLP(model2, codeoptions2,output2);
 
 %% Initialization for simulation kart 1
 
-pstart = [16,20];
 xs(index.x_v1-index.nu)=pstart(1);
 xs(index.y_v1-index.nu)=pstart(2);
 
-pstart2 = [20,16];
 xs(index.x_v2-index.nu)=pstart2(1);
 xs(index.y_v2-index.nu)=pstart2(2);
 x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 
 %% Initialization for simulation kart 2
-pstart3 = [16,20];
+
 xs2(index.x_v1-index.nu)=pstart(1);
 xs2(index.y_v1-index.nu)=pstart(2);
 
-pstart4 = [20,16];
 xs2(index.x_v2-index.nu)=pstart2(1);
 xs2(index.y_v2-index.nu)=pstart2(2);
 x02 = [zeros(model2.N,index.nu),repmat(xs2,model2.N,1)]';
@@ -310,8 +310,8 @@ end
 %%
 figure(4)
 for kk=1:length(alpha)
-plot(alpha(kk),optA(kk),'*','Color',[0,alpha(kk)/max(alpha),1])
-plot(alpha(kk),optB(kk),'*','Color',[1,alpha(kk)/max(alpha),0])
+plot(alpha(kk),optA(kk)/max(opt),'*','Color',[0,alpha(kk)/max(alpha),1])
+plot(alpha(kk),optB(kk)/max(opt),'*','Color',[1,alpha(kk)/max(alpha),0])
 end
 
 load('IBR.mat')
@@ -324,9 +324,9 @@ plot(u1_v1,'.-','Color',[0,0,1])
 plot(u1_v2,'.-','Color',[1,0,0])
 
 figure(3)
-plot(u2_v2,'.-','Color',[0,0,1])
+plot(u2_v1,'.-','Color',[0,0,1])
 plot(u2_v2,'.-','Color',[1,0,0])
 
 figure(4)
-plot(0,Cost_v1,'*','Color',[0,0,1])
-plot(0,Cost_v2,'*','Color',[1,0,0])
+plot(0,Cost_v1/max(opt),'*','Color',[0,0,1])
+plot(0,Cost_v2/max(opt),'*','Color',[1,0,0])
