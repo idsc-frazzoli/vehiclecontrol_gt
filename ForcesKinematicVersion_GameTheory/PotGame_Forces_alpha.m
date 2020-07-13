@@ -19,12 +19,12 @@ pslack=70;
 pacc=1;
 psteer=1;
 dist=1;
-xend1=24;
+xend1=23;
 yend1=20;
 xend2=20;
 yend2=23;
 %alpha=0.001;
-pstart = [17,20];
+pstart = [16,20];
 pstart3 = pstart;
 pstart2 = [20,16];
 pstart4 = pstart2;
@@ -126,11 +126,11 @@ model.lb(index.u_acc_v1)=0;
 model.ub(index.u_acc_v2)=1;
 model.lb(index.u_acc_v2)=0;
 
-model.ub(index.u_steer_v1)=1;
-model.lb(index.u_steer_v1)=-1;
+model.ub(index.u_steer_v1)=2;
+model.lb(index.u_steer_v1)=-2;
 
-model.ub(index.u_steer_v2)=1;
-model.lb(index.u_steer_v2)=-1;
+model.ub(index.u_steer_v2)=2;
+model.lb(index.u_steer_v2)=-2;
 
 model.ub(index.x_v1)=30;
 model.lb(index.x_v1)=0;
@@ -289,6 +289,13 @@ for i =1:tend
             title('Costs')
             xlabel('Alpha')
             ylabel('Costs')
+            
+            figure(5)
+            hold on
+            grid on
+            title('Percentage Costs')
+            xlabel('Alpha')
+            ylabel('Costs')
         end
         
         figure(1)
@@ -314,6 +321,12 @@ plot(alpha(kk),optA(kk)/max(opt),'*','Color',[0,alpha(kk)/max(alpha),1])
 plot(alpha(kk),optB(kk)/max(opt),'*','Color',[1,alpha(kk)/max(alpha),0])
 end
 
+figure(5)
+for kk=1:length(alpha)
+plot(alpha(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha(kk)/max(alpha),1])
+plot(alpha(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,alpha(kk)/max(alpha),0])
+end
+
 load('IBR.mat')
 figure(1)
 plot(x_v1,y_v1,'.-','Color',[0,0,1])
@@ -330,3 +343,7 @@ plot(u2_v2,'.-','Color',[1,0,0])
 figure(4)
 plot(0,Cost_v1/max(opt),'*','Color',[0,0,1])
 plot(0,Cost_v2/max(opt),'*','Color',[1,0,0])
+
+figure (5)
+plot(0,Cost_v1/(Cost_v1+Cost_v2)*100,'*','Color',[0,0,1])
+plot(0,Cost_v2/(Cost_v1+Cost_v2)*100,'*','Color',[1,0,0])

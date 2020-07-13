@@ -19,7 +19,7 @@ pslack=70;
 pacc=1;
 psteer=1;
 dist=1;
-xend1=24;
+xend1=23;
 yend1=20;
 xend2=20;
 yend2=23;
@@ -111,8 +111,8 @@ model.lb = -ones(1,index.nv)*inf;
 model.ub(index.u_acc_v1)=1;
 model.lb(index.u_acc_v1)=0;
 
-model.ub(index.u_steer_v1)=1;
-model.lb(index.u_steer_v1)=-1;
+model.ub(index.u_steer_v1)=2;
+model.lb(index.u_steer_v1)=-2;
 
 model.ub(index.x_v1)=30;
 model.lb(index.x_v1)=0;
@@ -167,7 +167,7 @@ output = newOutput('alldata', 1:model.N, 1:model.nvar);
 FORCES_NLP(model2, codeoptions,output);
 %% Initialization for simulation kart 1
 
-pstart = [17,20];
+pstart = [16,20];
 xs(index.x_v1-index.nu)=pstart(1);
 xs(index.y_v1-index.nu)=pstart(2);
 
