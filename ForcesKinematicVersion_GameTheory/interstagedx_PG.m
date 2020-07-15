@@ -48,13 +48,5 @@ function dx = interstagedx_PG(x,u)
     dx(index.beta_k2-index.nu)=dotbeta_k2;
     dx(index.s_k2-index.nu)=ds_k2;
     dx(index.ab_k2-index.nu)=dotab_k2;
-    
-    %dx = [v*cos(theta);
-    %v*sin(theta);
-    %v/l*tan(ackermannAngle);
-    %ab;
-    %dotbeta;
-    %ds;
-    %braking+cooldownfunction(temp)];
 end
 

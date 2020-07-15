@@ -1,6 +1,6 @@
 
 frames = tend;
-vidfile = VideoWriter('PotGame2P_dec1','Motion JPEG AVI');
+vidfile = VideoWriter('PotGame2P_alpha','Motion JPEG AVI');
 vidfile.FrameRate = 10;
 open(vidfile);
 set(gcf,'position',[100,100,1000,800])
