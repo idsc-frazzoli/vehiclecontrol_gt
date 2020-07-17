@@ -1,19 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Game Theory Potential Game
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% code by em
-% 2 vehicle running in the same track in opponent direction, without any 
-% constraints on collisions
-%add force path (change that for yourself)
-addpath('..');
-userDir = getuserdir;
-addpath('casadi');
-    
-clear model
-clear problem
 clear all
 close all
-
+clc
 %% Parameters Definitions
 maxSpeed = 10;
 maxxacc = 4;
@@ -23,13 +10,13 @@ rotacceffect  = 2;
 torqueveceffect = 3;
 brakeeffect = 0; 
 plagerror=1;
-platerror=10;
+platerror=0.01;
 pprog=0.2;
 pab=0.0004;
 pdotbeta=0.05;
 pspeedcost=0.2;
-pslack=5;
-pslack2=50;
+pslack=10;
+pslack2=100;
 dist=2;
 
 % Splines
@@ -46,17 +33,6 @@ tend = 1;
 eulersteps = 10;
 planintervall = 1;
 
-%% Spline Points
-
-points2 = [40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
-solvetimes = [];
-
-solvetimes2 = [];
 %% State and Input Definitions 
 global index
 
@@ -131,6 +107,18 @@ index.pointsN2 = pointsN2;
 integrator_stepsize = 0.1;
 trajectorytimestep = integrator_stepsize;
 
+
+%% Spline Points
+
+points2 = [40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]';  
+points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
+          4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]';
+solvetimes = [];
+
+solvetimes2 = [];
 %% model definition
 model.N = 31;                       % Forward horizon Length
 model.nvar = index.nv;
@@ -234,17 +222,6 @@ model.lb(index.s_k2)=0;
 model.lb(index.slack2)=0;
 
 %% CodeOptions for FORCES solver
-codeoptions = getOptions('MPCPathFollowing_v1');
-codeoptions.maxit = 500;    % Maximum number of iterations
-codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-codeoptions.cleanup = false;
-codeoptions.timing = 1;
-
-output = newOutput('alldata', 1:model.N, 1:model.nvar);
-
-FORCES_NLP(model, codeoptions,output);
-%% CodeOptions for FORCES solver
 model2 = model;
 for i=1:model2.N
    model2.objective{i} = @(z,p)objective_PG_2(...
@@ -271,18 +248,9 @@ for i=1:model2.N
        p(index.alpha1),...
        p(index.alpha2));
 end
-codeoptions2 = getOptions('MPCPathFollowing_v2');
-codeoptions2.maxit = 500;    % Maximum number of iterations
-codeoptions2.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-codeoptions2.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-codeoptions2.cleanup = false;
-codeoptions2.timing = 1;
 
-output2 = newOutput('alldata', 1:model2.N, 1:model2.nvar);
-
-FORCES_NLP(model2, codeoptions2,output2);
-
-%% Initialization for simulation kart 1
+%% problem 1
+% Initialization for simulation kart 1
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
 [pstartx,pstarty] = casadiDynamicBSPLINE(0.01,points);
@@ -295,10 +263,6 @@ xs(index.v-index.nu)=1;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
-plansx = [];
-plansy = [];
-planss = [];
-targets = [];
 
 %Go-kart 2 initialization
 fpoints2 = points2(1:2,1:2);
@@ -313,15 +277,10 @@ xs(index.v_k2-index.nu)=1;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
-plansx2 = [];
-plansy2 = [];
-planss2 = [];
-targets2 = [];
-planc = 10;
-tstart = 1;
 x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 
-%% Initialization for simulation kart 2
+%% problem 2
+%Initialization for simulation kart 1
 fpoints3 = points(1:2,1:2);
 pdir3 = diff(fpoints3);
 [pstartx3,pstarty3] = casadiDynamicBSPLINE(0.01,points);
@@ -334,10 +293,6 @@ xs2(index.v-index.nu)=1;
 xs2(index.ab-index.nu)=0;
 xs2(index.beta-index.nu)=0;
 xs2(index.s-index.nu)=0.01;
-plansx3 = [];
-plansy3 = [];
-planss3 = [];
-targets3 = [];
 
 %Go-kart 2 initialization
 fpoints4 = points2(1:2,1:2);
@@ -352,11 +307,6 @@ xs2(index.v_k2-index.nu)=1;
 xs2(index.ab_k2-index.nu)=0;
 xs2(index.beta_k2-index.nu)=0;
 xs2(index.s_k2-index.nu)=0.01;
-plansx4 = [];
-plansy4 = [];
-planss4 = [];
-targets4 = [];
-planc2 = 10;
 
 x02 = [zeros(model.N,index.nu),repmat(xs2,model.N,1)]';
 %% Simulation
@@ -367,8 +317,8 @@ a=0;
 history2 = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist2 = zeros(tend,pointsN*3+pointsN2*3+1);
 a2=0;
-alpha1=0.1:0.1:1;
-alpha2=0.1:0.1:1;
+alpha1=0.2:0.2:1;
+alpha2=0.2:0.2:1;
 optA = zeros(1,length(alpha1));
 optB = zeros(1,length(alpha1));
 opt = zeros(1,length(alpha1));
@@ -522,6 +472,10 @@ for kk=1:length(alpha1)
         plot(pstart(1),pstart(2),'g*')
         hold on
         plot(pstart2(1),pstart2(2),'g*') 
+        plot([pstart(1)-2,pstart(1)-2],[pstart(2),54],'--k')
+        plot([pstart(1)+2,pstart(1)+2],[pstart(2),54],'--k')
+        plot([pstart2(1),54],[pstart2(2)-2,pstart2(2)-2],'--k')
+        plot([pstart2(1),54],[pstart2(2)+2,pstart2(2)+2],'--k')
         grid on
         title('trajectory')
         xlabel('X')
@@ -545,53 +499,60 @@ for kk=1:length(alpha1)
         hold on
         grid on
         title('Costs')
-        xlabel('Alpha')
+        xlabel('Alpha1,Alpha2')
         ylabel('Costs')
 
         figure(5)
         hold on
         grid on
         title('Percentage Costs')
-        xlabel('Alpha')
+        xlabel('Alpha1,Alpha2')
         ylabel('Costs')
     end
 
     figure(1)
-    plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
-    plot(outputM2(:,index.x),outputM2(:,index.y),'.-','Color',[0,alpha2(kk)/max(alpha2),1])
-    plot(outputM2(:,index.x_k2),outputM2(:,index.y_k2),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
+    plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
+    plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
+    plot(outputM2(:,index.x),outputM2(:,index.y),'.-','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
+    plot(outputM2(:,index.x_k2),outputM2(:,index.y_k2),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
 
     figure(2)
-    plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(outputM(:,index.theta_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
-    plot(outputM2(:,index.theta),'.-','Color',[0,alpha2(kk)/max(alpha2),1])
-    plot(outputM2(:,index.theta_k2),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
+    plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
+    plot(outputM(:,index.theta_k2),'.-','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
+    plot(outputM2(:,index.theta),'.-','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
+    plot(outputM2(:,index.theta_k2),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
     
     figure(3)
-    plot(outputM(:,index.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(outputM(:,index.v_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
-    plot(outputM2(:,index.v),'.-','Color',[0,alpha2(kk)/max(alpha2),1])
-    plot(outputM2(:,index.v_k2),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
+    plot(outputM(:,index.v),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
+    plot(outputM(:,index.v_k2),'.-','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
+    plot(outputM2(:,index.v),'.-','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
+    plot(outputM2(:,index.v_k2),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
 end
 
 figure(4)
 for kk=1:length(alpha1)
-    plot(alpha1(kk),optA(kk),'*','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(alpha1(kk),optB(kk),'*','Color',[1,alpha1(kk)/max(alpha1),0])
-    plot(2-alpha2(kk),optA2(kk),'*','Color',[0,alpha2(kk)/max(alpha2),1])
-    plot(2-alpha2(kk),optB2(kk),'*','Color',[1,alpha2(kk)/max(alpha2),0])
+    plot(alpha1(kk),optA(kk),'*','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
+    plot(alpha1(kk),optB(kk),'*','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
+    plot(alpha1(kk),(optA(kk)+optB(kk))/2,'o','Color',[0,1,0])
+    plot(2-alpha2(kk),optA2(kk),'*','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
+    plot(2-alpha2(kk),optB2(kk),'*','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+    plot(2-alpha2(kk),(optA2(kk)+optB2(kk))/2,'o','Color',[0,1,0])
 end
-% xticklabels({'1,0.1','1,0.2','1,0.3','1,0.4','1,0.5','1,0.6','1,0.7',...
-%     '1,0.8','1,0.9','1,1','0.9,1','0.8,1','0.7,1','0.6,1','0.5,1',...
-%     '0.4,1','0.3,1','0.2,1','0.1,1'});
+legend('V1_{down}','V2_{left}','Tot/2')
+xticklabels({'0.2,1','0.4,1','0.6,1',...
+    '0.8,1','1,1','1,0.8','1,0.6',...
+    '1,0.4','1,0.2'});
 figure(5)
 for kk=1:length(alpha1)
-    plot(alpha1(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(alpha1(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,alpha1(kk)/max(alpha1),0])
-    plot(2-alpha2(kk),optA2(kk)/(optA2(kk)+optB2(kk))*100,'*','Color',[0,alpha2(kk)/max(alpha2),1])
-    plot(2-alpha2(kk),optB2(kk)/(optA2(kk)+optB2(kk))*100,'*','Color',[1,alpha2(kk)/max(alpha2),0])
+    plot(alpha1(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
+    plot(alpha1(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
+    plot(2-alpha2(kk),optA2(kk)/(optA2(kk)+optB2(kk))*100,'*','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
+    plot(2-alpha2(kk),optB2(kk)/(optA2(kk)+optB2(kk))*100,'*','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
 end
+legend('V1_{down}','V2_{left}')
+xticklabels({'0.2,1','0.4,1','0.6,1',...
+    '0.8,1','1,1','1,0.8','1,0.6',...
+    '1,0.4','1,0.2'});
 % xticklabels({'1,0.1','1,0.2','1,0.3','1,0.4','1,0.5','1,0.6','1,0.7',...
 %     '1,0.8','1,0.9','1,1','0.9,1','0.8,1','0.7,1','0.6,1','0.5,1',...
 %     '0.4,1','0.3,1','0.2,1','0.1,1'});

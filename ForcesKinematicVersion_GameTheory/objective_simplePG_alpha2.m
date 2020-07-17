@@ -7,10 +7,10 @@ function f = objective_simplePG_alpha2(z,pslack,xend1,xend2,yend1,yend2,alpha,pa
     y_v2 = z(index.y_v2);
     slack = z(index.slack);
     
-    xcost1=(x_v1-xend1)^2;
-    xcost2=(x_v2-xend2)^2;
-    ycost1=(y_v1-yend1)^2;
-    ycost2=(y_v2-yend2)^2;
+    xcost1=4*(x_v1-xend1)^2;
+    xcost2=4*(x_v2-xend2)^2;
+    ycost1=4*(y_v1-yend1)^2;
+    ycost2=4*(y_v2-yend2)^2;
     
     u1cost_v1=pacc*z(index.u_acc_v1)^2;
     u2cost_v1=psteer*z(index.u_steer_v1)^2;
