@@ -1,6 +1,7 @@
 function dx = interstagedx_IBR_1s(x,u)
     global index_IBR
     
+    l=1.19;
     % Inputs 
     dotab = u(index_IBR.dotab);
     ab = x(index_IBR.ab-index_IBR.nu);
