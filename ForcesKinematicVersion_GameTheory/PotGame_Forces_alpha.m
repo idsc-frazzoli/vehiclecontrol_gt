@@ -6,7 +6,16 @@
 % constraints on collisions
 %add force path (change that for yourself)
 addpath('..');
-userDir = getuserdir;
+%userDir = getuserdir;%for windows
+userDir = pwd;%for linux
+addpath('/home/thomas/Matlab/Forces/forces_pro_client');
+addpath('/home/thomas/Matlab/Forces/forces_pro_client/casadi-matlabR2014a-v2.4.2');
+
+% addpath('C:\Users\me\Documents\FORCES_client');
+addpath('casadi');
+addpath('../shared_dynamic')
+
+
 addpath('casadi');
     
 clear model
