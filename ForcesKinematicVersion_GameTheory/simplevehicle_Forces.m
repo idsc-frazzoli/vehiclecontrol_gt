@@ -51,17 +51,19 @@ index.sb = index.nu+1;
 
 % Parameters
 index.pslack = 1;
-index.dist = 2;
-index.xend1 = 3;
-index.xend2 = 4;
-index.yend1 = 5;
-index.yend2 = 6;
+index.dist   = 2;
+index.xend1  = 3;
+index.xend2  = 4;
+index.yend1  = 5;
+index.yend2  = 6;
+index.x_v2   = 7;
+index.y_v2   = 8;
 
 % Stepsize
-integrator_stepsize = 1;
+integrator_stepsize = 0.2;
 
 %% model definition
-model.N = 10;                       % Forward horizon Length
+model.N = 40;                       % Forward horizon Length
 model.nvar = index.nv;
 model.neq = index.ns;
 model.eq = @(z,p) RK4(...
