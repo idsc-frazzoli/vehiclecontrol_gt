@@ -201,7 +201,7 @@ codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for 
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions.cleanup = false;
 codeoptions.timing = 1;
-codeoptions.nlp.TolIneq = 1E-8; % tol. on inequality constraints
+%codeoptions.nlp.TolIneq = 1E-8; % tol. on inequality constraints
 output = newOutput('alldata', 1:model.N, 1:model.nvar);
 
 FORCES_NLP(model, codeoptions,output);
@@ -238,7 +238,7 @@ codeoptions2.printlevel = 1; % Use printlevel = 2 to print progress (but not for
 codeoptions2.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions2.cleanup = false;
 codeoptions2.timing = 1;
-codeoptions2.nlp.TolIneq = 1E-8; % tol. on inequality constraints
+%codeoptions2.nlp.TolIneq = 1E-8; % tol. on inequality constraints
 output2 = newOutput('alldata', 1:model2.N, 1:model2.nvar);
 
 FORCES_NLP(model2, codeoptions2,output2);
@@ -369,12 +369,12 @@ model_IBR.lb(index_IBR.slack2)=0;
 
 %% CodeOptions for FORCES solver
 codeoptions = getOptions('MPCPathFollowing_IBR');
-codeoptions.maxit = 200;    % Maximum number of iterations
+codeoptions.maxit = 500;    % Maximum number of iterations
 codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions.cleanup = false;
 codeoptions.timing = 1;
-codeoptions.nlp.TolIneq = 1E-8; % tol. on inequality constraints
+%codeoptions.nlp.TolIneq = 1E-8; % tol. on inequality constraints
 output = newOutput('alldata', 1:model_IBR.N, 1:model_IBR.nvar);
 
 FORCES_NLP(model_IBR, codeoptions,output);

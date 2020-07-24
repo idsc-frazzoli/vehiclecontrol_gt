@@ -2,7 +2,7 @@ clear all
 close all
 clc
 %% Parameters Definitions
-maxSpeed = 10;
+maxSpeed = 30;
 maxxacc = 4;
 maxyacc = 8;
 latacclim = 6;
@@ -10,13 +10,13 @@ rotacceffect  = 2;
 torqueveceffect = 3;
 brakeeffect = 0; 
 plagerror=1;
-platerror=0.01;
-pprog=0.2;
+platerror=0.02;
+pprog=0.4;
 pab=0.0004;
-pdotbeta=0.05;
-pspeedcost=0.2;
-pslack=10;
-pslack2=100;
+pdotbeta=0.009;
+pspeedcost=0.3;
+pslack=10000000;
+pslack2=10000000;
 dist=2;
 
 % Splines
@@ -28,8 +28,8 @@ splinestart2 = 1;
 splinestart3 = 1;
 splinestart4 = 1;
 
-vel1=1;
-vel2=1;
+vel1=8;
+vel2=9;
 
 % Simulation length
 tend = 1;
@@ -165,12 +165,12 @@ trajectorytimestep = integrator_stepsize;
 
 %% Spline Points
 
-points2 = [40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]';  
-points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
-          4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]';
+points2 = [20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]';  
+points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
+          5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]';
 solvetimes = [];
 
 solvetimes2 = [];
@@ -461,7 +461,7 @@ Pos2=repmat(pstart2, model_IBR.N-1 ,1);
 %% Simulation
 a=0;
 a2=0;
-alpha1=0:0.05:1;
+alpha1=0:0.1:1;
 alpha2=alpha1;
 optA = zeros(1,length(alpha1));
 optB = zeros(1,length(alpha1));
@@ -510,10 +510,10 @@ for kk=1:length(alpha1)
         plot(pstart(1),pstart(2),'g*')
         hold on
         plot(pstart2(1),pstart2(2),'g*') 
-        plot([pstart(1)-2,pstart(1)-2],[pstart(2),54],'--k')
-        plot([pstart(1)+2,pstart(1)+2],[pstart(2),54],'--k')
-        plot([pstart2(1),54],[pstart2(2)-2,pstart2(2)-2],'--k')
-        plot([pstart2(1),54],[pstart2(2)+2,pstart2(2)+2],'--k')
+        plot([pstart(1)-2.5,pstart(1)-2.5],[pstart(2),70],'--k')
+        plot([pstart(1)+2.5,pstart(1)+2.5],[pstart(2),70],'--k')
+        plot([pstart2(1),70],[pstart2(2)-2.5,pstart2(2)-2.5],'--k')
+        plot([pstart2(1),70],[pstart2(2)+2.5,pstart2(2)+2.5],'--k')
         grid on
         title('trajectory')
         xlabel('X')
@@ -815,7 +815,7 @@ for kk=1:length(alpha1)
     plot(2-alpha2(kk),optB2(kk),'*','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
     plot(2-alpha2(kk),(optA2(kk)+optB2(kk))/2,'o','Color',[0,1,0])
 end
-legend('V1_{down}','V2_{left}','Tot/2')
+legend('J1_{down}','J2_{left}','Tot/2')
 xticklabels({'0,1','0.2,1','0.4,1','0.6,1',...
     '0.8,1','1,1','1,0.8','1,0.6',...
     '1,0.4','1,0.2','1,0'});
