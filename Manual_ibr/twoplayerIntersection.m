@@ -89,9 +89,9 @@ surface(dV,dV,col)
 figure;
 surface(dV,dV,col+com)
 figure;
-surface(dV,dV,costA)
+surface(dV,dV,col+costA)
 figure;
-surface(dV,dV,costB)
+surface(dV,dV,col+costB)
 
 [xx,yy] = meshgrid(dV,dV);
 figure;hold on;
