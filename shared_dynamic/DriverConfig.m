@@ -49,7 +49,7 @@ elseif strcmp(behaviour,'drifting')==1
     ptv = 0.05;
 elseif strcmp(behaviour,'custom')==1
     maxSpeed = 7; % in [m/s]
-    maxxacc = 5; % in [m/s^-1]
+    maxxacc = 3; % in [m/s^-1]
     steeringreg = 0.02;  
     specificmoi = 0.3;
     plag = 1;

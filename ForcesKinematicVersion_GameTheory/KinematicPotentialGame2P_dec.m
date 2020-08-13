@@ -6,8 +6,14 @@
 % constraints on collisions
 %add force path (change that for yourself)
 addpath('..');
-userDir = getuserdir;
+userDir = pwd;
+addpath('/home/thomas/Matlab/Forces/forces_pro_client');
+addpath('/home/thomas/Matlab/Forces/forces_pro_client/casadi-matlabR2014a-v2.4.2');
+
+% addpath('C:\Users\me\Documents\FORCES_client');
 addpath('casadi');
+addpath('../shared_dynamic')
+
     
 clear model
 clear problem
@@ -61,12 +67,12 @@ planintervall = 1;
 % %points(:,3)=points(:,3)-0.2;
 % 
 % points2=flip(points);
-points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
 %points(:,3)=points(:,3)-0.2;
 
 solvetimes = [];

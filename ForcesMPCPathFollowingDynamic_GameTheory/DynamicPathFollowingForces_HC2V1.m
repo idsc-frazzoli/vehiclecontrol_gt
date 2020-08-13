@@ -8,7 +8,11 @@
 %add force path (change that for yourself)
 %addpath([userDir '/Forces']); % Location of FORCES PRO
 addpath('..');
-userDir = getuserdir;
+userDir = pwd;
+addpath('/home/thomas/Matlab/Forces/forces_pro_client');
+addpath('/home/thomas/Matlab/Forces/forces_pro_client/casadi-matlabR2014a-v2.4.2');
+
+% addpath('C:\Users\me\Documents\FORCES_client');
 addpath('casadi');
 addpath('../shared_dynamic')
     
@@ -121,15 +125,22 @@ model.hl = [-inf;-inf;-inf;-inf;-inf;0];
 % points = [18,35,42,55.2,56,51,42,40;...          %x
 %           41,55,57,56,43,40,45,31; ...    %y
 %           2.5,2.5,2.5,2.5,2.5,2.5,2.3,2.5]';   %phi
-points = [18,22,35,42,55.2,60,51,42,40,30,22;...          %x
-          41,52,55,57,56,43,40,42,31,35,34; ...    %y
-          2.5,2.5,2.5,2.5,2.5,2.3,2.3,2.3,2.3,2.5,2.5]';
-points(:,3)=points(:,3)-0.2;
-points2=[30,22,18,22,35,42,55.2,60,51,42,40;...          %x
-         35,34,41,52,55,57,56,43,40,42,31; ...    %y
-          2.5,2.5,2.5,2.5,2.5,2.3,2.3,2.3,2.3,2.5,2.5]';
-points2(:,1)=points2(:,1)+20;
-points2(:,3)=points2(:,3)-0.2;
+% points = [18,22,35,42,55.2,60,51,42,40,30,22;...          %x
+%           41,52,55,57,56,43,40,42,31,35,34; ...    %y
+%           2.5,2.5,2.5,2.5,2.5,2.3,2.3,2.3,2.3,2.5,2.5]';
+% points(:,3)=points(:,3)-0.2;
+% points2=[30,22,18,22,35,42,55.2,60,51,42,40;...          %x
+%          35,34,41,52,55,57,56,43,40,42,31; ...    %y
+%           2.5,2.5,2.5,2.5,2.5,2.3,2.3,2.3,2.3,2.5,2.5]';
+% points2(:,1)=points2(:,1)+20;
+% points2(:,3)=points2(:,3)-0.2;
+
+points2 = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
 %% Objective function
 trajectorytimestep = integrator_stepsize;
 
@@ -179,7 +190,7 @@ model.lb(index.s)=0;
 
 %% CodeOptions for FORCES solver
 codeoptions = getOptions('MPCPathFollowing'); % Need FORCES License to run
-codeoptions.maxit = 4000;    % Maximum number of iterations
+codeoptions.maxit = 400;    % Maximum number of iterations
 codeoptions.printlevel = 2; % Use printlevel = 2 to print progress (but not for timings)
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions.cleanup = false;
@@ -191,7 +202,7 @@ output = newOutput('alldata', 1:model.N, 1:model.nvar);
 FORCES_NLP(model, codeoptions,output); % Need FORCES License to run
 
 %% Simulation kart 1
-tend = 300;
+tend = 80;
 eulersteps = 10;
 planintervall = 1;
 fpoints = points(1:2,1:2);
@@ -328,6 +339,13 @@ for i =1:tend
         keyboard
         
     end
+    %% IBR single step
+            outputM = reshape(output.alldata,[model.nvar,model.N])';
+        problem2.all_parameters(index.xComp:model.npar:end)=...
+            outputM(:,index.x);
+        problem2.all_parameters(index.yComp:model.npar:end)=...
+            outputM(:,index.y);
+    
      % solve mpc go kart 2
     [output2,exitflag2,info2] = MPCPathFollowing(problem2);
     solvetimes2(end+1)=info2.solvetime;

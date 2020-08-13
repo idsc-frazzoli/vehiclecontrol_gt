@@ -6,10 +6,15 @@
 % constraints on collisions. The iterations run until a Nash equilibrium is
 % reached (Iterated Best response)
 
-%add force path (change that for yourself)
 addpath('..');
-userDir = getuserdir;
+userDir = pwd;
+addpath('/home/thomas/Matlab/Forces/forces_pro_client');
+addpath('/home/thomas/Matlab/Forces/forces_pro_client/casadi-matlabR2014a-v2.4.2');
+
+% addpath('C:\Users\me\Documents\FORCES_client');
 addpath('casadi');
+addpath('../shared_dynamic')
+
     
 clear model
 clear problem
@@ -58,6 +63,13 @@ points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;.
 points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
           5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+      
+      points2 = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
 % points = [41.8,36.2,52,57.2,53,52,47;...          %x
 %           38.33,44.933,58.2,53.8,49,44,43; ...    %y
 %           2.5,2.5,2.5,2.5,2.5,2.5,2.5]';         %width 
