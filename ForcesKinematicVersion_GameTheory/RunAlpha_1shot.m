@@ -1,6 +1,7 @@
 clear all
 close all
 clc
+
 %% Parameters Definitions
 maxSpeed = 30;
 maxxacc = 4;

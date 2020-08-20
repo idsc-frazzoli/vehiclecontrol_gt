@@ -2,7 +2,12 @@
 addpath('..');
 userDir = getuserdir;
 addpath('casadi');
-    
+addpath('models');  
+addpath('draw_files');
+addpath('parameters_vector');
+addpath('objective_function');
+addpath('constraints');
+
 clear model
 clear problem
 clear all

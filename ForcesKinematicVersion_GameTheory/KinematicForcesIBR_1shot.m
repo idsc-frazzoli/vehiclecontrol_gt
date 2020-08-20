@@ -10,7 +10,13 @@
 addpath('..');
 userDir = getuserdir;
 addpath('casadi');
-    
+addpath('casadi');
+addpath('models');  
+addpath('draw_files');
+addpath('parameters_vector');
+addpath('objective_function');
+addpath('constraints');
+
 clear model_IBR
 clear problem_IBR
 clear all
