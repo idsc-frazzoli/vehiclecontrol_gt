@@ -175,7 +175,7 @@ solvetimes = [];
 
 solvetimes2 = [];
 %% model definition
-model.N = 40;                       % Forward horizon Length
+model.N = 31;                       % Forward horizon Length
 model.nvar = index.nv;
 model.neq = index.ns;
 model.eq = @(z,p) RK4(...
@@ -368,7 +368,7 @@ x02 = [zeros(model.N,index.nu),repmat(xs2,model.N,1)]';
 
 %% IBR
 
-model_IBR.N = 40;
+model_IBR.N = 31;
 model_IBR.nvar = index_IBR.nv;
 model_IBR.neq = index_IBR.ns;
 model_IBR.eq = @(z,p) RK4(...
@@ -653,6 +653,12 @@ for kk=1:length(alpha1)
             a =a+ 1;
         end
         outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
+        
+        x0 = outputM';
+        u = repmat(outputM(1,1:index.nu),eulersteps,1);
+        [xhist,time] = euler(@(x,u)interstagedx_PG(x,u),xs,u,integrator_stepsize/eulersteps);
+        xs = xhist(end,:);
+        
         problem_IBR2.all_parameters = repmat (getParameters_IBR(maxSpeed,...
         maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
         brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
@@ -671,6 +677,12 @@ for kk=1:length(alpha1)
             a2 =a2+ 1;
         end
         outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
+        
+        x02 = outputM2';
+        u2 = repmat(outputM2(1,1:index.nu),eulersteps,1);
+        [xhist2,time] = euler(@(x,u)interstagedx_PG(x,u),xs2,u2,integrator_stepsize/eulersteps);
+        xs2 = xhist2(end,:);
+        
         cost1(kk)=info.pobj;
         optA2(kk)=info.pobj;
         cost2(kk)=info2.pobj;
@@ -710,6 +722,11 @@ for kk=1:length(alpha1)
             a2 =a2+ 1;
         end
         outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
+        
+        x02 = outputM2';
+        u2 = repmat(outputM2(1,1:index.nu),eulersteps,1);
+        [xhist2,time2] = euler(@(x,u)interstagedx_PG(x,u),xs2,u2,integrator_stepsize/eulersteps);
+        xs2 = xhist2(end,:);
         problem_IBR.all_parameters = repmat (getParameters_IBR(maxSpeed,...
         maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
         brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
@@ -727,6 +744,12 @@ for kk=1:length(alpha1)
             a =a+ 1;
         end
         outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
+        
+        x0 = outputM';
+        u = repmat(outputM(1,1:index.nu),eulersteps,1);
+        [xhist,time] = euler(@(x,u)interstagedx_PG(x,u),xs,u,integrator_stepsize/eulersteps);
+        xs = xhist(end,:);
+        
         cost1(kk)=info.pobj;
         optA(kk)=info.pobj;
         cost2(kk)=info2.pobj;

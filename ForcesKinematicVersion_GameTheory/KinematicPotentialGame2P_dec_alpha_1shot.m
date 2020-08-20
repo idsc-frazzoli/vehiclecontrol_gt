@@ -94,7 +94,7 @@ integrator_stepsize = 0.1;
 trajectorytimestep = integrator_stepsize;
 
 %% model definition
-model.N = 31;                       % Forward horizon Length
+model.N = 40;                       % Forward horizon Length
 model.nvar = index.nv;
 model.neq = index.ns;
 model.eq = @(z,p) RK4(...
@@ -165,7 +165,7 @@ model.lb(index.v)=0;
 
 % Steering Angle Constraint (input)
 model.ub(index.beta)=0.5;
-model.lb(index.beta)=-0.5;
+model.lb(index.beta)=0;
 
 % Path Progress Constraint (input)
 model.ub(index.s)=pointsN-2;
@@ -186,7 +186,7 @@ model.lb(index.v_k2)=0;
 
 % Steering Angle Constraint (input)
 model.ub(index.beta_k2)=0.5;
-model.lb(index.beta_k2)=-0.5;
+model.lb(index.beta_k2)=0;
 
 % Path Progress Constraint (input)
 model.ub(index.s_k2)=pointsN2-2;
@@ -298,7 +298,7 @@ index_IBR.pointsN = pointsN;
 
 %% model_IBR Definition
 
-model_IBR.N = 31;
+model_IBR.N = 40;
 model_IBR.nvar = index_IBR.nv;
 model_IBR.neq = index_IBR.ns;
 model_IBR.eq = @(z,p) RK4(...
@@ -358,7 +358,7 @@ model_IBR.lb(index_IBR.v)=0;
 
 % Steering Angle Constraint (input)
 model_IBR.ub(index_IBR.beta)=0.5;
-model_IBR.lb(index_IBR.beta)=-0.5;
+model_IBR.lb(index_IBR.beta)=0;
 
 % Path Progress Constraint (input)
 model_IBR.ub(index_IBR.s)=pointsN-2;
