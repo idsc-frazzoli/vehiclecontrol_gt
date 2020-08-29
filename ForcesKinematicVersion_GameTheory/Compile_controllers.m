@@ -29,7 +29,7 @@ Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no
 LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
-                                    % being on the left of the centerline)
+                                    % only the left side of the centerline)
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
 Game        = 'PG'; % IBR, PG; 'IBR' for 'dec' only, without alpha
