@@ -46,6 +46,10 @@ NUM_Vehicles: 1,2,3 supported
 
 Compiled: yes or no. Yes to skip compilation phase (Controller must be already compiled)
 
+Simulation: yes or no. Yes to run the simulation
+
+TestAlpha1shot: 'yes' or 'no'. yes if you want to test results with different alpha. It requires both IBR and PGalpha compiled (TO BE IMPROVED)
+
 LEPunisher: yes or no. Cost function option: yes if we want to penalize the lateral error only if the gokart is on the left side of the centerline
 
 For 2 vehicles only:
