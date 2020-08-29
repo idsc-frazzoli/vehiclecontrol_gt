@@ -14,12 +14,12 @@ userDir = pwd;%for linux
 % addpath('C:\Users\me\Documents\FORCES_client');
 % addpath('casadi');
 % addpath('../shared_dynamic')
-addpath('casadi');
-addpath('models');  
-addpath('draw_files');
-addpath('parameters_vector');
-addpath('objective_function');
-addpath('constraints');
+addpath('..\casadi');
+addpath('..\models');  
+addpath('..\draw_files');
+addpath('..\parameters_vector');
+addpath('..\objective_function');
+addpath('..\constraints');
 
 addpath('casadi');
     

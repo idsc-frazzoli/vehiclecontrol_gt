@@ -14,95 +14,15 @@ clear all
 close all
 
 %% Parameters Definitions
-maxSpeed = 10;
-maxxacc = 4;
-maxyacc = 8;
-latacclim = 6;
-rotacceffect  = 2;
-torqueveceffect = 3;
-brakeeffect = 0; 
-plagerror=1;
-platerror=0.01;
-pprog=0.2;
-pab=0.0004;
-pdotbeta=0.1;
-pspeedcost=0.2;
-pslack=5;
-
-% Splines
-pointsO = 14;
-pointsN = 10;
-splinestart = 1;
-nextsplinepoints = 0;
-
-% Stepsize
-integrator_stepsize = 0.1;
-
-% Simulation length
-tend = 100;
-eulersteps = 10;
-planintervall = 1;
-
-%% Spline Points
-    
-points = [36.2,52,57.2,53,52,47,41.8;...
-          44.933,58.2,53.8,49,44,43,38.33;...
-          1.8,1.8,1.8,0.5,0.5,0.5,1.8]';
-points(:,3)=points(:,3)-0.2;
-
-trajectorytimestep = integrator_stepsize;
-solvetimes = [];
+parameters_1_vehicle
 
 %% State and Input Definitions 
 global index
+indexes_1_vehicle
 
-% Inputs
-index.dotab = 1;
-index.dotbeta = 2;
-index.ds = 3;
-index.slack = 4;
-
-% States
-index.x = 5;
-index.y = 6;
-index.theta = 7;
-index.v = 8;
-index.ab = 9;
-index.beta = 10;
-index.s = 11;
-
-% Number of States
-index.ns = 7;
-
-% Number of Inputs
-index.nu = 4;
-
-% Number of Variables
-index.nv = index.ns+index.nu;
-index.sb = index.nu+1;
-
-% Parameters
-index.ps = 1;
-index.pax = 2;
-index.pay = 3;
-index.pll = 4;
-index.prae = 5;
-index.ptve = 6;
-index.pbre = 7;
-
-%% ADDED
-index.pointsO=pointsO;
-index.pointsN=pointsN;
-index.plag = 8;
-index.plat = 9;
-index.pprog = 10;
-index.pab = 11;
-index.pdotbeta = 12;
-index.pspeedcost = 13;
-index.pslack = 14;
 %% Model Definition
 
-model.N = 31;
+model.N = P_H_length;
 model.nvar = index.nv;
 model.neq = index.ns;
 
@@ -113,7 +33,7 @@ model.E = [zeros(index.ns,index.nu), eye(index.ns)];
 %% Non-Linear Constraints
 
 %limit lateral acceleration
-model.nh = 6; 
+model.nh = NUM_const; 
 model.ineq = @(z,p) nlconst(z,p);
 model.hu = [0;1;0;0;0;0];
 model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];
@@ -148,11 +68,10 @@ model.ub = ones(1,index.nv)*inf;
 model.lb = -ones(1,index.nv)*inf;
 
 % Delta path progress
-model.ub(index.ds)=5;
-model.lb(index.ds)=-1;
+model.ub(index.ds)=ds_max;
+model.lb(index.ds)=ds_min;
 
 % Acceleration
-model.lb(index.ab)=-4.5;
 model.lb(index.ab)=-inf;
 
 % Slack
@@ -162,8 +81,8 @@ model.lb(index.slack)=0;
 model.lb(index.v)=0;
 
 % Steering Angle
-model.ub(index.beta)=0.5;
-model.lb(index.beta)=-0.5;
+model.ub(index.beta)=beta_max;
+model.lb(index.beta)=beta_min;
 
 %Path Progress
 model.ub(index.s)=pointsN-2;
@@ -171,7 +90,7 @@ model.lb(index.s)=0;
 
 %% Solver
 codeoptions = getOptions('MPCPathFollowing');
-codeoptions.maxit = 200;    % Maximum number of iterations
+codeoptions.maxit = MAX_IT;    % Maximum number of iterations
 codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions.cleanup = false;

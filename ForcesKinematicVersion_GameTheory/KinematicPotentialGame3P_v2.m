@@ -44,9 +44,7 @@ pointsN3 = 10;
 splinestart = 1;
 splinestart2 = 1;
 splinestart3 = 1;
-nextsplinepoints = 0;
-nextsplinepoints_k2 = 0;
-nextsplinepoints_k3 = 0;
+
 % Simulation length
 tend = 80;
 eulersteps = 10;

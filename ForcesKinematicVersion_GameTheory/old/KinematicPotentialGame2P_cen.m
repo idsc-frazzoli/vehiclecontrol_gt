@@ -46,14 +46,24 @@ pointsN = 10;
 pointsN2 = 10;
 splinestart = 1;
 splinestart2 = 1;
-nextsplinepoints = 0;
-nextsplinepoints_k2 = 0;
 
 % Simulation length
 tend = 90;
 eulersteps = 10;
 planintervall = 1;
 
+%% controller params %%RECOMPILE IF MODIFIED!
+NUM_const=13; % number of nonlinear constraint
+P_H_length=31; % prediction horizon length
+MAX_IT= 500; % N of max iterations
+
+% ds constraint (delta progress)
+ds_max=5;
+ds_min=-1;
+
+% beta constraint (steering angle)
+beta_max=0.5;
+beta_min=-0.5;
 %% Spline Points
 % points = [18,22,35,42,55.2,60,51,42,40,30,22;...          %x
 %           41,52,55,57,56,43,40,42,31,35,34; ...    %y
@@ -151,7 +161,7 @@ integrator_stepsize = 0.1;
 trajectorytimestep = integrator_stepsize;
 
 %% Model definition
-model.N = 31;                       % Forward horizon Length
+model.N = P_H_length;                       % Forward horizon Length
 model.nvar = index.nv;
 model.neq = index.ns;
 model.eq = @(z,p) RK4(...
@@ -165,7 +175,7 @@ model.E = [zeros(index.ns,index.nu), eye(index.ns)];
 %% Non-Linear Constraints
 
 %limit lateral acceleration
-model.nh = 13; 
+model.nh = NUM_const; 
 model.ineq = @(z,p) nlconst_PG(z,p);
 model.hu = [0;1;0;0;0;0;0;1;0;0;0;0;0];%
 model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
@@ -207,8 +217,8 @@ model.ub = ones(1,index.nv)*inf;
 model.lb = -ones(1,index.nv)*inf;
 
 % Path Progress rate Constraint (input)
-model.ub(index.ds)=5;
-model.lb(index.ds)=-1;
+model.ub(index.ds)=ds_max;
+model.lb(index.ds)=ds_min;
 
 % Acceleration Constraint (input)
 model.lb(index.ab)=-inf;
@@ -220,16 +230,16 @@ model.lb(index.slack)=0;
 model.lb(index.v)=0;
 
 % Steering Angle Constraint (input)
-model.ub(index.beta)=0.5;
-model.lb(index.beta)=-0.5;
+model.ub(index.beta)=beta_max;
+model.lb(index.beta)=beta_min;
 
 % Path Progress Constraint (input)
 model.ub(index.s)=pointsN-2;
 model.lb(index.s)=0;
 
 % Path Progress rate Constraint (input)
-model.ub(index.ds_k2)=5;
-model.lb(index.ds_k2)=-1;
+model.ub(index.ds_k2)=ds_max;
+model.lb(index.ds_k2)=ds_min;
 
 % Acceleration Constraint (input)
 model.lb(index.ab_k2)=-inf;
@@ -241,8 +251,8 @@ model.lb(index.slack_k2)=0;
 model.lb(index.v_k2)=0;
 
 % Steering Angle Constraint (input)
-model.ub(index.beta_k2)=0.5;
-model.lb(index.beta_k2)=-0.5;
+model.ub(index.beta_k2)=beta_max;
+model.lb(index.beta_k2)=beta_min;
 
 % Path Progress Constraint (input)
 model.ub(index.s_k2)=pointsN2-2;
@@ -251,8 +261,8 @@ model.lb(index.s_k2)=0;
 model.lb(index.slack2)=0;
 
 %% CodeOptions for FORCES solver
-codeoptions = getOptions('MPCPathFollowing');
-codeoptions.maxit = 500;    % Maximum number of iterations
+codeoptions = getOptions('MPCPathFollowing_2v');
+codeoptions.maxit = MAX_IT;    % Maximum number of iterations
 codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
 codeoptions.cleanup = false;
@@ -362,7 +372,7 @@ for i =1:tend
         pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2), model.N ,1);
     problem.x0 = x0(:);       
     % solve mpc
-    [output,exitflag,info] = MPCPathFollowing(problem);
+    [output,exitflag,info] = MPCPathFollowing_2v(problem);
     solvetimes(end+1)=info.solvetime;
     if(exitflag==0)
        a = a + 1; 
