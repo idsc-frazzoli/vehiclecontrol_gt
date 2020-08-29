@@ -1,6 +1,6 @@
 %code by mheim
 figure;
-global index
+global index_IBR
 
 % variables history = [t,ab,dotbeta,ds,x,y,theta,v,beta,s,braketemp]
 %start later in history
@@ -20,10 +20,10 @@ title('reference trajectory vs actual');
 %legend('reference', 'MPC controlled')
 
 %plot acceleration and deceleration in colors
-p = lhistory(:,[index.x+1,index.y+1]);
-offset = 0.4*gokartforward(lhistory(:,index.theta+1));
+p = lhistory(:,[index_IBR.x+1,index_IBR.y+1]);
+offset = 0.4*gokartforward(lhistory(:,index_IBR.theta+1));
 p = offset + p;
-acc = lhistory(:,index.ab+1);
+acc = lhistory(:,index_IBR.ab+1);
 maxacc = max(abs(acc));
 [nu,~]=size(p);
 for i=1:nu-1
@@ -57,11 +57,11 @@ hold off
 subplot(m,n,2)
 hold on
 yyaxis left
-plot(lhistory(:,1),lhistory(:,index.beta+1))
+plot(lhistory(:,1),lhistory(:,index_IBR.beta+1))
 ylabel('steering position [rad]')
 axis([-inf inf -1 1])
 yyaxis right
-stairs(lhistory(:,1), lhistory(:,index.dotbeta+1))
+stairs(lhistory(:,1), lhistory(:,index_IBR.dotbeta+1))
 %axis([-inf inf -2 2])
 axis([-inf inf -4 4])
 ylabel('steering change rate [rad/s]')
@@ -73,11 +73,11 @@ xlabel('[s]')
 subplot(m,n,3)
 hold on
 yyaxis left
-stairs(lhistory(:,1), lhistory(:,index.ab+1))
+stairs(lhistory(:,1), lhistory(:,index_IBR.ab+1))
 ylabel('acceleration [m/s²]')
 axis([-inf inf -8 8])
 yyaxis right
-plot(lhistory(:,1),lhistory(:,index.v+1))
+plot(lhistory(:,1),lhistory(:,index_IBR.v+1))
 ylabel('speed [m/s]')
 axis([-inf inf -12 12])
 title('Acceleration/Speed');
@@ -89,14 +89,14 @@ subplot(m,n,4)
 hold on
 %compute lateral acceleration
 l = 1.19;
-beta = lhistory(:,index.beta+1);
-dotbeta = lhistory(:,index.dotbeta+1);
-tangentspeed = lhistory(:,index.v+1);
+beta = lhistory(:,index_IBR.beta+1);
+dotbeta = lhistory(:,index_IBR.dotbeta+1);
+tangentspeed = lhistory(:,index_IBR.v+1);
 ackermannAngle = -0.58.*beta.*beta.*beta+0.93*beta;
 dAckermannAngle = -0.58.*3.*beta.*beta.*dotbeta+0.93.*dotbeta;
 la = tan(ackermannAngle).*tangentspeed.^2/l;
 lra =1./(cos(ackermannAngle).^2).*dAckermannAngle.*tangentspeed./l;
-fa = lhistory(:,index.ab+1);
+fa = lhistory(:,index_IBR.ab+1);
 na = (fa.^2+la.^2).^0.5;
 title('accelerations')
 axis([-inf inf -10 10])
@@ -113,9 +113,9 @@ hold on
 %compute lateral acceleration
 braking = zeros(numel(lhistory(:,1)),1);
 c = 0;
-for sp=lhistory(:,index.v+1)'
+for sp=lhistory(:,index_IBR.v+1)'
     c = c+1;
-    braking(c) = max(0,-lhistory(c,index.ab+1)+casadiGetMaxNegAcc(sp));
+    braking(c) = max(0,-lhistory(c,index_IBR.ab+1)+casadiGetMaxNegAcc(sp));
     %braking(c) = max(0,-lhistory(c,2));
 end
 title('braking')
@@ -127,7 +127,7 @@ plot(lhistory(:,1),braking);
 yyaxis right
 ylabel('slack')
 axis([-inf inf -1 10])
-plot(lhistory(:,1), lhistory(:,index.slack2+1));
+plot(lhistory(:,1), lhistory(:,index_IBR.slack2+1));
 
 subplot(m,n,6)
 % variables history = [t,ab,dotbeta,ds,x,y,theta,v,beta,s,braketemp]
@@ -136,13 +136,13 @@ title('path progress')
 yyaxis left
 axis([-inf inf 0 1])
 ylabel('progress rate [1/s]')
-plot(lhistory(:,1),lhistory(:,index.ds+1));
+plot(lhistory(:,1),lhistory(:,index_IBR.ds+1));
 
 yyaxis right
 ylabel('progress [1]')
 axis([-inf inf 0 2])
 xlabel('[s]')
-plot(lhistory(:,1), lhistory(:,index.s+1));
+plot(lhistory(:,1), lhistory(:,index_IBR.s+1));
 
 %%
 %code by mheim
@@ -159,10 +159,10 @@ title('reference trajectory vs actual');
 %legend('reference', 'MPC controlled')
 
 %plot acceleration and deceleration in colors
-p2 = lhistory2(:,[index.x+1,index.y+1]);
-offset2 = 0.4*gokartforward(lhistory2(:,index.theta+1));
+p2 = lhistory2(:,[index_IBR.x+1,index_IBR.y+1]);
+offset2 = 0.4*gokartforward(lhistory2(:,index_IBR.theta+1));
 p2 = offset2 + p2;
-acc2 = lhistory2(:,index.ab+1);
+acc2 = lhistory2(:,index_IBR.ab+1);
 maxacc2 = max(abs(acc2));
 [nu2,~]=size(p2);
 for i=1:nu2-1
@@ -196,11 +196,11 @@ hold off
 subplot(m,n,2)
 hold on
 yyaxis left
-plot(lhistory2(:,1),lhistory2(:,index.beta+1))
+plot(lhistory2(:,1),lhistory2(:,index_IBR.beta+1))
 ylabel('steering position [rad]')
 axis([-inf inf -1 1])
 yyaxis right
-stairs(lhistory2(:,1), lhistory2(:,index.dotbeta+1))
+stairs(lhistory2(:,1), lhistory2(:,index_IBR.dotbeta+1))
 %axis([-inf inf -2 2])
 axis([-inf inf -4 4])
 ylabel('steering change rate [rad/s]')
@@ -212,11 +212,11 @@ xlabel('[s]')
 subplot(m,n,3)
 hold on
 yyaxis left
-stairs(lhistory2(:,1), lhistory2(:,index.ab+1))
+stairs(lhistory2(:,1), lhistory2(:,index_IBR.ab+1))
 ylabel('acceleration [m/s²]')
 axis([-inf inf -8 8])
 yyaxis right
-plot(lhistory2(:,1),lhistory2(:,index.v+1))
+plot(lhistory2(:,1),lhistory2(:,index_IBR.v+1))
 ylabel('speed [m/s]')
 axis([-inf inf -12 12])
 title('Acceleration/Speed');
@@ -227,14 +227,14 @@ hold off
 subplot(m,n,4)
 hold on
 %compute lateral acceleration
-beta2 = lhistory2(:,index.beta+1);
-dotbeta2 = lhistory2(:,index.dotbeta+1);
-tangentspeed2 = lhistory2(:,index.v+1);
+beta2 = lhistory2(:,index_IBR.beta+1);
+dotbeta2 = lhistory2(:,index_IBR.dotbeta+1);
+tangentspeed2 = lhistory2(:,index_IBR.v+1);
 ackermannAngle2 = -0.58.*beta2.*beta2.*beta2+0.93*beta2;
 dAckermannAngle2 = -0.58.*3.*beta2.*beta2.*dotbeta2+0.93.*dotbeta2;
 la2 = tan(ackermannAngle2).*tangentspeed2.^2/l;
 lra2 =1./(cos(ackermannAngle2).^2).*dAckermannAngle2.*tangentspeed2./l;
-fa2 = lhistory(:,index.ab+1);
+fa2 = lhistory(:,index_IBR.ab+1);
 na2 = (fa2.^2+la2.^2).^0.5;
 title('accelerations')
 axis([-inf inf -10 10])
@@ -251,9 +251,9 @@ hold on
 %compute lateral acceleration
 braking2 = zeros(numel(lhistory2(:,1)),1);
 c2 = 0;
-for sp2=lhistory2(:,index.v+1)'
+for sp2=lhistory2(:,index_IBR.v+1)'
     c2 = c2+1;
-    braking2(c2) = max(0,-lhistory2(c2,index.ab+1)+casadiGetMaxNegAcc(sp2));
+    braking2(c2) = max(0,-lhistory2(c2,index_IBR.ab+1)+casadiGetMaxNegAcc(sp2));
     %braking(c) = max(0,-lhistory(c,2));
 end
 title('braking')
@@ -265,7 +265,7 @@ plot(lhistory2(:,1),braking2);
 yyaxis right
 ylabel('slack')
 axis([-inf inf -1 10])
-plot(lhistory2(:,1), lhistory2(:,index.slack2+1));
+plot(lhistory2(:,1), lhistory2(:,index_IBR.slack2+1));
 
 subplot(m,n,6)
 % variables history = [t,ab,dotbeta,ds,x,y,theta,v,beta,s,braketemp]
@@ -274,11 +274,11 @@ title('path progress')
 yyaxis left
 axis([-inf inf 0 1])
 ylabel('progress rate [1/s]')
-plot(lhistory2(:,1),lhistory2(:,index.ds+1));
+plot(lhistory2(:,1),lhistory2(:,index_IBR.ds+1));
 
 yyaxis right
 ylabel('progress [1]')
 axis([-inf inf 0 2])
 xlabel('[s]')
-plot(lhistory2(:,1), lhistory2(:,index.s+1));
+plot(lhistory2(:,1), lhistory2(:,index_IBR.s+1));
 

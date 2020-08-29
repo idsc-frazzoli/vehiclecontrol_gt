@@ -1,59 +1,59 @@
 %% State and Input Definitions
-global index
+global index_IBR
 
 % inputs go kart 1
-index.dotab = 1;
-index.dotbeta = 2;
-index.ds = 3;
-index.slack = 4;
+index_IBR.dotab = 1;
+index_IBR.dotbeta = 2;
+index_IBR.ds = 3;
+index_IBR.slack = 4;
 % shared
-index.slack2=5;
+index_IBR.slack2=5;
 
 % States
-index.x = 6;
-index.y = 7;
-index.theta = 8;
-index.v = 9;
-index.ab = 10;
-index.beta = 11;
-index.s = 12;
+index_IBR.x = 6;
+index_IBR.y = 7;
+index_IBR.theta = 8;
+index_IBR.v = 9;
+index_IBR.ab = 10;
+index_IBR.beta = 11;
+index_IBR.s = 12;
 
 % Number of States
-index.ns = 7;
+index_IBR.ns = 7;
 
 % Number of Inputs
-index.nu = 5;
+index_IBR.nu = 5;
 
 % Number of Variables
-index.nv = index.ns+index.nu;
-index.sb = index.nu+1;
+index_IBR.nv = index_IBR.ns+index_IBR.nu;
+index_IBR.sb = index_IBR.nu+1;
 
 % Parameters
-index.ps = 1;
-index.pax = 2;
-index.pay = 3;
-index.pll = 4;
-index.prae = 5;
-index.ptve = 6;
-index.pbre = 7;
+index_IBR.ps = 1;
+index_IBR.pax = 2;
+index_IBR.pay = 3;
+index_IBR.pll = 4;
+index_IBR.prae = 5;
+index_IBR.ptve = 6;
+index_IBR.pbre = 7;
 
 %% ADDED
-index.plag = 8;
-index.plat = 9;
-index.pprog = 10;
-index.pab = 11;
-index.pdotbeta = 12;
-index.pspeedcost = 13;
-index.pslack = 14;
-index.pslack2 = 15;
-index.dist = 16;
-index.xComp = 17;
-index.yComp = 18;
-index.pointsO = pointsO;
-index.pointsN = pointsN;
+index_IBR.plag = 8;
+index_IBR.plat = 9;
+index_IBR.pprog = 10;
+index_IBR.pab = 11;
+index_IBR.pdotbeta = 12;
+index_IBR.pspeedcost = 13;
+index_IBR.pslack = 14;
+index_IBR.pslack2 = 15;
+index_IBR.dist = 16;
+index_IBR.xComp = 17;
+index_IBR.yComp = 18;
+index_IBR.pointsO = pointsO;
+index_IBR.pointsN = pointsN;
 
 %% model initialization
 model.N = P_H_length;
-model.nvar = index.nv;
-model.neq = index.ns;
+model.nvar = index_IBR.nv;
+model.neq = index_IBR.ns;
 model.npar = pointsO + 3*pointsN;

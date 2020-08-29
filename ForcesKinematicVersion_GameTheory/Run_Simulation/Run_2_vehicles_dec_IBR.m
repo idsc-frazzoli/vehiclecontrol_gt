@@ -13,7 +13,7 @@
 % parameters_2_vehicles
 % pointsO=18;
 %% Initialization for simulation
-global index
+global index_IBR
 % indexes_2_vehicles_IBR
 
 %% Initialization for simulation
@@ -22,20 +22,20 @@ pdir = diff(fpoints);
 [pstartx,pstarty] = casadiDynamicBSPLINE(0.01,points);
 pstart = [pstartx,pstarty];
 pangle = atan2(pdir(2),pdir(1));
-xs(index.x-index.nu)=pstart(1);
-xs(index.y-index.nu)=pstart(2);
-xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=1;
-xs(index.ab-index.nu)=0;
-xs(index.beta-index.nu)=0;
-xs(index.s-index.nu)=0.01;
+xs(index_IBR.x-index_IBR.nu)=pstart(1);
+xs(index_IBR.y-index_IBR.nu)=pstart(2);
+xs(index_IBR.theta-index_IBR.nu)=pangle;
+xs(index_IBR.v-index_IBR.nu)=1;
+xs(index_IBR.ab-index_IBR.nu)=0;
+xs(index_IBR.beta-index_IBR.nu)=0;
+xs(index_IBR.s-index_IBR.nu)=0.01;
 plansx = [];
 plansy = [];
 planss = [];
 targets = [];
 planc = 10;
 
-x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
+x0 = [zeros(model.N,index_IBR.nu),repmat(xs,model.N,1)]';
 
 %% Initialization for simulation 2
 fpoints2 = points2(1:2,1:2);
@@ -43,13 +43,13 @@ pdir2 = diff(fpoints2);
 [pstartx2,pstarty2] = casadiDynamicBSPLINE(0.01,points2);
 pstart2 = [pstartx2,pstarty2];
 pangle2 = atan2(pdir2(2),pdir2(1));
-xs2(index.x-index.nu)=pstart2(1);
-xs2(index.y-index.nu)=pstart2(2);
-xs2(index.theta-index.nu)=pangle2;
-xs2(index.v-index.nu)=1;
-xs2(index.ab-index.nu)=0;
-xs2(index.beta-index.nu)=0;
-xs2(index.s-index.nu)=0.01;
+xs2(index_IBR.x-index_IBR.nu)=pstart2(1);
+xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
+xs2(index_IBR.theta-index_IBR.nu)=pangle2;
+xs2(index_IBR.v-index_IBR.nu)=1;
+xs2(index_IBR.ab-index_IBR.nu)=0;
+xs2(index_IBR.beta-index_IBR.nu)=0;
+xs2(index_IBR.s-index_IBR.nu)=0.01;
 %% Simulation
 history = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist = zeros(tend,pointsN*3+1);
@@ -58,7 +58,7 @@ plansy = [];
 planss = [];
 targets = [];
 planc = 10;
-x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
+x0 = [zeros(model.N,index_IBR.nu),repmat(xs,model.N,1)]';
 %% k2
 history2 = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist2 = zeros(tend,pointsN*3+1);
@@ -68,7 +68,7 @@ planss2 = [];
 targets2 = [];
 planc2 = 10;
 
-x02 = [zeros(model.N,index.nu),repmat(xs2,model.N,1)]';
+x02 = [zeros(model.N,index_IBR.nu),repmat(xs2,model.N,1)]';
 tstart = 1;
 %% Communal
 a=0;
@@ -88,26 +88,26 @@ for i =1:tend
     tstart = i;
     %find bspline
     if(1)
-        if xs(index.s-index.nu)>1
+        if xs(index_IBR.s-index_IBR.nu)>1
             %nextSplinePoints
             %spline step forward
             splinestart = splinestart+1;
-            xs(index.s-index.nu)=xs(index.s-index.nu)-1;
+            xs(index_IBR.s-index_IBR.nu)=xs(index_IBR.s-index_IBR.nu)-1;
         end
-        if xs2(index.s-index.nu)>1
+        if xs2(index_IBR.s-index_IBR.nu)>1
             %nextSplinePoints
             %spline step forward
             splinestart2 = splinestart2+1;
-            xs2(index.s-index.nu)=xs2(index.s-index.nu)-1;
+            xs2(index_IBR.s-index_IBR.nu)=xs2(index_IBR.s-index_IBR.nu)-1;
         end
     end
 
-    xs(index.ab-index.nu)=min(casadiGetMaxAcc(xs(index.v-index.nu))...
-        -0.0001,xs(index.ab-index.nu));
+    xs(index_IBR.ab-index_IBR.nu)=min(casadiGetMaxAcc(xs(index_IBR.v-index_IBR.nu))...
+        -0.0001,xs(index_IBR.ab-index_IBR.nu));
     problem.xinit = xs';
     
-    xs2(index.ab-index.nu)=min(casadiGetMaxAcc(xs2(index.v-index.nu))...
-        -0.0001,xs2(index.ab-index.nu));
+    xs2(index_IBR.ab-index_IBR.nu)=min(casadiGetMaxAcc(xs2(index_IBR.v-index_IBR.nu))...
+        -0.0001,xs2(index_IBR.ab-index_IBR.nu));
     problem2.xinit = xs2';
     %do it every time because we don't care about the performance of this
     %script
@@ -122,7 +122,7 @@ for i =1:tend
        nextSplinePoints(ii,:)=points(ip,:);
        ip = ip + 1;
     end
-    splinepointhist(i,:)=[xs(index.s-index.nu),nextSplinePoints(:)'];
+    splinepointhist(i,:)=[xs(index_IBR.s-index_IBR.nu),nextSplinePoints(:)'];
     
     %go kart 2
     ip2 = splinestart2;
@@ -135,7 +135,7 @@ for i =1:tend
        nextSplinePoints2(ii,:)=points2(ip2,:);
        ip2 = ip2 + 1;
     end
-    splinepointhist2(i,:)=[xs2(index.s-index.nu),nextSplinePoints2(:)'];
+    splinepointhist2(i,:)=[xs2(index_IBR.s-index_IBR.nu),nextSplinePoints2(:)'];
     
     % parameters
     problem.all_parameters = repmat (getParameters_IBR(maxSpeed,...
@@ -144,9 +144,9 @@ for i =1:tend
         pspeedcost,pslack,pslack2,dist,xs2(1),xs2(2),nextSplinePoints),...
         model.N ,1);
     
-    problem.all_parameters(index.xComp:model.npar:end)=[Pos2(:,1);...
+    problem.all_parameters(index_IBR.xComp:model.npar:end)=[Pos2(:,1);...
                                                         Pos2(end,1)];
-    problem.all_parameters(index.yComp:model.npar:end)=[Pos2(:,2);...
+    problem.all_parameters(index_IBR.yComp:model.npar:end)=[Pos2(:,2);...
                                                         Pos2(end,2)];
    
     problem.x0 = x0(:);
@@ -158,9 +158,9 @@ for i =1:tend
         pspeedcost,pslack,pslack2,dist,xs(1),xs(2),nextSplinePoints2),...
         model.N ,1);
     
-    problem2.all_parameters(index.xComp:model.npar:end)=[Pos1(:,1);...
+    problem2.all_parameters(index_IBR.xComp:model.npar:end)=[Pos1(:,1);...
                                                          Pos1(end,1)];
-    problem2.all_parameters(index.yComp:model.npar:end)=[Pos1(:,2);...
+    problem2.all_parameters(index_IBR.yComp:model.npar:end)=[Pos1(:,2);...
                                                          Pos1(end,2)];
     problem2.x0 = x02(:);
     
@@ -176,10 +176,10 @@ for i =1:tend
        keyboard
     end
     outputM = reshape(output.alldata,[model.nvar,model.N])';
-    problem2.all_parameters(index.xComp:model.npar:end)=...
-        outputM(:,index.x);
-    problem2.all_parameters(index.yComp:model.npar:end)=...
-        outputM(:,index.y);
+    problem2.all_parameters(index_IBR.xComp:model.npar:end)=...
+        outputM(:,index_IBR.x);
+    problem2.all_parameters(index_IBR.yComp:model.npar:end)=...
+        outputM(:,index_IBR.y);
     %go kart 2
     [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem2);
     solvetimes2(end+1)=info2.solvetime;
@@ -193,17 +193,17 @@ for i =1:tend
 
     outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
 
-    problem.all_parameters(index.xComp:model.npar:end)=...
-        outputM2(:,index.x);
-    problem.all_parameters(index.yComp:model.npar:end)=...
-        outputM2(:,index.y);
+    problem.all_parameters(index_IBR.xComp:model.npar:end)=...
+        outputM2(:,index_IBR.x);
+    problem.all_parameters(index_IBR.yComp:model.npar:end)=...
+        outputM2(:,index_IBR.y);
     costT1(i)=info.pobj;
     costT2(i)=info2.pobj;
     %outputM = reshape(output.alldata,[model.nvar,model.N])';
 
     x0 = outputM';
-    u = repmat(outputM(1,1:index.nu),eulersteps,1);
-    [xhist,time] = euler(@(x,u)interstagedx(x,u),xs,u,...
+    u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
+    [xhist,time] = euler(@(x,u)interstagedx_IBR_1s(x,u),xs,u,...
         integrator_stepsize/eulersteps);
     xs = xhist(end,:);
     xs
@@ -212,19 +212,19 @@ for i =1:tend
     planc = planc + 1;
     if(planc>planintervall)
        planc = 1; 
-       plansx = [plansx; outputM(:,index.x)'];
-       plansy = [plansy; outputM(:,index.y)'];
-       planss = [planss; outputM(:,index.s)'];
-       [tx,ty]=casadiDynamicBSPLINE(outputM(end,index.s),nextSplinePoints);
+       plansx = [plansx; outputM(:,index_IBR.x)'];
+       plansy = [plansy; outputM(:,index_IBR.y)'];
+       planss = [planss; outputM(:,index_IBR.s)'];
+       [tx,ty]=casadiDynamicBSPLINE(outputM(end,index_IBR.s),nextSplinePoints);
        targets = [targets;tx,ty];
     end
-    Pos1=[outputM(2:end,index.x),outputM(2:end,index.y)];
+    Pos1=[outputM(2:end,index_IBR.x),outputM(2:end,index_IBR.y)];
     
     %outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-    Pos2=[outputM2(2:end,index.x),outputM2(2:end,index.y)];
+    Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
     x02 = outputM2';
-    u2 = repmat(outputM2(1,1:index.nu),eulersteps,1);
-    [xhist2,time2] = euler(@(x2,u2)interstagedx(x2,u2),...
+    u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
+    [xhist2,time2] = euler(@(x2,u2)interstagedx_IBR_1s(x2,u2),...
         xs2,u2,integrator_stepsize/eulersteps);
     xs2 = xhist2(end,:);
     xs2
@@ -234,19 +234,19 @@ for i =1:tend
     planc2 = planc2 + 1;
     if(planc2>planintervall)
        planc2 = 1; 
-       plansx2 = [plansx2; outputM2(:,index.x)'];
-       plansy2 = [plansy2; outputM2(:,index.y)'];
-       planss2 = [planss2; outputM2(:,index.s)'];
-       [tx2,ty2]=casadiDynamicBSPLINE(outputM2(end,index.s),nextSplinePoints2);
+       plansx2 = [plansx2; outputM2(:,index_IBR.x)'];
+       plansy2 = [plansy2; outputM2(:,index_IBR.y)'];
+       planss2 = [planss2; outputM2(:,index_IBR.s)'];
+       [tx2,ty2]=casadiDynamicBSPLINE(outputM2(end,index_IBR.s),nextSplinePoints2);
        targets2 = [targets2;tx2,ty2];
     end
     cost1(i)=info.pobj;
     cost2(i)=info2.pobj;
     %costS(i)=costS;
-    Progress1(i)=outputM(1,index.s);
-    Progress2(i)=outputM2(1,index.s);
+    Progress1(i)=outputM(1,index_IBR.s);
+    Progress2(i)=outputM2(1,index_IBR.s);
     % check
-    Pos2=[outputM2(2:end,index.x),outputM2(2:end,index.y)];
+    Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
     distanceX=xs(1)-xs2(1);
     distanceY=xs(2)-xs2(2);
    
