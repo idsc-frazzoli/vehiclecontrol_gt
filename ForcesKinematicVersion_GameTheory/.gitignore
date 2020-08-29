@@ -246,7 +246,8 @@ MPCPathFollowing_PgSimple1.m
 MPCPathFollowing_PgSimple2.m
 IBR.mat
 MPCPathFollowing_SimpleIBR.m
-
+MPCPathFollowing_IBR_model_40.c
+MPCPathFollowing_IBR_model_40.obj
 nativeMPCLCM
 stdout_temp
 
