@@ -39,8 +39,8 @@ planintervall = 1;
 
 %% controller params %%RECOMPILE IF MODIFIED!
 NUM_const=13; % number of nonlinear constraint
-P_H_length=31; % prediction horizon length
-MAX_IT= 500; % N of max iterations
+P_H_length=31;% prediction horizon length
+MAX_IT= 200;  % N of max iterations
 
 % ds constraint (delta progress)
 ds_max=5;
@@ -57,7 +57,13 @@ points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
 points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
           10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-
+      
+% points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
+%           50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+%           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+% points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+%           5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
+%           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
 solvetimes = [];
 solvetimes2 = [];
 trajectorytimestep = integrator_stepsize;

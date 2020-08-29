@@ -34,10 +34,10 @@ plagerror=1;
 platerror=0.01;
 pprog=0.2;
 pab=0.0004;
-pdotbeta=0.05;
+pdotbeta=0.01;
 pspeedcost=0.2;
 pslack=5;
-pslack2=50;
+pslack2=10;
 dist=2;
 
 % Splines
@@ -57,13 +57,22 @@ planintervall = 1;
 
 %% Spline Points
 %     
-points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
-          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
-% points = [41.8,36.2,52,57.2,53,52,47;...          %x
+% points2 = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110;...          %x
+%           50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+%           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+% points = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+%           5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110; ...    %y
+%           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+
+points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+          10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
+          3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
+      
+
+% % points = [41.8,36.2,52,57.2,53,52,47;...          %x
 %           38.33,44.933,58.2,53.8,49,44,43; ...    %y
 %           2.5,2.5,2.5,2.5,2.5,2.5,2.5]';         %width 
 % points2 = [57.2,52,36.2,41.8,47,52,53;...          %x
@@ -208,7 +217,7 @@ model.lb(index.s)=0;
 model.lb(index.slack2)=0;
 
 %% CodeOptions for FORCES solver
-codeoptions = getOptions('MPCPathFollowing_IBR');
+codeoptions = getOptions('MPCPathFollowing_IBR1');
 codeoptions.maxit = 200;    % Maximum number of iterations
 codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
 codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
@@ -367,46 +376,41 @@ for i =1:tend
                                                          Pos1(end,2)];
     problem2.x0 = x02(:);
     
-    jj=1;
-    while jj<=Nit
-        
-        %go kart 1
-        [output,exitflag,info] = MPCPathFollowing_IBR(problem);
-        solvetimes(end+1)=info.solvetime;
-        if(exitflag==0)
-            a =a+ 1;
-            IND=[IND;i];
-        end
-        if(exitflag~=1 && exitflag ~=0)
-           keyboard
-        end
-        outputM = reshape(output.alldata,[model.nvar,model.N])';
-        problem2.all_parameters(index.xComp:model.npar:end)=...
-            outputM(:,index.x);
-        problem2.all_parameters(index.yComp:model.npar:end)=...
-            outputM(:,index.y);
-        %go kart 2
-        [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem2);
-        solvetimes2(end+1)=info2.solvetime;
-        if(exitflag2==0)
-            a2 =a2+ 1;
-            IND2=[IND2;i];
-        end
-        if(exitflag2~=1 && exitflag2 ~=0)
-            keyboard           
-        end
-               
-        outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
 
-        problem.all_parameters(index.xComp:model.npar:end)=...
-            outputM2(:,index.x);
-        problem.all_parameters(index.yComp:model.npar:end)=...
-            outputM2(:,index.y);
-        costT1(i,jj)=info.pobj;
-        costT2(i,jj)=info2.pobj;
-        jj=jj+1;
-
+    %go kart 1
+    [output,exitflag,info] = MPCPathFollowing_IBR1(problem);
+    solvetimes(end+1)=info.solvetime;
+    if(exitflag==0)
+        a =a+ 1;
+        IND=[IND;i];
     end
+    if(exitflag~=1 && exitflag ~=0)
+       keyboard
+    end
+    outputM = reshape(output.alldata,[model.nvar,model.N])';
+    problem2.all_parameters(index.xComp:model.npar:end)=...
+        outputM(:,index.x);
+    problem2.all_parameters(index.yComp:model.npar:end)=...
+        outputM(:,index.y);
+    %go kart 2
+    [output2,exitflag2,info2] = MPCPathFollowing_IBR1(problem2);
+    solvetimes2(end+1)=info2.solvetime;
+    if(exitflag2==0)
+        a2 =a2+ 1;
+        IND2=[IND2;i];
+    end
+    if(exitflag2~=1 && exitflag2 ~=0)
+        keyboard           
+    end
+
+    outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+
+    problem.all_parameters(index.xComp:model.npar:end)=...
+        outputM2(:,index.x);
+    problem.all_parameters(index.yComp:model.npar:end)=...
+        outputM2(:,index.y);
+    costT1(i)=info.pobj;
+    costT2(i)=info2.pobj;
     %outputM = reshape(output.alldata,[model.nvar,model.N])';
 
     x0 = outputM';

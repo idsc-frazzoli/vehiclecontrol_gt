@@ -15,10 +15,10 @@ clear all
 close all
 
 % configuration
-NUM_Vehicle = 3; %1,2,3
+NUM_Vehicle = 2; %1,2,3
 Condition   = 'dec'; % 'cen' 'dec';
 Game        = 'IBR'; % IBR, PG;
-Alpha       = 'yes'; %yes , no
+Alpha       = 'no'; %yes , no
 
 %% Parameters Definitions (parameters_vector folder)
 switch NUM_Vehicle
@@ -30,6 +30,10 @@ switch NUM_Vehicle
         % for alpha case
         if strcmp(Alpha,'yes')
             pointsO=18;
+        end
+        if strcmp(Game,'IBR')
+            pointsO=18;
+            NUM_const=7;
         end
     case 3
         parameters_3_vehicles
@@ -45,7 +49,14 @@ switch NUM_Vehicle
     case 2
         switch Alpha
             case 'no'
-                indexes_2_vehicles
+                switch Game
+                    case 'PG'
+                        indexes_2_vehicles
+                    case 'IBR'
+                        indexes_2_vehicles_IBR
+                    otherwise
+                        error('Change Game')
+                end
             case 'yes'
                 indexes_2_vehicles_alpha
             otherwise
@@ -55,7 +66,7 @@ switch NUM_Vehicle
         indexes_3_vehicles
 end
 %% Model Definition (models folder)
-% if you change interstagedx file, remember to change also in
+% if you change interstagedx file, remember to change also the file in
 % simulation!!!!
 switch NUM_Vehicle
     case 1
@@ -63,8 +74,16 @@ switch NUM_Vehicle
                    @(x,u,p)interstagedx(x,u), integrator_stepsize,p);
         
     case 2
-        model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
-                   @(x,u,p)interstagedx_PG(x,u),integrator_stepsize,p);
+        switch Game
+            case 'PG'
+                model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                       @(x,u,p)interstagedx_PG(x,u),integrator_stepsize,p);
+            case 'IBR'
+                model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                       @(x,u,p)interstagedx(x,u), integrator_stepsize,p);
+            otherwise
+                error('Change Game')
+        end
                
     case 3
         model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
@@ -97,27 +116,51 @@ switch NUM_Vehicle
     case 2
         switch Alpha
             case 'no'
-                for i=1:model.N
-                    model.objective{i} = @(z,p)objective_PG(z,...
-                        getPointsFromParameters(p, pointsO, pointsN),...
-                        getRadiiFromParameters(p, pointsO, pointsN),...
-                        getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-                        p(index.ps),...
-                        p(index.pax),...
-                        p(index.pay),...
-                        p(index.pll),...
-                        p(index.prae),...
-                        p(index.ptve),...
-                        p(index.pbre),...
-                        p(index.plag),...
-                        p(index.plat),...
-                        p(index.pprog),...
-                        p(index.pab),...
-                        p(index.pdotbeta),...
-                        p(index.pspeedcost),...
-                        p(index.pslack),...
-                        p(index.pslack2));
+                switch Game
+                    case 'PG'
+                        for i=1:model.N
+                            model.objective{i} = @(z,p)objective_PG(z,...
+                                getPointsFromParameters(p, pointsO, pointsN),...
+                                getRadiiFromParameters(p, pointsO, pointsN),...
+                                getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                                getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                                p(index.ps),...
+                                p(index.pax),...
+                                p(index.pay),...
+                                p(index.pll),...
+                                p(index.prae),...
+                                p(index.ptve),...
+                                p(index.pbre),...
+                                p(index.plag),...
+                                p(index.plat),...
+                                p(index.pprog),...
+                                p(index.pab),...
+                                p(index.pdotbeta),...
+                                p(index.pspeedcost),...
+                                p(index.pslack),...
+                                p(index.pslack2));
+                        end
+                    case 'IBR'
+                        for i=1:model.N
+                            model.objective{i} = @(z,p)objective_IBR(z,...
+                            getPointsFromParameters(p, pointsO, pointsN),...
+                            getRadiiFromParameters(p, pointsO, pointsN),...
+                            p(index.ps),...
+                            p(index.pax),...
+                            p(index.pay),...
+                            p(index.pll),...
+                            p(index.prae),...
+                            p(index.ptve),...
+                            p(index.pbre),...
+                            p(index.plag),...
+                            p(index.plat),...
+                            p(index.pprog),...
+                            p(index.pab),...
+                            p(index.pdotbeta),...
+                            p(index.pspeedcost),...
+                            p(index.pslack),...
+                            p(index.pslack2));
+                        end
                 end
             case 'yes'
                 for i=1:model.N
@@ -210,40 +253,52 @@ switch NUM_Vehicle
         model.hu = [0;1;0;0;0;0];
         model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];
     case 2
+        switch Game
+            case 'PG'
+                % Path Progress rate Constraint (input)
+                model.ub(index.ds_k2)=ds_max;
+                model.lb(index.ds_k2)=ds_min;
 
-        % Path Progress rate Constraint (input)
-        model.ub(index.ds_k2)=ds_max;
-        model.lb(index.ds_k2)=ds_min;
+                % Acceleration Constraint (input)
+                model.lb(index.ab_k2)=-inf;
 
-        % Acceleration Constraint (input)
-        model.lb(index.ab_k2)=-inf;
+                % Slack Variables Constraint (input)
+                model.lb(index.slack_k2)=0;
 
-        % Slack Variables Constraint (input)
-        model.lb(index.slack_k2)=0;
+                % Speed Constraint (state)
+                model.lb(index.v_k2)=0;
 
-        % Speed Constraint (state)
-        model.lb(index.v_k2)=0;
+                % Steering Angle Constraint (input)
+                model.ub(index.beta_k2)=beta_max;
+                model.lb(index.beta_k2)=beta_min;
 
-        % Steering Angle Constraint (input)
-        model.ub(index.beta_k2)=beta_max;
-        model.lb(index.beta_k2)=beta_min;
+                % Path Progress Constraint (input)
+                model.ub(index.s_k2)=pointsN2-2;
+                model.lb(index.s_k2)=0;
 
-        % Path Progress Constraint (input)
-        model.ub(index.s_k2)=pointsN2-2;
-        model.lb(index.s_k2)=0;
-        
-        % collision
-        model.lb(index.slack2)=0;
-        
-        %non linear
-        model.nh = NUM_const; 
-        model.ineq = @(z,p) nlconst_PG(z,p);
-        model.hu = [0;1;0;0;0;0;...
-                    0;1;0;0;0;0;...
-                    0];%
-        model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
-                    -inf;-inf;-inf;-inf;-inf;-inf;...
-                    -inf];%
+                % collision
+                model.lb(index.slack2)=0;
+
+                %non linear
+                model.nh = NUM_const; 
+                model.ineq = @(z,p) nlconst_PG(z,p);
+                model.hu = [0;1;0;0;0;0;...
+                            0;1;0;0;0;0;...
+                            0];%
+                model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
+                            -inf;-inf;-inf;-inf;-inf;-inf;...
+                            -inf];%
+            case 'IBR'
+                % Slack
+                model.lb(index.slack2)=0;
+                %limit lateral acceleration
+                model.nh = NUM_const; 
+                model.ineq = @(z,p) nlconst_IBR(z,p);
+                model.hu = [0;1;0;0;0;0;...
+                            0];
+                model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
+                            -inf];
+        end
     case 3
         % Path Progress rate Constraint (input)
         model.ub(index.ds_k2)=5;
@@ -311,7 +366,12 @@ switch NUM_Vehicle
     case 2
         switch Alpha
             case 'no'
-                codeoptions = getOptions('MPCPathFollowing_2v');
+                switch Game
+                    case 'PG'
+                        codeoptions = getOptions('MPCPathFollowing_2v');
+                    case 'IBR'
+                        codeoptions = getOptions('MPCPathFollowing_IBR');
+                end
             case 'yes'
                 codeoptions = getOptions('MPCPathFollowing_2v_alpha');
         end
@@ -326,7 +386,8 @@ codeoptions.cleanup = false;
 codeoptions.timing = 1;
 output = newOutput('alldata', 1:model.N, 1:model.nvar);
 FORCES_NLP(model, codeoptions,output);
-%% Run simulation
+
+%% Run simulation (RUN only this, if controller is already compiled)
 switch NUM_Vehicle
     case 1
         Run_1_vehicle
@@ -342,10 +403,17 @@ switch NUM_Vehicle
             case 'dec'
                 switch Alpha
                     case 'no'
-                        Run_2_vehicles_dec
+                        switch Game
+                            case 'PG'
+                                Run_2_vehicles_dec
+                            case 'IBR'
+                                Run_2_vehicles_dec_IBR
+                        end
                     case 'yes'
                         Run_2_vehicles_dec_alpha
                 end
+            otherwise
+                error('Change Condition')
         end
     case 3
         Run_3_vehicles_cen
