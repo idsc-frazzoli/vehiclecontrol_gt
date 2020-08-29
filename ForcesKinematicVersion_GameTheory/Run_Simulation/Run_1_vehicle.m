@@ -1,20 +1,20 @@
 %add force path (change that for yourself)
-addpath('..');
-userDir = getuserdir;
-addpath('casadi');
-addpath('models');  
-addpath('draw_files');
-addpath('parameters_vector');
-addpath('objective_function');
-addpath('constraints');
-addpath('index_script');
+% addpath('..');
+% userDir = getuserdir;
+% addpath('casadi');
+% addpath('models');  
+% addpath('draw_files');
+% addpath('parameters_vector');
+% addpath('objective_function');
+% addpath('constraints');
+% addpath('index_script');
 
 %% Parameters Definitions
-parameters_1_vehicle
+%parameters_1_vehicle
 
 %% Initialization for simulation
 global index
-indexes_1_vehicle
+%indexes_1_vehicle
 
 
 fpoints = points(1:2,1:2);

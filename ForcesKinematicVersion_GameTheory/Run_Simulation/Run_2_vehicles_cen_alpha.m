@@ -1,20 +1,20 @@
 %add force path (change that for yourself)
-addpath('..');
-userDir = getuserdir;
-addpath('casadi');
-addpath('models');  
-addpath('draw_files');
-addpath('parameters_vector');
-addpath('objective_function');
-addpath('constraints');
-addpath('index_script');
+% addpath('..');
+% userDir = getuserdir;
+% addpath('casadi');
+% addpath('models');  
+% addpath('draw_files');
+% addpath('parameters_vector');
+% addpath('objective_function');
+% addpath('constraints');
+% addpath('index_script');
 
 %% Parameters Definitions
-parameters_2_vehicles
-
+%parameters_2_vehicles
+%pointsO=18;
 %% Initialization for simulation
 global index
-indexes_2_vehicles
+%indexes_2_vehicles_alpha
 
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
@@ -111,13 +111,14 @@ for i =1:tend
     splinepointhist(i,:)=[xs(index.s-index.nu),[nextSplinePoints(:);nextSplinePoints_k2(:)]'];
     
     % parameters
-    problem.all_parameters = repmat(getParameters_PG(maxSpeed,maxxacc,...
-        maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
-        plagerror,platerror,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2), model.N ,1);
-    problem.x0 = x0(:);       
+    problem.all_parameters = repmat(getParameters_PG_alpha(maxSpeed,...
+        maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
+        brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
+        pspeedcost,pslack,pslack2,dist,alpha1,alpha2,nextSplinePoints,...
+        nextSplinePoints_k2), model.N ,1);
+    problem.x0 = x0(:);      
     % solve mpc
-    [output,exitflag,info] = MPCPathFollowing_2v(problem);
+    [output,exitflag,info] = MPCPathFollowing_2v_alpha(problem);
     solvetimes(end+1)=info.solvetime;
     if(exitflag==0)
        a = a + 1; 
