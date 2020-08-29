@@ -25,14 +25,15 @@ close all
 % configuration
 NUM_Vehicles = 2; %1,2,3
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
-Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
-TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha
+Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
+TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
+                    % Simulation must be no
 LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % being on the left of the centerline)
 % NUM Vehicles=2
-Condition   = 'dec'; % 'cen' 'dec';
+Condition   = 'cen'; % 'cen' 'dec';
 Game        = 'PG'; % IBR, PG; 'IBR' for 'dec' only, without alpha
-Alpha       = 'yes'; % yes , no; yes for 'cen' condition and 'PG' Game only
+Alpha       = 'no'; % yes , no; yes for 'cen' condition and 'PG' Game only
 
 %% Parameters Definitions (parameters_vector folder)
 switch NUM_Vehicles
@@ -488,6 +489,7 @@ if strcmp(Compiled,'no')
     output = newOutput('alldata', 1:model.N, 1:model.nvar);
     FORCES_NLP(model, codeoptions,output);
 end
+
 %% Run simulation 
 if strcmp(Simulation, 'yes')
     switch NUM_Vehicles
@@ -520,8 +522,6 @@ if strcmp(Simulation, 'yes')
         case 3
             Run_3_vehicles_cen
     end
-end
-
-if strcmp(TestAlpha1shot, 'yes')
+elseif strcmp(TestAlpha1shot, 'yes')
     RunAlpha_1shot
 end
