@@ -24,11 +24,13 @@ close all
 
 % configuration
 NUM_Vehicles = 2; %1,2,3
-Compiled    = 'no'; % 'yes' or 'no' if code has already been compiled
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
+TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha
 LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % being on the left of the centerline)
 % NUM Vehicles=2
-Condition   = 'cen'; % 'cen' 'dec';
+Condition   = 'dec'; % 'cen' 'dec';
 Game        = 'PG'; % IBR, PG; 'IBR' for 'dec' only, without alpha
 Alpha       = 'yes'; % yes , no; yes for 'cen' condition and 'PG' Game only
 
@@ -486,34 +488,40 @@ if strcmp(Compiled,'no')
     output = newOutput('alldata', 1:model.N, 1:model.nvar);
     FORCES_NLP(model, codeoptions,output);
 end
-%% Run simulation (RUN only this, if controller is already compiled)
-switch NUM_Vehicles
-    case 1
-        Run_1_vehicle
-    case 2
-        switch Condition
-            case 'cen'
-                switch Alpha
-                    case 'no'
-                        Run_2_vehicles_cen
-                    case 'yes'
-                        Run_2_vehicles_cen_alpha
-                end
-            case 'dec'
-                switch Alpha
-                    case 'no'
-                        switch Game
-                            case 'PG'
-                                Run_2_vehicles_dec
-                            case 'IBR'
-                                Run_2_vehicles_dec_IBR
-                        end
-                    case 'yes'
-                        Run_2_vehicles_dec_alpha
-                end
-            otherwise
-                error('Change Condition')
-        end
-    case 3
-        Run_3_vehicles_cen
+%% Run simulation 
+if strcmp(Simulation, 'yes')
+    switch NUM_Vehicles
+        case 1
+            Run_1_vehicle
+        case 2
+            switch Condition
+                case 'cen'
+                    switch Alpha
+                        case 'no'
+                            Run_2_vehicles_cen
+                        case 'yes'
+                            Run_2_vehicles_cen_alpha
+                    end
+                case 'dec'
+                    switch Alpha
+                        case 'no'
+                            switch Game
+                                case 'PG'
+                                    Run_2_vehicles_dec
+                                case 'IBR'
+                                    Run_2_vehicles_dec_IBR
+                            end
+                        case 'yes'
+                            Run_2_vehicles_dec_alpha
+                    end
+                otherwise
+                    error('Change Condition')
+            end
+        case 3
+            Run_3_vehicles_cen
+    end
+end
+
+if strcmp(TestAlpha1shot, 'yes')
+    RunAlpha_1shot
 end
