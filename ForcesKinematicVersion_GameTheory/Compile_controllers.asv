@@ -535,5 +535,5 @@ if strcmp(Simulation, 'yes')
             Run_3_vehicles_cen
     end
 elseif strcmp(TestAlpha1shot, 'yes')
-    RunAlpha_1shot_convex % RunAlpha_1shot
+    RunAlpha_1shot % RunAlpha_1
 end

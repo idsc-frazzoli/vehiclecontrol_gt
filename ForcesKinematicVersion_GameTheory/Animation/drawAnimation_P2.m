@@ -1,6 +1,6 @@
 
 frames = tend;
-vidfile = VideoWriter('IBR_prova','Motion JPEG AVI');
+vidfile = VideoWriter('..\video\PG_prova','Motion JPEG AVI');
 vidfile.FrameRate = 10;
 open(vidfile);
 set(gcf,'position',[100,100,1000,800])

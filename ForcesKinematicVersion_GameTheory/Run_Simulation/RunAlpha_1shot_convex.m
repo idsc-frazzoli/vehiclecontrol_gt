@@ -1,5 +1,5 @@
 global index index_IBR
-
+close all
 %% problem 1
 % Initialization for simulation kart 1
 fpoints = points(1:2,1:2);
@@ -86,8 +86,8 @@ Pos2=repmat(pstart2, model_IBR.N-1 ,1);
 %% Simulation
 a=0;
 a2=0;
-alpha1=0:0.1:1;
-alpha2=alpha1;
+alpha1=0:0.05:1;
+alpha2=1-alpha1;
 optA = zeros(1,length(alpha1));
 optB = zeros(1,length(alpha1));
 opt = zeros(1,length(alpha1));
@@ -296,27 +296,27 @@ for kk=1:length(alpha1)
             a2 =a2+ 1;
         end
         outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
-        cost1(kk)=info.pobj;
-        optA2(kk)=info.pobj;
-        cost2(kk)=info2.pobj;
-        optB2(kk)=info2.pobj;
-        opt(kk)=optA2(kk)+optB2(kk);
+        cost1(kk)=info2.pobj;
+        optA(kk)=info2.pobj;
+        cost2(kk)=info.pobj;
+        optB(kk)=info.pobj;
+        opt(kk)=optA(kk)+optB(kk);
         Progress1(kk)=outputM(1,index_IBR.s);
         Progress2(kk)=outputM2(1,index_IBR.s);
         
         figure(1)
-        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,1-alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
 
         figure(2)
-        plot(outputM(:,index_IBR.theta),'.-','Color',[0,1-alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
 
         figure(3)
-        plot(outputM(:,index_IBR.v),'.-','Color',[0,1-alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM2(:,index_IBR.v),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM2(:,index_IBR.v),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
         
-        %alpha2=0
+    elseif alpha2(kk)==0
         problem_IBR2.all_parameters = repmat (getParameters_IBR(maxSpeed,...
             maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
             brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
@@ -352,117 +352,84 @@ for kk=1:length(alpha1)
             a =a+ 1;
         end
         outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
-        cost1(kk)=info.pobj;
-        optA(kk)=info.pobj;
-        cost2(kk)=info2.pobj;
-        optB(kk)=info2.pobj;
+        cost1(kk)=info2.pobj;
+        optA(kk)=info2.pobj;
+        cost2(kk)=info.pobj;
+        optB(kk)=info.pobj;
         opt2(kk)=optA(kk)+optB(kk);
         Progress1(kk)=outputM(1,index_IBR.s);
         Progress2(kk)=outputM2(1,index_IBR.s);
         figure(1)
-        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
 
         figure(2)
-        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
 
         figure(3)
-        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM2(:,index_IBR.v),'.-','Color',[1,alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM2(:,index_IBR.v),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
     else
         % parameters
         problem.all_parameters = repmat(getParameters_PG_alpha(maxSpeed,...
             maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
             brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,alpha1(kk),alpha2(end),nextSplinePoints,...
+            pspeedcost,pslack,pslack2,dist,alpha1(kk),alpha2(kk),nextSplinePoints,...
             nextSplinePoints_k2), model.N ,1);
-        % parameters
-        problem2.all_parameters = repmat(getParameters_PG_alpha(maxSpeed,...
-            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,alpha1(end),alpha2(kk),nextSplinePoints3,...
-            nextSplinePoints4_k2), model.N ,1);
         % solve mpc
         [output,exitflag,info] = MPCPathFollowing_2v_alpha(problem);
-        [output2,exitflag2,info2] = MPCPathFollowing_2v_alpha(problem2);
         outputM = reshape(output.alldata,[model.nvar,model.N])';
-        outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+
         %% Evaluation cost function
         for jj=1:length(outputM)
             [lagcost_A,latcost_A,reg_A,prog_A,slack_A,speedcost_A,lagcost_A_k2,...
             latcost_A_k2,reg_A_k2,prog_A_k2,slack_A_k2,speedcost_A_k2,f,f1,f2] =...
             objective_PG_TestAlpha(outputM(jj,:),nextSplinePoints,nextSplinePoints_k2,...
             maxSpeed,plagerror, platerror, pprog, pab, pdotbeta,...
-            pspeedcost,pslack,pslack2,alpha1(kk),alpha2(end));
-            [lagcost_B,latcost_B,reg_B,prog_B,slack_B,speedcost_B,lagcost_B_k2,...
-            latcost_B_k2,reg_B_k2,prog_B_k2,slack_B_k2,speedcost_B_k2,f3,f4,f5] =...
-            objective_PG_TestAlpha(outputM2(jj,:),nextSplinePoints3,nextSplinePoints4_k2,...
-            maxSpeed,plagerror, platerror, pprog, pab, pdotbeta,...
-            pspeedcost,pslack,pslack2,alpha1(end),alpha2(kk));
+            pspeedcost,pslack,pslack2,alpha1(kk),alpha2(kk));
+
             optA(kk)= optA(kk)+ f1;
             optB(kk)= optB(kk)+ f2;
             opt(kk) = opt(kk)+ f;
-            optA2(kk)= optA2(kk)+ f4;
-            optB2(kk)= optB2(kk)+ f5;
-            opt2(kk) = opt2(kk)+ f3;
+
         end
 
         cost1(kk)=info.pobj;
-        cost2(kk)=info2.pobj;
+
         Progress1(kk)=outputM(1,index.s);
-        Progress2(kk)=outputM2(1,index.s_k2);
+
         figure(1)
-        plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
-        plot(outputM2(:,index.x),outputM2(:,index.y),'.-','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
-        plot(outputM2(:,index.x_k2),outputM2(:,index.y_k2),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
 
         figure(2)
-        plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM(:,index.theta_k2),'.-','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
-        plot(outputM2(:,index.theta),'.-','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
-        plot(outputM2(:,index.theta_k2),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+        plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM(:,index.theta_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
 
         figure(3)
-        plot(outputM(:,index.v),'.-','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-        plot(outputM(:,index.v_k2),'.-','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
-        plot(outputM2(:,index.v),'.-','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
-        plot(outputM2(:,index.v_k2),'.-','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
-    
+        plot(outputM(:,index.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
+        plot(outputM(:,index.v_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
     end
 end
 
 figure(4)
 for kk=1:length(alpha1)
-    plot(alpha1(kk),optA(kk),'*','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-    plot(alpha1(kk),optB(kk),'*','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
+    plot(alpha1(kk),optA(kk),'*','Color',[0,alpha1(kk)/max(alpha1),1])
+    plot(alpha1(kk),optB(kk),'*','Color',[1,alpha1(kk)/max(alpha1),0])
     plot(alpha1(kk),(optA(kk)+optB(kk))/2,'o','Color',[0,1,0])
-    plot(2-alpha2(kk),optA2(kk),'*','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
-    plot(2-alpha2(kk),optB2(kk),'*','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
-    plot(2-alpha2(kk),(optA2(kk)+optB2(kk))/2,'o','Color',[0,1,0])
 end
 legend('J1_{down}','J2_{left}','Tot/2')
-xticklabels({'0,1','0.2,1','0.4,1','0.6,1',...
-    '0.8,1','1,1','1,0.8','1,0.6',...
-    '1,0.4','1,0.2','1,0'});
-% xticklabels({'0.2,1','0.4,1','0.6,1',...
-%     '0.8,1','1,1','1,0.8','1,0.6',...
-%     '1,0.4','1,0.2'});
+xticklabels({'0,1','0.1,0.9','0.2,0.8','0.3,0.7','0.4,0.6',...
+    '0.5,0.5','0.6,0.4','0.7,0.3','0.8,0.2',...
+    '0.9,0.1','1,0'});
+
 figure(5)
 for kk=1:length(alpha1)
-    plot(alpha1(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha1(kk)/max(alpha1)*0.5,1])
-    plot(alpha1(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,alpha1(kk)/max(alpha1)*0.5,0])
-    plot(2-alpha2(kk),optA2(kk)/(optA2(kk)+optB2(kk))*100,'*','Color',[0,1-alpha2(kk)/max(alpha2)*0.5,1])
-    plot(2-alpha2(kk),optB2(kk)/(optA2(kk)+optB2(kk))*100,'*','Color',[1,1-alpha2(kk)/max(alpha2)*0.5,0])
+    plot(alpha1(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha1(kk)/max(alpha1),1])
+    plot(alpha1(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,alpha1(kk)/max(alpha1),0])
 end
 legend('V1_{down}','V2_{left}')
-xticklabels({'0,1','0.2,1','0.4,1','0.6,1',...
-    '0.8,1','1,1','1,0.8','1,0.6',...
-    '1,0.4','1,0.2','1,0'});
-% xticklabels({'0.2,1','0.4,1','0.6,1',...
-%     '0.8,1','1,1','1,0.8','1,0.6',...
-%     '1,0.4','1,0.2'});
-% xticklabels({'1,0.1','1,0.2','1,0.3','1,0.4','1,0.5','1,0.6','1,0.7',...
-%     '1,0.8','1,0.9','1,1','0.9,1','0.8,1','0.7,1','0.6,1','0.5,1',...
-%     '0.4,1','0.3,1','0.2,1','0.1,1'});
+xticklabels({'0,1','0.1,0.9','0.2,0.8','0.3,0.7','0.4,0.6',...
+    '0.5,0.5','0.6,0.4','0.7,0.3','0.8,0.2',...
+    '0.9,0.1','1,0'});
