@@ -14,8 +14,8 @@ pprog=0.2;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
 pdotbeta=0.1;      % steering velocity parameter cost
 pspeedcost=0.2;    % parameter for cost that occurs when max_speed is exceeded
-pslack=5;          % slack variable 
-pslack2=10;        % collision cost
+pslack=1000;          % slack variable 
+pslack2=1000;        % collision cost
 dist=2;            % min distance available
 % alpha parameters for CF (only if alpha condition active, update pointsO)
 alpha1=0.5;

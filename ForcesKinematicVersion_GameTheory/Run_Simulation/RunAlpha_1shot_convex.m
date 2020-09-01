@@ -59,8 +59,6 @@ xs2(index.ab_k2-index.nu)=0;
 xs2(index.beta_k2-index.nu)=0;
 xs2(index.s_k2-index.nu)=0.01;
 
-x02 = [zeros(model.N,index.nu),repmat(xs2,model.N,1)]';
-
 % V1
 xs_IBR(index_IBR.x-index_IBR.nu)=pstart(1);
 xs_IBR(index_IBR.y-index_IBR.nu)=pstart(2);
@@ -86,13 +84,11 @@ Pos2=repmat(pstart2, model_IBR.N-1 ,1);
 %% Simulation
 a=0;
 a2=0;
-alpha1=0:0.05:1;
+alpha1=fliplr(0:0.05:1);
 alpha2=1-alpha1;
 optA = zeros(1,length(alpha1));
 optB = zeros(1,length(alpha1));
 opt = zeros(1,length(alpha1));
-optA2 = zeros(1,length(alpha2));
-optB2 = zeros(1,length(alpha2));
 opt2 = zeros(1,length(alpha2));
 cost1 = zeros(1,length(alpha1));
 cost2 = zeros(1,length(alpha2));
@@ -124,7 +120,6 @@ xs_IBR2(index_IBR.ab-index_IBR.nu)=min(casadiGetMaxAcc(xs_IBR2(index_IBR.v-index
 problem_IBR2.xinit = xs_IBR2';
 
 problem.x0 = x0(:);   
-problem2.x0 = x02(:); 
 problem_IBR.x0_IBR = x0_IBR(:);
 problem_IBR2.x0_IBR = x0_IBR2(:);
 tstart = 1;
@@ -260,127 +255,142 @@ for kk=1:length(alpha1)
        nextSplinePoints4_k2(jj,:)=points2(ip4,:);
        ip4 = ip4 + 1;
     end
-    if alpha1(kk)==0
-        % parameters
-        problem_IBR.all_parameters = repmat (getParameters_IBR(maxSpeed,...
-            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,xs_IBR2(1),xs_IBR2(2),nextSplinePoints),...
-            model_IBR.N ,1);
-        problem_IBR.all_parameters(index_IBR.xComp:model_IBR.npar:end)=[Pos2(:,1);...
-                                                            Pos2(end,1)];
-        problem_IBR.all_parameters(index_IBR.yComp:model_IBR.npar:end)=[Pos2(:,2);...
-                                                            Pos2(end,2)];
-        problem_IBR.x0 = x0_IBR(:);
-        %go kart 1
-        [output,exitflag,info] = MPCPathFollowing_IBR(problem_IBR);
-        if(exitflag==0)
-            a =a+ 1;
-        end
-        outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
-        problem_IBR2.all_parameters = repmat (getParameters_IBR(maxSpeed,...
-        maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-        brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2,dist,xs_IBR(1),xs_IBR(2),nextSplinePoints_k2),...
-        model_IBR.N ,1);
-    
-        problem_IBR2.all_parameters(index_IBR.xComp:model_IBR.npar:end)=...
-            outputM(:,index_IBR.x);
-        problem_IBR2.all_parameters(index_IBR.yComp:model_IBR.npar:end)=...
-            outputM(:,index_IBR.y);
-        problem_IBR2.x0 = x0_IBR2(:);
-    
-        %go kart 2
-        [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem_IBR2);
-        if(exitflag2==0)
-            a2 =a2+ 1;
-        end
-        outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
-        cost1(kk)=info2.pobj;
-        optA(kk)=info2.pobj;
-        cost2(kk)=info.pobj;
-        optB(kk)=info.pobj;
-        opt(kk)=optA(kk)+optB(kk);
-        Progress1(kk)=outputM(1,index_IBR.s);
-        Progress2(kk)=outputM2(1,index_IBR.s);
-        
-        figure(1)
-        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
-
-        figure(2)
-        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
-
-        figure(3)
-        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM2(:,index_IBR.v),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
-        
-    elseif alpha2(kk)==0
-        problem_IBR2.all_parameters = repmat (getParameters_IBR(maxSpeed,...
+    if alpha2(kk)==0
+        for jj=1:2
+            % parameters
+            problem_IBR.all_parameters = repmat (getParameters_IBR(maxSpeed,...
+                maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
+                brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
+                pspeedcost,pslack,pslack2,dist,xs_IBR2(1),xs_IBR2(2),nextSplinePoints),...
+                model_IBR.N ,1);
+            problem_IBR.all_parameters(index_IBR.xComp:model_IBR.npar:end)=[Pos2(:,1);...
+                                                                Pos2(end,1)];
+            problem_IBR.all_parameters(index_IBR.yComp:model_IBR.npar:end)=[Pos2(:,2);...
+                                                                Pos2(end,2)];
+            problem_IBR.x0 = x0_IBR(:);
+            %go kart 1
+            [output,exitflag,info] = MPCPathFollowing_IBR(problem_IBR);
+            if(exitflag==0)
+                a =a+ 1;
+            end
+            outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
+            x0_IBR=outputM';
+            
+            problem_IBR2.all_parameters = repmat (getParameters_IBR(maxSpeed,...
             maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
             brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
             pspeedcost,pslack,pslack2,dist,xs_IBR(1),xs_IBR(2),nextSplinePoints_k2),...
             model_IBR.N ,1);
 
-        problem_IBR2.all_parameters(index_IBR.xComp:model_IBR.npar:end)=[Pos1(:,1);...
-                                                             Pos1(end,1)];
-        problem_IBR2.all_parameters(index_IBR.yComp:model_IBR.npar:end)=[Pos1(:,2);...
-                                                             Pos2(end,2)];
-        problem_IBR2.x0 = x0_IBR2(:);
-    
-        %go kart 1
-        [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem_IBR2);
-        if(exitflag2==0)
-            a2 =a2+ 1;
+            problem_IBR2.all_parameters(index_IBR.xComp:model_IBR.npar:end)=...
+                outputM(:,index_IBR.x);
+            problem_IBR2.all_parameters(index_IBR.yComp:model_IBR.npar:end)=...
+                outputM(:,index_IBR.y);
+            problem_IBR2.x0 = x0_IBR2(:);
+
+            %go kart 2
+            [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem_IBR2);
+            if(exitflag2==0)
+                a2 =a2+ 1;
+            end
+            outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
+            x0_IBR2=outputM2';
         end
-        outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
-        problem_IBR.all_parameters = repmat (getParameters_IBR(maxSpeed,...
-        maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-        brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2,dist,xs_IBR2(1),xs_IBR2(2),nextSplinePoints),...
-        model_IBR.N ,1);
-    
-        problem_IBR.all_parameters(index_IBR.xComp:model_IBR.npar:end)=...
-            outputM2(:,index_IBR.x);
-        problem_IBR.all_parameters(index_IBR.yComp:model_IBR.npar:end)=...
-            outputM2(:,index_IBR.y);
-        problem_IBR.x0 = x0_IBR(:);
-        %go kart 2
-        [output,exitflag,info] = MPCPathFollowing_IBR(problem_IBR);
-        if(exitflag==0)
-            a =a+ 1;
+        cost2(kk)=info2.pobj;
+        optB(kk)=info2.pobj;
+        cost1(kk)=info.pobj;
+        optA(kk)=info.pobj;
+        opt(kk)=optA(kk)+optB(kk);
+        Progress1(kk)=outputM(1,index_IBR.s);
+        Progress2(kk)=outputM2(1,index_IBR.s);
+        
+        figure(1)
+        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,1-alpha1(kk),0])
+
+        figure(2)
+        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,1-alpha1(kk),0])
+
+        figure(3)
+        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM2(:,index_IBR.v),'.-','Color',[1,1-alpha1(kk),0])
+        x0_IBR = [zeros(model_IBR.N,index_IBR.nu),repmat(xs_IBR,model_IBR.N,1)]';
+        x0_IBR2 = [zeros(model_IBR.N,index_IBR.nu),repmat(xs_IBR2,model_IBR.N,1)]';
+    elseif alpha1(kk)==0
+        for jj=1:2
+            problem_IBR2.all_parameters = repmat (getParameters_IBR(maxSpeed,...
+                maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
+                brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
+                pspeedcost,pslack,pslack2,dist,xs_IBR(1),xs_IBR(2),nextSplinePoints_k2),...
+                model_IBR.N ,1);
+
+            problem_IBR2.all_parameters(index_IBR.xComp:model_IBR.npar:end)=[Pos1(:,1);...
+                                                                 Pos1(end,1)];
+            problem_IBR2.all_parameters(index_IBR.yComp:model_IBR.npar:end)=[Pos1(:,2);...
+                                                                 Pos2(end,2)];
+            problem_IBR2.x0 = x0_IBR2(:);
+
+            %go kart 1
+            [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem_IBR2);
+            if(exitflag2==0)
+                a2 =a2+ 1;
+            end
+            outputM2 = reshape(output2.alldata,[model_IBR.nvar,model_IBR.N])';
+            x0_IBR2=outputM2';
+            problem_IBR.all_parameters = repmat (getParameters_IBR(maxSpeed,...
+            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
+            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
+            pspeedcost,pslack,pslack2,dist,xs_IBR2(1),xs_IBR2(2),nextSplinePoints),...
+            model_IBR.N ,1);
+
+            problem_IBR.all_parameters(index_IBR.xComp:model_IBR.npar:end)=...
+                outputM2(:,index_IBR.x);
+            problem_IBR.all_parameters(index_IBR.yComp:model_IBR.npar:end)=...
+                outputM2(:,index_IBR.y);
+            problem_IBR.x0 = x0_IBR(:);
+            %go kart 2
+            [output,exitflag,info] = MPCPathFollowing_IBR(problem_IBR);
+            if(exitflag==0)
+                a =a+ 1;
+            end
+            outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
+            x0_IBR=outputM';
         end
-        outputM = reshape(output.alldata,[model_IBR.nvar,model_IBR.N])';
-        cost1(kk)=info2.pobj;
-        optA(kk)=info2.pobj;
-        cost2(kk)=info.pobj;
-        optB(kk)=info.pobj;
-        opt2(kk)=optA(kk)+optB(kk);
+        cost2(kk)=info2.pobj;
+        optB(kk)=info2.pobj;
+        cost1(kk)=info.pobj;
+        optA(kk)=info.pobj;
+        opt(kk)=optA(kk)+optB(kk);
         Progress1(kk)=outputM(1,index_IBR.s);
         Progress2(kk)=outputM2(1,index_IBR.s);
         figure(1)
-        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
+        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,1-alpha1(kk),0])
 
         figure(2)
-        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
+        plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM2(:,index_IBR.theta),'.-','Color',[1,1-alpha1(kk),0])
 
         figure(3)
-        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM2(:,index_IBR.v),'.-','Color',[1,alpha2(kk)/max(alpha2),0])
+        plot(outputM(:,index_IBR.v),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM2(:,index_IBR.v),'.-','Color',[1,1-alpha1(kk),0])
+        x0_IBR = [zeros(model_IBR.N,index_IBR.nu),repmat(xs_IBR,model_IBR.N,1)]';
+        x0_IBR2 = [zeros(model_IBR.N,index_IBR.nu),repmat(xs_IBR2,model_IBR.N,1)]';
     else
-        % parameters
-        problem.all_parameters = repmat(getParameters_PG_alpha(maxSpeed,...
-            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,alpha1(kk),alpha2(kk),nextSplinePoints,...
-            nextSplinePoints_k2), model.N ,1);
-        % solve mpc
-        [output,exitflag,info] = MPCPathFollowing_2v_alpha(problem);
-        outputM = reshape(output.alldata,[model.nvar,model.N])';
-
+        for jj=1:2
+            % parameters
+            problem.all_parameters = repmat(getParameters_PG_alpha(maxSpeed,...
+                maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
+                brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
+                pspeedcost,pslack,pslack2,dist,alpha1(kk),alpha2(kk),nextSplinePoints,...
+                nextSplinePoints_k2), model.N ,1);
+            problem.x0=x0(:);
+            % solve mpc
+            [output,exitflag,info] = MPCPathFollowing_2v_alpha(problem);
+            outputM = reshape(output.alldata,[model.nvar,model.N])';
+            x0=outputM';
+        end
         %% Evaluation cost function
         for jj=1:length(outputM)
             [lagcost_A,latcost_A,reg_A,prog_A,slack_A,speedcost_A,lagcost_A_k2,...
@@ -395,28 +405,29 @@ for kk=1:length(alpha1)
 
         end
 
-        cost1(kk)=info.pobj;
+        cost1(kk)=2*info.pobj;
 
         Progress1(kk)=outputM(1,index.s);
 
         figure(1)
-        plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
+        plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,1-alpha1(kk),0])
 
         figure(2)
-        plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM(:,index.theta_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
+        plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM(:,index.theta_k2),'.-','Color',[1,1-alpha1(kk),0])
 
         figure(3)
-        plot(outputM(:,index.v),'.-','Color',[0,alpha1(kk)/max(alpha1),1])
-        plot(outputM(:,index.v_k2),'.-','Color',[1,alpha1(kk)/max(alpha1),0])
+        plot(outputM(:,index.v),'.-','Color',[0,alpha1(kk),1])
+        plot(outputM(:,index.v_k2),'.-','Color',[1,1-alpha1(kk),0])
+        x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
     end
 end
 
 figure(4)
 for kk=1:length(alpha1)
-    plot(alpha1(kk),optA(kk),'*','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(alpha1(kk),optB(kk),'*','Color',[1,alpha1(kk)/max(alpha1),0])
+    plot(alpha1(kk),optA(kk),'*','Color',[0,alpha1(kk),1])
+    plot(alpha1(kk),optB(kk),'*','Color',[1,1-alpha1(kk),0])
     plot(alpha1(kk),(optA(kk)+optB(kk))/2,'o','Color',[0,1,0])
 end
 legend('J1_{down}','J2_{left}','Tot/2')
@@ -426,8 +437,8 @@ xticklabels({'0,1','0.1,0.9','0.2,0.8','0.3,0.7','0.4,0.6',...
 
 figure(5)
 for kk=1:length(alpha1)
-    plot(alpha1(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha1(kk)/max(alpha1),1])
-    plot(alpha1(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,alpha1(kk)/max(alpha1),0])
+    plot(alpha1(kk),optA(kk)/(optA(kk)+optB(kk))*100,'*','Color',[0,alpha1(kk),1])
+    plot(alpha1(kk),optB(kk)/(optA(kk)+optB(kk))*100,'*','Color',[1,1-alpha1(kk),0])
 end
 legend('V1_{down}','V2_{left}')
 xticklabels({'0,1','0.1,0.9','0.2,0.8','0.3,0.7','0.4,0.6',...

@@ -1,4 +1,4 @@
-function dx = interstagedx_alpha(x,u)
+function dx = interstagedx_PG_alpha(x,u)
     global index
     
     % Inputs 

@@ -317,7 +317,7 @@ model_IBR.E = [zeros(index_IBR.ns,index_IBR.nu), eye(index_IBR.ns)];
 
 %limit lateral acceleration
 model_IBR.nh = 4; 
-model_IBR.ineq = @(z,p) nlconst_IBR_1s(z,p);
+model_IBR.ineq = @(z,p) nlconst_IBR_alpha(z,p);
 model_IBR.hu = [0;0;0;0];
 model_IBR.hl = [-inf;-inf;-inf;-inf];
 
@@ -327,7 +327,7 @@ model_IBR.npar = pointsO + 3*pointsN;
 %% Objective Function
 model_IBR.npar = pointsO + 3*pointsN;
 for i=1:model_IBR.N
-    model_IBR.objective{i} = @(z,p)objective_IBR_1s(z,...
+    model_IBR.objective{i} = @(z,p)objective_IBR_alpha(z,...
     getPointsFromParameters(p, pointsO, pointsN),...
     p(index_IBR.ps),...
     p(index_IBR.plag),...

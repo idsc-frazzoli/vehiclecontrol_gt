@@ -1,4 +1,4 @@
-function dx = interstagedx_IBR_1s(x,u)
+function dx = interstagedx_IBR_alpha(x,u)
     global index_IBR
     
     l=1.19;

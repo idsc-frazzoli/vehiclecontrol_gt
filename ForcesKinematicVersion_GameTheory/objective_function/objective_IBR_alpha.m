@@ -1,4 +1,4 @@
-function f = objective_IBR_1s(z,points,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function f = objective_IBR_alpha(z,points,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
     global index_IBR
 
     [splx,sply] = casadiDynamicBSPLINE(z(index_IBR.s),points);

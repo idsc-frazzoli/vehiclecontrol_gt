@@ -1,5 +1,5 @@
 %% Parameters Definitions
-maxSpeed = 30;
+maxSpeed = 10;
 maxxacc = 4;
 maxyacc = 8;
 latacclim = 6;
@@ -25,8 +25,8 @@ splinestart2 = 1;
 splinestart3 = 1;
 splinestart4 = 1;
 
-vel1=5;
-vel2=5;
+vel1=10; % Down
+vel2=10;   % left
 
 % Simulation length
 tend = 1;
@@ -45,4 +45,15 @@ solvetimes = [];
 
 solvetimes2 = [];
 
-P_H_length=40;
+%% controller params %%RECOMPILE IF MODIFIED!
+NUM_const=4; % number of nonlinear constraint
+P_H_length=40;% prediction horizon length
+MAX_IT= 400;  % N of max iterations
+
+% ds constraint (delta progress)
+ds_max=5;
+ds_min=-1;
+
+% beta constraint (steering angle)
+beta_max=0.5;
+beta_min=-0.5;

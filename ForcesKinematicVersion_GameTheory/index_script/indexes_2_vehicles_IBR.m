@@ -52,7 +52,7 @@ index_IBR.yComp = 18;
 index_IBR.pointsO = pointsO;
 index_IBR.pointsN = pointsN;
 
-%% model initialization
+%% model_IBR initialization
 model.N = P_H_length;
 model.nvar = index_IBR.nv;
 model.neq = index_IBR.ns;

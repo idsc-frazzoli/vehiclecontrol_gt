@@ -27,13 +27,14 @@ NUM_Vehicles = 2; %1,2,3
 Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='yes';% 'yes' or 'no', yes if you want to test alpha. 
-                    % Simulation must be no
+                    % Simulation must be no, it requires compiled
+                    % IBR+alpha and PG+alpha
 LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
-Game        = 'PG'; % IBR, PG; 'IBR' for 'dec' only, without alpha
-Alpha       = 'no'; % yes , no; yes for 'cen' condition and 'PG' Game only
+Game        = 'PG'; % IBR, PG; 'IBR' has simulation for 'dec' only.
+Alpha       = 'yes'; % yes , no; yes for 'cen' condition only
 
 %% Parameters Definitions (parameters_vector folder)
 switch NUM_Vehicles
@@ -68,21 +69,22 @@ switch NUM_Vehicles
     case 2
         switch Alpha
             case 'no'
-                if strcmp(TestAlpha1shot,'no')
-                    switch Game
-                        case 'PG'
-                            indexes_2_vehicles
-                        case 'IBR'
-                            indexes_2_vehicles_IBR
-                        otherwise
-                            error('Change Game')
-                    end
-                else
-                    index_2_vehicles_TestAlpha
+                switch Game
+                    case 'PG'
+                        indexes_2_vehicles
+                    case 'IBR'
+                        indexes_2_vehicles_IBR
+                    otherwise
+                        error('Change Game')
                 end
             case 'yes'
                 if strcmp(TestAlpha1shot,'no')
-                    indexes_2_vehicles_alpha
+                    switch Game
+                        case 'PG'
+                            indexes_2_vehicles_alpha
+                        case 'IBR'
+                            indexes_2_vehicles_IBR
+                    end
                 else
                     index_2_vehicles_TestAlpha
                 end
@@ -92,10 +94,11 @@ switch NUM_Vehicles
     case 3
         indexes_3_vehicles
 end
+
 if strcmp(Compiled,'no')
-    %% Model Definition (models folder)
-    % if you change interstagedx file, remember to change also the file in
-    % simulation!!!!
+%% Model Definition (models folder)
+% if you change interstagedx file, remember to change also the file in
+% simulation!!!!
     switch NUM_Vehicles
         case 1
             model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
@@ -104,11 +107,23 @@ if strcmp(Compiled,'no')
         case 2
             switch Game
                 case 'PG'
-                    model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
-                           @(x,u,p)interstagedx_PG(x,u),integrator_stepsize,p);
+                    switch Alpha
+                        case 'no'
+                            model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                                @(x,u,p)interstagedx_PG(x,u),integrator_stepsize,p);
+                        case 'yes'
+                            model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                                @(x,u,p)interstagedx_PG_alpha(x,u),integrator_stepsize,p);
+                    end
                 case 'IBR'
-                    model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                           @(x,u,p)interstagedx_IBR_1s(x,u), integrator_stepsize,p);
+                    switch Alpha
+                        case 'no'
+                            model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
+                                   @(x,u,p)interstagedx_IBR(x,u), integrator_stepsize,p);
+                        case 'yes'
+                            model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
+                                @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
+                    end
                 otherwise
                     error('Change Game')
             end
@@ -123,7 +138,8 @@ if strcmp(Compiled,'no')
     else
         model.E = [zeros(index.ns,index.nu), eye(index.ns)];
     end
-    %% Objective Function (objective_function folder)
+    
+%% Objective Function (objective_function folder)
     switch NUM_Vehicles
         case 1
             for i=1:model.N
@@ -221,12 +237,59 @@ if strcmp(Compiled,'no')
                             end
                     end
                 case 'yes'
+                    switch Game
+                        case 'PG'
+                            for i=1:model.N
+                                model.objective{i} = @(z,p)objective_PG_alpha(z,...
+                                    getPointsFromParameters(p, pointsO, pointsN),...
+                                    getRadiiFromParameters(p, pointsO, pointsN),...
+                                    getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                                    getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                                    p(index.ps),...
+                                    p(index.pax),...
+                                    p(index.pay),...
+                                    p(index.pll),...
+                                    p(index.prae),...
+                                    p(index.ptve),...
+                                    p(index.pbre),...
+                                    p(index.plag),...
+                                    p(index.plat),...
+                                    p(index.pprog),...
+                                    p(index.pab),...
+                                    p(index.pdotbeta),...
+                                    p(index.pspeedcost),...
+                                    p(index.pslack),...
+                                    p(index.pslack2),...
+                                    p(index.alpha1),...
+                                    p(index.alpha2));
+                            end
+                        case 'IBR'
+                            for i=1:model.N
+                                model.objective{i} = @(z,p)objective_IBR_alpha(z,...
+                                    getPointsFromParameters(p, pointsO, pointsN),...
+                                    p(index_IBR.ps),...
+                                    p(index_IBR.plag),...
+                                    p(index_IBR.plat),...
+                                    p(index_IBR.pprog),...
+                                    p(index_IBR.pab),...
+                                    p(index_IBR.pdotbeta),...
+                                    p(index_IBR.pspeedcost),...
+                                    p(index_IBR.pslack),...
+                                    p(index_IBR.pslack2));
+                            end
+                    end
+            end
+        case 3
+            switch LEPunisher
+                case 'no'
                     for i=1:model.N
-                        model.objective{i} = @(z,p)objective_PG_alpha(z,...
+                        model.objective{i} = @(z,p)objective_PG3(z,...
                             getPointsFromParameters(p, pointsO, pointsN),...
                             getRadiiFromParameters(p, pointsO, pointsN),...
                             getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
                             getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                            getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
+                            getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
                             p(index.ps),...
                             p(index.pax),...
                             p(index.pay),...
@@ -241,37 +304,7 @@ if strcmp(Compiled,'no')
                             p(index.pdotbeta),...
                             p(index.pspeedcost),...
                             p(index.pslack),...
-                            p(index.pslack2),...
-                            p(index.alpha1),...
-                            p(index.alpha2));
-                    end
-            end
-        case 3
-            switch LEPunisher
-                case 'no'
-                    for i=1:model.N
-                        model.objective{i} = @(z,p)objective_PG3(z,...
-                        getPointsFromParameters(p, pointsO, pointsN),...
-                        getRadiiFromParameters(p, pointsO, pointsN),...
-                        getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-                        p(index.ps),...
-                        p(index.pax),...
-                        p(index.pay),...
-                        p(index.pll),...
-                        p(index.prae),...
-                        p(index.ptve),...
-                        p(index.pbre),...
-                        p(index.plag),...
-                        p(index.plat),...
-                        p(index.pprog),...
-                        p(index.pab),...
-                        p(index.pdotbeta),...
-                        p(index.pspeedcost),...
-                        p(index.pslack),...
-                        p(index.pslack2));
+                            p(index.pslack2));
                     end
                 case 'yes'
                     for i=1:model.N
@@ -302,7 +335,7 @@ if strcmp(Compiled,'no')
                     
     end
 
-    %% Linear and NON-Linear Constraints 
+%% Linear and NON-Linear Constraints 
     if strcmp(Game,'IBR')
         model.xinitidx = index_IBR.sb:index_IBR.nv;
 
@@ -393,30 +426,49 @@ if strcmp(Compiled,'no')
 
                     % collision
                     model.lb(index.slack2)=0;
-
-                    %non linear
-                    model.nh = NUM_const; 
-                    model.ineq = @(z,p) nlconst_PG(z,p);
-                    model.hu = [0;1;0;0;0;0;...
-                                0;1;0;0;0;0;...
-                                0];%
-                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
-                                -inf;-inf;-inf;-inf;-inf;-inf;...
-                                -inf];%
+                    switch Alpha
+                        case 'no'
+                            %non linear
+                            model.nh = NUM_const; 
+                            model.ineq = @(z,p) nlconst_PG(z,p);
+                            model.hu = [0;1;0;0;0;0;...
+                                        0;1;0;0;0;0;...
+                                        0];%
+                            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
+                                        -inf;-inf;-inf;-inf;-inf;-inf;...
+                                        -inf];%
+                        case 'yes'
+                            %limit lateral acceleration
+                            model.nh = 7; 
+                            model.ineq = @(z,p) nlconst_alpha(z,p);
+                            model.hu = [0;0;0;...
+                                        0;0;0;...
+                                        0];%
+                            model.hl = [-inf;-inf;-inf;...
+                                        -inf;-inf;-inf;...
+                                        -inf];
+                    end
                 case 'IBR'
-                    
-                    %limit lateral acceleration
-                    model.nh = NUM_const; 
-                    model.ineq = @(z,p) nlconst_IBR(z,p);
-                    model.hu = [0;1;0;0;0;0;...
-                                0];
-                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
-                                -inf];
-            end
+                    switch Alpha
+                        case 'no'
+                            %limit lateral acceleration
+                            model.nh = NUM_const; 
+                            model.ineq = @(z,p) nlconst_IBR(z,p);
+                            model.hu = [0;1;0;0;0;0;...
+                                        0];
+                            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
+                                        -inf];
+                        case 'yes'
+                            model.nh = 4; 
+                            model.ineq = @(z,p) nlconst_IBR_alpha(z,p);
+                            model.hu = [0;0;0;0];
+                            model.hl = [-inf;-inf;-inf;-inf];
+                    end
+                end
         case 3
             % Path Progress rate Constraint (input)
-            model.ub(index.ds_k2)=5;
-            model.lb(index.ds_k2)=-1;
+            model.ub(index.ds_k2)=ds_max;
+            model.lb(index.ds_k2)=ds_min;
 
             % Acceleration Constraint (input)
             model.lb(index.ab_k2)=-inf;
@@ -428,16 +480,16 @@ if strcmp(Compiled,'no')
             model.lb(index.v_k2)=0;
 
             % Steering Angle Constraint (input)
-            model.ub(index.beta_k2)=0.5;
-            model.lb(index.beta_k2)=-0.5;
+            model.ub(index.beta_k2)=beta_max;
+            model.lb(index.beta_k2)=beta_min;
 
             % Path Progress Constraint (input)
             model.ub(index.s_k2)=pointsN2-2;
             model.lb(index.s_k2)=0;
 
             % Path Progress rate Constraint (input)
-            model.ub(index.ds_k3)=5;
-            model.lb(index.ds_k3)=-1;
+            model.ub(index.ds_k3)=ds_max;
+            model.lb(index.ds_k3)=ds_min;
 
             % Acceleration Constraint (input)
             model.lb(index.ab_k3)=-inf;
@@ -449,8 +501,8 @@ if strcmp(Compiled,'no')
             model.lb(index.v_k3)=0;
 
             % Steering Angle Constraint (input)
-            model.ub(index.beta_k3)=0.5;
-            model.lb(index.beta_k3)=-0.5;
+            model.ub(index.beta_k3)=beta_max;
+            model.lb(index.beta_k3)=beta_min;
 
             % Path Progress Constraint (input)
             model.ub(index.s_k3)=pointsN3-2;
