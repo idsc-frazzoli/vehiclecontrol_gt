@@ -44,7 +44,7 @@ MAX_IT= 400;  % N of max iterations
 
 % ds constraint (delta progress)
 ds_max=5;
-ds_min=-1;
+ds_min=0.01;%-1
 
 % beta constraint (steering angle)
 beta_max=0.5;

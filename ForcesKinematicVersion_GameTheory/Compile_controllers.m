@@ -16,7 +16,7 @@ addpath('parameters_vector');
 addpath('objective_function');
 addpath('constraints');
 addpath('index_script');
-addpath('Run_Simulation')
+addpath('Run_Simulation');
 clear model
 clear problem
 clear all
@@ -31,6 +31,7 @@ TestAlpha1shot='yes';% 'yes' or 'no', yes if you want to test alpha.
                     % IBR+alpha and PG+alpha
 LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
+                                    % PG only
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
 Game        = 'PG'; % IBR, PG; 'IBR' has simulation for 'dec' only.
@@ -240,7 +241,7 @@ if strcmp(Compiled,'no')
                     switch Game
                         case 'PG'
                             for i=1:model.N
-                                model.objective{i} = @(z,p)objective_PG_alpha(z,...
+                                model.objective{i} = @(z,p)objective_PG_alpha_v1(z,... % objective_PG_alpha
                                     getPointsFromParameters(p, pointsO, pointsN),...
                                     getRadiiFromParameters(p, pointsO, pointsN),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
@@ -265,7 +266,7 @@ if strcmp(Compiled,'no')
                             end
                         case 'IBR'
                             for i=1:model.N
-                                model.objective{i} = @(z,p)objective_IBR_alpha(z,...
+                                model.objective{i} = @(z,p)objective_IBR_alpha_v1(z,...
                                     getPointsFromParameters(p, pointsO, pointsN),...
                                     p(index_IBR.ps),...
                                     p(index_IBR.plag),...
