@@ -68,7 +68,7 @@ for iff = 1:frames-1
     plot(plansx2(iff+1,:),plansy2(iff+1,:),'-k','LineWidth',6);
     plot(plansx3(iff+1,:),plansy3(iff+1,:),'-k','LineWidth',6);
     
-    gklx = [-0.4,1.4,1.4,-0.4,-0.4];
+    gklx = [-0.8,2,2,-0.8,-0.8];
     gkly = [-0.8,-0.8,0.8,0.8,-0.8];
     gklp = [gklx;gkly];
     
