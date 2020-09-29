@@ -1,7 +1,7 @@
 % points = [36.2,52,57.2,53,55,47,41.8;
 %           44.933,58.2,53.8,49,44,43,38.33;
 %           1.8,0.5,1.8,0.4,0.4,0.4,1.8]';
-% close all
+close all
 % points = [28,35,42,55.2,56,51,42,40;...          %x
 %           41,60,43,56,43,40,44,31; ...    %y
 %           1.8,1.4,1,1.5,0.5,0.5,0.5,1.4]';
@@ -15,7 +15,7 @@
 %           41,52,55,57,56,43,40,42,31,35,34; ...    %y
 %           3,3,3,3,3,3,3,3,3,3,3]';
 points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+          60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60; ...    %y
           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
 % points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
 %           10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
@@ -23,9 +23,21 @@ points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
 % points2 = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,70;...          %x
 %           10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,20; ...    %y
 %           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';  
-points2 =  [55,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,55,65,65;...          %x
-            95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,10,92; ...    %y
-            3,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,3,2,2]';
+points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+           95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10; ...    %y
+           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+
+points3 = [50,50,50,50,50,50,50,50,50,50,48,45,40,35,30,25,20,15,10;...          %x
+           95,90,85,80,75,70,65,60,55,52,50,50,50,50,50,50,50,50,50; ...    %y
+           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+points3(:,2)=points3(:,2)-10;
+
+points4 = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
+           50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
+           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+       
+points5 = flip(points);
+points5(:,2)=points5(:,2)-20;
 % points = [41,36.2,41,45,51,57.2,54,52,47;...          %x
 %           39,46,52,60,61,53.8,49,43,43; ...    %y
 %           3,3,3,3,3,3,3,3,3]';  
@@ -38,18 +50,40 @@ points2 =  [55,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,55,65,65;...     
 %           4,4,4,4,4,4,4,4,3,3,2,2,2,3,2,2,2,2,3,3.5]';
 [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
 [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+[leftline3,middleline3,rightline3] = drawTrack(points3(:,1:2),points3(:,3));
+[leftline4,middleline4,rightline4] = drawTrack(points4(:,1:2),points4(:,3));
+[leftline5,middleline5,rightline5] = drawTrack(points5(:,1:2),points5(:,3));
 figure
 hold on
 plot(leftline(:,1),leftline(:,2),'b')
-plot(middleline(:,1),middleline(:,2),'r')
+plot(middleline(:,1),middleline(:,2),'b')
 plot(rightline(:,1),rightline(:,2),'b')
-points1 = [points;points(1,1),points(1,2),points(1,3)];
-plot(points1(:,1),points1(:,2),'g*-')
-plot(leftline2(:,1),leftline2(:,2),'b')
-plot(middleline2(:,1),middleline2(:,2),'r')
-plot(rightline2(:,1),rightline2(:,2),'b')
-points3 = [points2;points2(1,1),points2(1,2),points2(1,3)];
-plot(points3(:,1),points3(:,2),'g*-')
+pointsA = points;%points(1,1),points(1,2),points(1,3)];
+plot(pointsA(:,1),pointsA(:,2),'b*')
+
+plot(leftline2(:,1),leftline2(:,2),'g')
+plot(middleline2(:,1),middleline2(:,2),'g')
+plot(rightline2(:,1),rightline2(:,2),'g')
+pointsB = points2;%points2(1,1),points2(1,2),points2(1,3)];
+plot(pointsB(:,1),pointsB(:,2),'g*')
+
+plot(leftline3(:,1),leftline3(:,2),'r')
+plot(middleline3(:,1),middleline3(:,2),'r')
+plot(rightline3(:,1),rightline3(:,2),'r')
+pointsC = points3;%;points3(1,1),points3(1,2),points3(1,3)]
+plot(pointsC(:,1),pointsC(:,2),'r*')
+
+plot(leftline4(:,1),leftline4(:,2),'c')
+plot(middleline4(:,1),middleline4(:,2),'c')
+plot(rightline4(:,1),rightline4(:,2),'c')
+pointsD = points4;%;points3(1,1),points3(1,2),points3(1,3)]
+plot(pointsD(:,1),pointsD(:,2),'c*')
+
+plot(leftline5(:,1),leftline5(:,2),'y')
+plot(middleline5(:,1),middleline5(:,2),'y')
+plot(rightline5(:,1),rightline5(:,2),'y')
+pointsE = points5;%;points3(1,1),points3(1,2),points3(1,3)]
+plot(pointsE(:,1),pointsE(:,2),'y*')
 xlabel('x')
 ylabel('y')
 grid on

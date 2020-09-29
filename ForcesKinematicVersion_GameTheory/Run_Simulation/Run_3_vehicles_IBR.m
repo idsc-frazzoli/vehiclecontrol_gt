@@ -1,6 +1,7 @@
 %% Initialization for simulation
 global index_IBR
 
+dis=1.5;
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
@@ -8,9 +9,9 @@ pdir = diff(fpoints);
 pstart = [pstartx,pstarty];
 pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
-xs(index_IBR.y-index_IBR.nu)=pstart(2);
+xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=5;
+xs(index_IBR.v-index_IBR.nu)=6;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -28,24 +29,24 @@ pdir2 = diff(fpoints2);
 [pstartx2,pstarty2] = casadiDynamicBSPLINE(0.01,points2);
 pstart2 = [pstartx2,pstarty2];
 pangle2 = atan2(pdir2(2),pdir2(1));
-xs2(index_IBR.x-index_IBR.nu)=pstart2(1);
+xs2(index_IBR.x-index_IBR.nu)=pstart2(1)+dis;
 xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
 xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-xs2(index_IBR.v-index_IBR.nu)=5;
+xs2(index_IBR.v-index_IBR.nu)=6;
 xs2(index_IBR.ab-index_IBR.nu)=0;
 xs2(index_IBR.beta-index_IBR.nu)=0;
 xs2(index_IBR.s-index_IBR.nu)=0.01;
 
-%% Initialization for simulation 2
+%% Initialization for simulation 3
 fpoints3 = points3(1:2,1:2);
 pdir3 = diff(fpoints3);
 [pstartx3,pstarty3] = casadiDynamicBSPLINE(0.01,points3);
 pstart3 = [pstartx3,pstarty3];
 pangle3 = atan2(pdir3(2),pdir3(1));
-xs3(index_IBR.x-index_IBR.nu)=pstart3(1);
+xs3(index_IBR.x-index_IBR.nu)=pstart3(1)-dis;
 xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
 xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-xs3(index_IBR.v-index_IBR.nu)=5.5;
+xs3(index_IBR.v-index_IBR.nu)=7;
 xs3(index_IBR.ab-index_IBR.nu)=0;
 xs3(index_IBR.beta-index_IBR.nu)=0;
 xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -387,12 +388,80 @@ for i =1:tend
     end
 end
 %[t,ab,dotbeta,x,y,theta,v,beta,s]
-drawIBR3
+if tend==1
+        figure(4)
+        plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
+        hold on
+        plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
+        plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
 
-figure
-hold on
-plot(cost1,'b')
-plot(cost2,'r')
-plot(cost3,'g')
-plot(cost1+cost2+cost3,'c')
-legend('Kart1','Kart2','Kart3','Tot')
+        grid on
+        title('trajectory')
+        xlabel('X')
+        ylabel('Y')
+        %axis equal
+        
+        figure(5)
+        hold on
+        grid on
+        title('steer')
+        ylabel('')
+
+        figure(6)
+        hold on
+        grid on
+        title('Speed')
+
+        figure(4)
+        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'b.-','Linewidth',1)
+        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'r.-','Linewidth',1)
+        plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'g.-','Linewidth',1)
+        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+        [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+        hold on
+        plot(leftline(:,1),leftline(:,2),'k')
+        plot(middleline(:,1),middleline(:,2),'k--')
+        plot(rightline(:,1),rightline(:,2),'k')
+        plot(leftline2(:,1),leftline2(:,2),'k')
+        plot(middleline2(:,1),middleline2(:,2),'k--')
+        plot(rightline2(:,1),rightline2(:,2),'k')
+%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
+%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
+%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
+%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+        legend ('Vehicle 1','V 2','V 3','Trajectory 1','T 2','T 3')
+        set(gca,'FontSize',12)
+        figure(5)
+        plot(0.1:0.1:4,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
+        legend ('Vehicle 1','V 2','V 3')
+        xlabel('Prediction horizon [s]')
+        set(gca,'FontSize',12)
+        figure(6)
+        plot(0.1:0.1:4,outputM(:,index_IBR.v),'b.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        legend ('Vehicle 1','V 2','V 3')
+        xlabel('Prediction horizon [s]')
+        ylabel('speed [m/s]')
+        set(gca,'FontSize',12)
+        figure(7)
+        hold on
+        plot(cost1,'b*')
+        plot(cost2,'r*')
+        plot(cost3,'g*')
+        plot(cost1+cost2+cost3,'c*')
+        legend ('Vehicle 1','V 2','V 3','Tot')
+else
+    drawIBR3
+    figure
+    hold on
+    plot(cost1,'b')
+    plot(cost2,'r')
+    plot(cost3,'g')
+    plot(cost1+cost2+cost3,'c')
+    legend ('Vehicle 1','V 2','V 3','Tot')
+end
+
+

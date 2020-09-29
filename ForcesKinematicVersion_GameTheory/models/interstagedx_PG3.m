@@ -31,10 +31,10 @@ function dx = interstagedx_PG3(x,u)
     beta_k3 = x(index.beta_k3-index.nu);
     
     l = 1.19;
-    ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
-    ackermannAngle_k2 = -0.58*beta_k2*beta_k2*beta_k2+0.93*beta_k2;
-    ackermannAngle_k3 = -0.58*beta_k3*beta_k3*beta_k3+0.93*beta_k3;
-    
+%     ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
+%     ackermannAngle_k2 = -0.58*beta_k2*beta_k2*beta_k2+0.93*beta_k2;
+%     ackermannAngle_k3 = -0.58*beta_k3*beta_k3*beta_k3+0.93*beta_k3;
+%     
     import casadi.*
     if isa(x(1), 'double')
         dx = zeros(index.ns,1);
@@ -45,7 +45,7 @@ function dx = interstagedx_PG3(x,u)
     % Update states
     dx(index.x-index.nu)=v*cos(theta);
     dx(index.y-index.nu)=v*sin(theta);
-    dx(index.theta-index.nu)=v/l*tan(ackermannAngle);
+    dx(index.theta-index.nu)=v/l*tan(beta);
     dx(index.v-index.nu)=ab;
     dx(index.beta-index.nu)=dotbeta;
     dx(index.s-index.nu)=ds;
@@ -53,7 +53,7 @@ function dx = interstagedx_PG3(x,u)
     
     dx(index.x_k2-index.nu)=v_k2*cos(theta_k2);
     dx(index.y_k2-index.nu)=v_k2*sin(theta_k2);
-    dx(index.theta_k2-index.nu)=v_k2/l*tan(ackermannAngle_k2);
+    dx(index.theta_k2-index.nu)=v_k2/l*tan(beta_k2);
     dx(index.v_k2-index.nu)=ab_k2;
     dx(index.beta_k2-index.nu)=dotbeta_k2;
     dx(index.s_k2-index.nu)=ds_k2;
@@ -61,7 +61,7 @@ function dx = interstagedx_PG3(x,u)
     
     dx(index.x_k3-index.nu)=v_k3*cos(theta_k3);
     dx(index.y_k3-index.nu)=v_k3*sin(theta_k3);
-    dx(index.theta_k3-index.nu)=v_k3/l*tan(ackermannAngle_k3);
+    dx(index.theta_k3-index.nu)=v_k3/l*tan(beta_k3);
     dx(index.v_k3-index.nu)=ab_k3;
     dx(index.beta_k3-index.nu)=dotbeta_k3;
     dx(index.s_k3-index.nu)=ds_k3;

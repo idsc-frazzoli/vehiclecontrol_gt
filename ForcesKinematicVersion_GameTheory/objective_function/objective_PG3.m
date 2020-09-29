@@ -51,6 +51,9 @@ function f = objective_PG3(z,points,radii,points2,radii2,points3,radii3,vmax, ma
     lagerror_k3 = forward_k3'*error_k3;
     laterror_k3 = sidewards_k3'*error_k3;
     
+    laterror=min(sidewards'*error,0);
+    laterror_k2=min(sidewards_k2'*error_k2,0);
+    laterror_k3=min(sidewards_k3'*error_k3,0);
     
     %latdist = abs(laterror);
     %outsideTrack = max(0,latdist-r);

@@ -1,5 +1,5 @@
 % go kart parameters
-maxSpeed = 10;
+maxSpeed = 7;
 maxxacc = 4;
 maxyacc = 8;
 latacclim = 6;
@@ -9,13 +9,13 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=0.01;    % lateral error param cost
+platerror=0.02;    % lateral error param cost
 pprog=0.2;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
-pdotbeta=0.1;      % steering velocity parameter cost
-pspeedcost=0.2;    % parameter for cost that occurs when max_speed is exceeded
-pslack=5;          % slack variable 
-pslack2=1000;        % collision cost
+pdotbeta=0.2;      % steering velocity parameter cost
+pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
+pslack=500;          % slack variable 
+pslack2=1000000;        % collision cost
 dist=3;            % min distance available
 
 % Splines
@@ -31,7 +31,7 @@ splinestart4 = 1;
 integrator_stepsize = 0.1;
 
 % Simulation length
-tend = 60;
+tend = 1;
 eulersteps = 10;
 planintervall = 1;
 
@@ -49,18 +49,18 @@ beta_max=0.5;
 beta_min=-0.5;
 %% Spline Points
 
-points = [15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
-          50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-          6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]';  
-points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-          15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
-          6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]';  
+points = [30,35,40,45,50,55,60,65,70;...,75,80,85,90,95          %x
+          50,50,50,50,50,50,50,50,50; ...,50,50,50,50,50    %y
+          3,3,3,3,3,3,3,3,3]';% ,5,5,5,5,5 
+points2 = [50,50,50,50,50,50,50,50,50;...,50,50,50,50,50          %x
+          30,35,40,45,50,55,60,65,70; ...,75,80,85,90,95    %y
+          3,3,3,3,3,3,3,3,3]'; %,5,5,5,5,5  
 % points3 = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95;...          %x
 %           10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95; ...    %y
 %           6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]'; 
-points3 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
-           85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0; ...    %y
-           6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]';
+points3 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
+           70,65,60,55,50,45,40,35,30,25,20,15,10,5,0; ...    %y
+           3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
 %        
 solvetimes  = [];
 solvetimes2 = [];

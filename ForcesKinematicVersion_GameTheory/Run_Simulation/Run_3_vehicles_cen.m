@@ -16,6 +16,7 @@
 global index
 %indexes_3_vehicles
 
+dis=1.5;
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
@@ -23,9 +24,9 @@ pdir = diff(fpoints);
 pstart = [pstartx,pstarty];
 pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
-xs(index.y-index.nu)=pstart(2);
+xs(index.y-index.nu)=pstart(2)-dis;
 xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=1;
+xs(index.v-index.nu)=6;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
@@ -39,10 +40,10 @@ pdir2 = diff(fpoints2);
 [pstartx2,pstarty2] = casadiDynamicBSPLINE(0.01,points2);
 pstart2 = [pstartx2,pstarty2];
 pangle2 = atan2(pdir2(2),pdir2(1));
-xs(index.x_k2-index.nu)=pstart2(1);
+xs(index.x_k2-index.nu)=pstart2(1)+dis;
 xs(index.y_k2-index.nu)=pstart2(2);
 xs(index.theta_k2-index.nu)=pangle2;
-xs(index.v_k2-index.nu)=1;
+xs(index.v_k2-index.nu)=6;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
@@ -57,10 +58,10 @@ pdir3 = diff(fpoints3);
 [pstartx3,pstarty3] = casadiDynamicBSPLINE(0.01,points3);
 pstart3 = [pstartx3,pstarty3];
 pangle3 = atan2(pdir3(2),pdir3(1));
-xs(index.x_k3-index.nu)=pstart3(1);
+xs(index.x_k3-index.nu)=pstart3(1)-dis;
 xs(index.y_k3-index.nu)=pstart3(2);
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=1;
+xs(index.v_k3-index.nu)=7;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
@@ -191,4 +192,62 @@ for i =1:tend
     Percentage=i/tend*100
 end
 
-draw3
+if tend==1
+    figure(1)
+        plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
+        hold on
+        plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
+        plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
+        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+        [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+        hold on
+        plot(leftline(:,1),leftline(:,2),'k')
+        plot(middleline(:,1),middleline(:,2),'k-.')
+        plot(rightline(:,1),rightline(:,2),'k')
+        plot(leftline2(:,1),leftline2(:,2),'k')
+        plot(middleline2(:,1),middleline2(:,2),'k-.')
+        plot(rightline2(:,1),rightline2(:,2),'k')
+        grid on
+        title('trajectory')
+        xlabel('X')
+        ylabel('Y')
+
+        figure(2)
+        hold on
+        grid on
+        title('steer')
+        xlabel('step')
+        ylabel('')
+
+        figure(3)
+        hold on
+        grid on
+        title('vel')
+        xlabel('step')
+        ylabel('')
+
+        figure(1)
+        plot(outputM(:,index.x),outputM(:,index.y),'b.-','Linewidth',1)
+        plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'r.-','Linewidth',1)
+        plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'g.-','Linewidth',1)
+        
+        figure(2)
+        plot(0.1:0.1:4,outputM(:,index.theta),'b.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM(:,index.theta_k2),'r.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM(:,index.theta_k3),'g.-','Linewidth',1)
+        legend('Kart1','Kart2','Kart3')
+        figure(3)
+        plot(0.1:0.1:4,outputM(:,index.v),'b.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM(:,index.v_k2),'r.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM(:,index.v_k3),'g.-','Linewidth',1)
+        legend('Kart1','Kart2','Kart3')
+%         figure
+%         hold on
+%         plot(cost1,'b*')
+%         plot(cost2,'r*')
+%         plot(cost3,'g*')
+%         plot(cost1+cost2+cost3,'c*')
+%         legend('Kart1','Kart2','Kart3','Tot')
+else
+    draw3
+end
