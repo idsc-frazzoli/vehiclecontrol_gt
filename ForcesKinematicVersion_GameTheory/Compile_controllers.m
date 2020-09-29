@@ -25,7 +25,7 @@ clear all
 % configuration
 NUM_Vehicles = 5; %1,2,3
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
-Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
+Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled
                     % IBR+alpha and PG+alpha
@@ -34,7 +34,7 @@ LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % PG only
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
-Game        = 'IBR'; % IBR, PG; 'IBR' has simulation for 'dec' only.
+Game        = 'PG'; % IBR, PG; 'IBR' has simulation for 'dec' only.
 Alpha       = 'no'; % yes , no; yes for 'cen' condition only
 
 %% Parameters Definitions (parameters_vector folder)
@@ -112,12 +112,12 @@ switch NUM_Vehicles
                 indexes_3_vehicles_IBR %%% Not supported
         end
     case 5
-%         switch Game
-%             case 'PG'
-%                 indexes_5_vehicles
-%             case 'IBR'
+        switch Game
+            case 'PG'
+                indexes_5_vehicles
+            case 'IBR'
                 indexes_5_vehicles_IBR %%% Not supported
-%        end
+       end
 end
 
 if strcmp(Compiled,'no')
@@ -164,15 +164,15 @@ if strcmp(Compiled,'no')
                 
             end
         case 5
-%             switch Game
-%                 case 'PG'
-%                     model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
-%                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
-%                 case 'IBR'
+            switch Game
+                case 'PG'
+                    model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                               @(x,u,p)interstagedx_PG5(x,u),integrator_stepsize,p);
+                case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
                                @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
                 
-%             end
+            end
     end
     
     if strcmp(Game,'IBR')
@@ -393,7 +393,31 @@ if strcmp(Compiled,'no')
                     
             end
         case 5
-     %        case 'IBR'
+            switch Game
+                case 'PG'
+                    for i=1:model.N
+                        model.objective{i} = @(z,p)objective_PG5_LE(z,...
+                        getPointsFromParameters(p, pointsO, pointsN),...
+                        getRadiiFromParameters(p, pointsO, pointsN),...
+                        getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                        getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
+                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
+                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3, pointsN4),...
+                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3, pointsN4),...
+                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3+3*pointsN4, pointsN5),...
+                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3+3*pointsN4, pointsN5),...
+                        p(index.pbre),...
+                        p(index.plag),...
+                        p(index.plat),...
+                        p(index.pprog),...
+                        p(index.pab),...
+                        p(index.pdotbeta),...
+                        p(index.pspeedcost),...
+                        p(index.pslack),...
+                        p(index.pslack2));
+                    end
+                case 'IBR'
                     for i=1:model.N
                         model.objective{i} = @(z,p)objective_IBR_alpha(z,...
                             getPointsFromParameters(p, pointsO, pointsN),...
@@ -407,6 +431,7 @@ if strcmp(Compiled,'no')
                             p(index_IBR.pslack),...
                             p(index_IBR.pslack2));
                     end
+            end
                     
     end
 
@@ -607,10 +632,113 @@ if strcmp(Compiled,'no')
                     model.hl = [-inf;-inf;-inf;-inf;-inf];
             end
         case 5
-            model.nh = 7; 
-            model.ineq = @(z,p) nlconst_IBR_alpha_5(z,p);
-            model.hu = [0;0;0;0;0;0;0];
-            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];
+            switch Game
+                case 'PG'
+                    % Path Progress rate Constraint (input)
+                    model.ub(index.ds_k2)=ds_max;
+                    model.lb(index.ds_k2)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model.lb(index.ab_k2)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    model.lb(index.slack_k2)=0;
+
+                    % Speed Constraint (state)
+                    model.lb(index.v_k2)=0;
+
+                    % Steering Angle Constraint (input)
+                    model.ub(index.beta_k2)=beta_max;
+                    model.lb(index.beta_k2)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model.ub(index.s_k2)=pointsN2-2;
+                    model.lb(index.s_k2)=0;
+
+                    % Path Progress rate Constraint (input)
+                    model.ub(index.ds_k3)=ds_max;
+                    model.lb(index.ds_k3)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model.lb(index.ab_k3)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    model.lb(index.slack_k3)=0;
+
+                    % Speed Constraint (state)
+                    model.lb(index.v_k3)=0;
+
+                    % Steering Angle Constraint (input)
+                    model.ub(index.beta_k3)=beta_max;
+                    model.lb(index.beta_k3)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model.ub(index.s_k3)=pointsN4-2;
+                    model.lb(index.s_k3)=0;
+                    
+                    % Path Progress rate Constraint (input)
+                    model.ub(index.ds_k4)=ds_max;
+                    model.lb(index.ds_k4)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model.lb(index.ab_k4)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    model.lb(index.slack_k4)=0;
+
+                    % Speed Constraint (state)
+                    model.lb(index.v_k4)=0;
+
+                    % Steering Angle Constraint (input)
+                    model.ub(index.beta_k4)=beta_max;
+                    model.lb(index.beta_k4)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model.ub(index.s_k5)=pointsN5-2;
+                    model.lb(index.s_k5)=0;
+
+                    % Path Progress rate Constraint (input)
+                    model.ub(index.ds_k5)=ds_max;
+                    model.lb(index.ds_k5)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model.lb(index.ab_k5)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    model.lb(index.slack_k5)=0;
+
+                    % Speed Constraint (state)
+                    model.lb(index.v_k5)=0;
+
+                    % Steering Angle Constraint (input)
+                    model.ub(index.beta_k5)=beta_max;
+                    model.lb(index.beta_k5)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model.ub(index.s_k5)=pointsN5-2;
+                    model.lb(index.s_k5)=0;
+                    
+                    model.lb(index.slack2)=0;
+                    model.lb(index.slack3)=0;
+                    model.lb(index.slack4)=0;
+
+                    %limit lateral acceleration
+                    model.nh = NUM_const; 
+                    model.ineq = @(z,p) nlconst_PG5(z,p);
+                    model.hu = [0;0;0;0;0;0;...
+                                0;0;0;0;0;0;0;0;0;
+                                0;0;0;0;0;0;0;0;0;0];%
+                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
+                                -inf;-inf;-inf;-inf;-inf;-inf;...
+                                -inf;-inf;-inf;-inf;-inf;-inf;...
+                                -inf;-inf;-inf;-inf;-inf;-inf;...
+                                -inf];%
+                case 'IBR'
+                    model.nh = 7; 
+                    model.ineq = @(z,p) nlconst_IBR_alpha_5(z,p);
+                    model.hu = [0;0;0;0;0;0;0];
+                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];
+            end
     end
 
     %% Solver
@@ -637,12 +765,12 @@ if strcmp(Compiled,'no')
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
             end
         case 5
-%             switch Game
-%                 case 'PG'
-%                     codeoptions = getOptions('MPCPathFollowing_3v');
-%                 case 'IBR'
+            switch Game
+                case 'PG'
+                    codeoptions = getOptions('MPCPathFollowing_5v');
+                case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_5v_IBR');
-%             end
+            end
     end
 
     codeoptions.maxit = MAX_IT;    % Maximum number of iterations
@@ -691,12 +819,12 @@ if strcmp(Simulation, 'yes')
                     Run_3_vehicles_IBR
             end
         case 5
-%             switch Game
-%                 case 'PG'
-%                     Run_3_vehicles_cen
-            %    case 'IBR'
+            switch Game
+                case 'PG'
+                    Run_5_vehicles_cen
+               case 'IBR'
                     Run_5_vehicles_IBR
-           % end
+           end
     end
 elseif strcmp(TestAlpha1shot, 'yes')
     RunAlpha_1shot_convex % RunAlpha_1shot
