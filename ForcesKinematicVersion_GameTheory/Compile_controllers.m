@@ -24,8 +24,8 @@ clear all
 
 % configuration
 NUM_Vehicles = 5; %1,2,3
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
-Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled
                     % IBR+alpha and PG+alpha
@@ -34,7 +34,7 @@ LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % PG only
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
-Game        = 'PG'; % IBR, PG; 'IBR' has simulation for 'dec' only.
+Game        = 'IBR'; % IBR, PG; 'IBR' has simulation for 'dec' only.
 Alpha       = 'no'; % yes , no; yes for 'cen' condition only
 
 %% Parameters Definitions (parameters_vector folder)
@@ -617,13 +617,13 @@ if strcmp(Compiled,'no')
                     %limit lateral acceleration
                     model.nh = NUM_const; 
                     model.ineq = @(z,p) nlconst_PG3(z,p);
-                    model.hu = [0;1;0;0;0;0;...
-                                0;1;0;0;0;0;...
-                                0;1;0;0;0;0;...
+                    model.hu = [0;0;0;...
+                                0;0;0;...
+                                0;0;0;...
                                 0;0;0];%
-                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
-                                -inf;-inf;-inf;-inf;-inf;-inf;...
-                                -inf;-inf;-inf;-inf;-inf;-inf;...
+                    model.hl = [-inf;-inf;-inf;...
+                                -inf;-inf;-inf;...
+                                -inf;-inf;-inf;...
                                 -inf;-inf;-inf];%
                 case 'IBR'
                     model.nh = 5; 
