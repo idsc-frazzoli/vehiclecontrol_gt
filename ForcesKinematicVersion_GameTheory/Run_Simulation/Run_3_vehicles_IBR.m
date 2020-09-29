@@ -295,7 +295,7 @@ for i =1:tend
     
     costT1(i)=info.pobj;
     costT2(i)=info2.pobj;
-    costT2(i)=info3.pobj;
+    costT3(i)=info3.pobj;
     %outputM = reshape(output.alldata,[model.nvar,model.N])';
 
     x0 = outputM';

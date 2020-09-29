@@ -23,8 +23,8 @@ clear all
 %close all
 
 % configuration
-NUM_Vehicles = 3; %1,2,3
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+NUM_Vehicles = 5; %1,2,3
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled
@@ -34,7 +34,7 @@ LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % PG only
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
-Game        = 'PG'; % IBR, PG; 'IBR' has simulation for 'dec' only.
+Game        = 'IBR'; % IBR, PG; 'IBR' has simulation for 'dec' only.
 Alpha       = 'no'; % yes , no; yes for 'cen' condition only
 
 %% Parameters Definitions (parameters_vector folder)
@@ -62,6 +62,13 @@ switch NUM_Vehicles
                 parameters_3_vehicles
             case 'IBR'
                 parameters_3_vehicles_IBR
+        end
+    case 5
+        switch Game
+            case 'PG'
+                parameters_5_vehicles
+            case 'IBR'
+                parameters_5_vehicles_IBR
         end
     otherwise
         error('Change NUM_Vehicle')
@@ -104,6 +111,13 @@ switch NUM_Vehicles
             case 'IBR'
                 indexes_3_vehicles_IBR %%% Not supported
         end
+    case 5
+%         switch Game
+%             case 'PG'
+%                 indexes_5_vehicles
+%             case 'IBR'
+                indexes_5_vehicles_IBR %%% Not supported
+%        end
 end
 
 if strcmp(Compiled,'no')
@@ -149,6 +163,16 @@ if strcmp(Compiled,'no')
                                @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
                 
             end
+        case 5
+%             switch Game
+%                 case 'PG'
+%                     model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+%                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
+%                 case 'IBR'
+                    model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
+                               @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
+                
+%             end
     end
     
     if strcmp(Game,'IBR')
@@ -368,6 +392,21 @@ if strcmp(Compiled,'no')
                     end
                     
             end
+        case 5
+     %        case 'IBR'
+                    for i=1:model.N
+                        model.objective{i} = @(z,p)objective_IBR_alpha(z,...
+                            getPointsFromParameters(p, pointsO, pointsN),...
+                            p(index_IBR.ps),...
+                            p(index_IBR.plag),...
+                            p(index_IBR.plat),...
+                            p(index_IBR.pprog),...
+                            p(index_IBR.pab),...
+                            p(index_IBR.pdotbeta),...
+                            p(index_IBR.pspeedcost),...
+                            p(index_IBR.pslack),...
+                            p(index_IBR.pslack2));
+                    end
                     
     end
 
@@ -567,6 +606,11 @@ if strcmp(Compiled,'no')
                     model.hu = [0;0;0;0;0];
                     model.hl = [-inf;-inf;-inf;-inf;-inf];
             end
+        case 5
+            model.nh = 7; 
+            model.ineq = @(z,p) nlconst_IBR_alpha_5(z,p);
+            model.hu = [0;0;0;0;0;0;0];
+            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];
     end
 
     %% Solver
@@ -592,6 +636,13 @@ if strcmp(Compiled,'no')
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
             end
+        case 5
+%             switch Game
+%                 case 'PG'
+%                     codeoptions = getOptions('MPCPathFollowing_3v');
+%                 case 'IBR'
+                    codeoptions = getOptions('MPCPathFollowing_5v_IBR');
+%             end
     end
 
     codeoptions.maxit = MAX_IT;    % Maximum number of iterations
@@ -639,6 +690,13 @@ if strcmp(Simulation, 'yes')
                 case 'IBR'
                     Run_3_vehicles_IBR
             end
+        case 5
+%             switch Game
+%                 case 'PG'
+%                     Run_3_vehicles_cen
+            %    case 'IBR'
+                    Run_5_vehicles_IBR
+           % end
     end
 elseif strcmp(TestAlpha1shot, 'yes')
     RunAlpha_1shot_convex % RunAlpha_1shot
