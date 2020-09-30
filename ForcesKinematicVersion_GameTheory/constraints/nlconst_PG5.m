@@ -21,47 +21,42 @@ pointsN2 = index.pointsN2;
 pointsN3 = index.pointsN3;
 pointsN4 = index.pointsN4;
 pointsN5 = index.pointsN5;
-points = getPointsFromParameters(p, pointsO, pointsN);
-radii = getRadiiFromParameters(p, pointsO, pointsN);
+points = getPointsFromParameters   (p, pointsO, pointsN);
+radii = getRadiiFromParameters     (p, pointsO, pointsN);
 
 points_k2 = getPointsFromParameters(p, pointsO+3*pointsN, pointsN2);
-radii_k2 = getRadiiFromParameters(p, pointsO+3*pointsN, pointsN2);
+radii_k2 = getRadiiFromParameters  (p, pointsO+3*pointsN, pointsN2);
 
 points_k3 = getPointsFromParameters(p, pointsO+3*pointsN+3*pointsN2, pointsN3);
-radii_k3 = getRadiiFromParameters(p, pointsO+3*pointsN+3*pointsN2, pointsN3);
+radii_k3 = getRadiiFromParameters  (p, pointsO+3*pointsN+3*pointsN2, pointsN3);
 
 points_k4 = getPointsFromParameters(p, pointsO+3*pointsN+3*pointsN2+3*pointsN3, pointsN4);
-radii_k4 = getRadiiFromParameters(p, pointsO+3*pointsN+3*pointsN2+3*pointsN3, pointsN4);
+radii_k4 = getRadiiFromParameters  (p, pointsO+3*pointsN+3*pointsN2+3*pointsN3, pointsN4);
 
 points_k5 = getPointsFromParameters(p, pointsO+3*pointsN+3*pointsN2+3*pointsN3+3*pointsN4, pointsN5);
-radii_k5 = getRadiiFromParameters(p, pointsO+3*pointsN+3*pointsN2+3*pointsN3+3*pointsN4, pointsN5);
+radii_k5 = getRadiiFromParameters  (p, pointsO+3*pointsN+3*pointsN2+3*pointsN3+3*pointsN4, pointsN5);
 
 % Splines
 [splx,sply] = casadiDynamicBSPLINE(z(index.s),points);
-%[spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
 [splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index.s),points);
 r = casadiDynamicBSPLINERadius(z(index.s),radii);
 
 [splx_k2,sply_k2] = casadiDynamicBSPLINE(z(index.s_k2),points_k2);
-%[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points_k2);
 [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points_k2);
 r_k2 = casadiDynamicBSPLINERadius(z(index.s_k2),radii_k2);
 
 [splx_k3,sply_k3] = casadiDynamicBSPLINE(z(index.s_k3),points_k3);
-%[spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points_k3);
 [splsx_k3, splsy_k3] = casadiDynamicBSPLINEsidewards(z(index.s_k3),points_k3);
 r_k3 = casadiDynamicBSPLINERadius(z(index.s_k3),radii_k3);
 
 [splx_k4,sply_k4] = casadiDynamicBSPLINE(z(index.s_k4),points_k4);
-%[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points_k2);
 [splsx_k4, splsy_k4] = casadiDynamicBSPLINEsidewards(z(index.s_k4),points_k4);
 r_k4 = casadiDynamicBSPLINERadius(z(index.s_k4),radii_k4);
 
 [splx_k5,sply_k5] = casadiDynamicBSPLINE(z(index.s_k5),points_k5);
-%[spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points_k3);
 [splsx_k5, splsy_k5] = casadiDynamicBSPLINEsidewards(z(index.s_k5),points_k5);
 r_k5 = casadiDynamicBSPLINERadius(z(index.s_k5),radii_k5);
-%forward = [spldx;spldy];
+%1)
 sidewards = [splsx;splsy];
 
 realPos = z([index.x,index.y]);
@@ -74,7 +69,7 @@ error = centerPos-wantedpos;
 
 % Projection errors
 laterror = sidewards'*error;
-
+% 2
 sidewards_k2 = [splsx_k2;splsy_k2];
 
 realPos_k2 = z([index.x_k2,index.y_k2]);
@@ -86,10 +81,8 @@ wantedpos_k2 = [splx_k2;sply_k2];
 error_k2 = centerPos_k2-wantedpos_k2;
 
 % Projection errors
-%lagerror_k2 = forward_k2'*error_k2;
 laterror_k2 = sidewards_k2'*error_k2;
-
-%forward_k3 = [spldx_k3;spldy_k3];
+% 3
 sidewards_k3 = [splsx_k3;splsy_k3];
 
 realPos_k3 = z([index.x_k3,index.y_k3]);
@@ -101,9 +94,9 @@ wantedpos_k3 = [splx_k3;sply_k3];
 error_k3 = centerPos_k3-wantedpos_k3;
 
 % Projection errors
-%lagerror_k3 = forward_k3'*error_k3;
 laterror_k3 = sidewards_k3'*error_k3;
 
+% 4
 sidewards_k4 = [splsx_k4;splsy_k4];
 
 realPos_k4 = z([index.x_k4,index.y_k4]);
@@ -118,7 +111,7 @@ error_k4 = centerPos_k4-wantedpos_k4;
 %lagerror_k2 = forward_k2'*error_k2;
 laterror_k4 = sidewards_k4'*error_k4;
 
-%forward_k3 = [spldx_k3;spldy_k3];
+% 5
 sidewards_k5 = [splsx_k5;splsy_k5];
 
 realPos_k5 = z([index.x_k5,index.y_k5]);
@@ -163,7 +156,7 @@ distance_Y9=(z(index.y_k3)-z(index.y_k5));
 distance_X10=(z(index.x_k4)-z(index.x_k5));
 distance_Y10=(z(index.y_k4)-z(index.y_k5));
 
-squared_distance_array = sqrt(distance_X.^2+distance_Y.^2);
+squared_distance_array =  sqrt(distance_X .^2+distance_Y .^2);
 squared_distance_array2 = sqrt(distance_X2.^2+distance_Y2.^2);
 squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 squared_distance_array4 = sqrt(distance_X4.^2+distance_Y4.^2);

@@ -9,14 +9,14 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=0.02;    % lateral error param cost
+platerror=2;    % lateral error param cost
 pprog=0.2;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
 pdotbeta=0.2;      % steering velocity parameter cost
 pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
-dist=3;            % min distance available
+dist=4;            % min distance available
 
 % Splines
 pointsO = 20;      % N gokart parameters + N cost function parameters

@@ -17,16 +17,17 @@ addpath('objective_function');
 addpath('constraints');
 addpath('index_script');
 addpath('Run_Simulation');
+addpath('Animation');
 clear model
 clear problem
 clear all
-%close all
+close all
 
 % configuration
-NUM_Vehicles = 5; %1,2,3
+NUM_Vehicles = 2; %1,2,3
 Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
-Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
-TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
+Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
+TestAlpha1shot='yes';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled
                     % IBR+alpha and PG+alpha
 LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
@@ -35,7 +36,7 @@ LEPunisher  = 'no'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
 % NUM Vehicles=2
 Condition   = 'cen'; % 'cen' 'dec';
 Game        = 'IBR'; % IBR, PG; 'IBR' has simulation for 'dec' only.
-Alpha       = 'no'; % yes , no; yes for 'cen' condition only
+Alpha       = 'yes'; % yes , no; yes for 'cen' condition only
 
 %% Parameters Definitions (parameters_vector folder)
 switch NUM_Vehicles
@@ -398,16 +399,11 @@ if strcmp(Compiled,'no')
                     for i=1:model.N
                         model.objective{i} = @(z,p)objective_PG5_LE(z,...
                         getPointsFromParameters(p, pointsO, pointsN),...
-                        getRadiiFromParameters(p, pointsO, pointsN),...
                         getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN, pointsN2),...
                         getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3, pointsN4),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3, pointsN4),...
-                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3+3*pointsN4, pointsN5),...
-                        getRadiiFromParameters(p, pointsO + 3*pointsN + 3*pointsN2+ 3*pointsN3+3*pointsN4, pointsN5),...
-                        p(index.pbre),...
+                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3, pointsN4),...
+                        getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3 + 3*pointsN4, pointsN5),...
+                        p(index.ps),...
                         p(index.plag),...
                         p(index.plat),...
                         p(index.pprog),...
@@ -673,9 +669,9 @@ if strcmp(Compiled,'no')
                     model.lb(index.beta_k3)=beta_min;
 
                     % Path Progress Constraint (input)
-                    model.ub(index.s_k3)=pointsN4-2;
+                    model.ub(index.s_k3)=pointsN3-2;
                     model.lb(index.s_k3)=0;
-                    
+                    %4)
                     % Path Progress rate Constraint (input)
                     model.ub(index.ds_k4)=ds_max;
                     model.lb(index.ds_k4)=ds_min;
@@ -694,9 +690,9 @@ if strcmp(Compiled,'no')
                     model.lb(index.beta_k4)=beta_min;
 
                     % Path Progress Constraint (input)
-                    model.ub(index.s_k5)=pointsN5-2;
-                    model.lb(index.s_k5)=0;
-
+                    model.ub(index.s_k4)=pointsN4-2;
+                    model.lb(index.s_k4)=0;
+                    %5)
                     % Path Progress rate Constraint (input)
                     model.ub(index.ds_k5)=ds_max;
                     model.lb(index.ds_k5)=ds_min;
@@ -726,8 +722,10 @@ if strcmp(Compiled,'no')
                     model.nh = NUM_const; 
                     model.ineq = @(z,p) nlconst_PG5(z,p);
                     model.hu = [0;0;0;0;0;0;...
-                                0;0;0;0;0;0;0;0;0;
-                                0;0;0;0;0;0;0;0;0;0];%
+                                0;0;0;0;0;0;...
+                                0;0;0;0;0;0;...
+                                0;0;0;0;0;0;...
+                                0];%];%
                     model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
                                 -inf;-inf;-inf;-inf;-inf;-inf;...
                                 -inf;-inf;-inf;-inf;-inf;-inf;...

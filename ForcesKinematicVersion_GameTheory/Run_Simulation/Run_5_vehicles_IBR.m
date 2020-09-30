@@ -792,20 +792,20 @@ if tend==1
         set(gca,'FontSize',12)
         axis equal
         figure(5)
-        plot(0.1:0.1:7,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM4(:,index_IBR.theta),'c.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM5(:,index_IBR.theta),'m.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM4(:,index_IBR.theta),'c.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM5(:,index_IBR.theta),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
         xlabel('Prediction horizon [s]')
         set(gca,'FontSize',12)
         figure(6)
-        plot(0.1:0.1:7,outputM(:,index_IBR.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM4(:,index_IBR.v),'c.-','Linewidth',1)
-        plot(0.1:0.1:7,outputM5(:,index_IBR.v),'m.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM(:,index_IBR.v),'b.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM4(:,index_IBR.v),'c.-','Linewidth',1)
+        plot(0.1:0.1:4,outputM5(:,index_IBR.v),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
         xlabel('Prediction horizon [s]')
         ylabel('speed [m/s]')
@@ -819,6 +819,7 @@ if tend==1
         plot(cost5,'m*')
         plot(cost1+cost2+cost3+cost4+cost5,'k*')
         legend ('Vehicle 1','V 2','V 3','V 4','V 5','Tot')
+        drawAnimation_P5_PH_IBR
 else
     drawIBR3
     figure

@@ -16,7 +16,7 @@ slack4 = z(index.slack4);
 % beta_k2  = z(index.beta_k2);
 % dotbeta_k2 = z(index.dotbeta_k2);
 % forwardacc_k2 = z(index.ab_k2);
-% slack_k2 = z(index.slack_k2);
+slack_k2 = z(index.slack_k2);
 % 
 % beta_k3  = z(index.beta_k3);
 % dotbeta_k3 = z(index.dotbeta_k3);

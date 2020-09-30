@@ -241,6 +241,7 @@ if tend==1
         plot(0.1:0.1:4,outputM(:,index.v_k2),'r.-','Linewidth',1)
         plot(0.1:0.1:4,outputM(:,index.v_k3),'g.-','Linewidth',1)
         legend('Kart1','Kart2','Kart3')
+        drawAnimation_P3_PH
 %         figure
 %         hold on
 %         plot(cost1,'b*')

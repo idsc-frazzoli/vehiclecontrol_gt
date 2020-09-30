@@ -49,10 +49,7 @@ function dx = interstagedx_PG5(x,u)
     beta_k5 = x(index.beta_k5-index.nu);
     
     l = 1.19;
-%     ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
-%     ackermannAngle_k2 = -0.58*beta_k2*beta_k2*beta_k2+0.93*beta_k2;
-%     ackermannAngle_k3 = -0.58*beta_k3*beta_k3*beta_k3+0.93*beta_k3;
-%     
+ 
     import casadi.*
     if isa(x(1), 'double')
         dx = zeros(index.ns,1);
@@ -100,12 +97,5 @@ function dx = interstagedx_PG5(x,u)
     dx(index.beta_k5-index.nu)=dotbeta_k5;
     dx(index.s_k5-index.nu)=ds_k5;
     dx(index.ab_k5-index.nu)=dotab_k5;
-    %dx = [v*cos(theta);
-    %v*sin(theta);
-    %v/l*tan(ackermannAngle);
-    %ab;
-    %dotbeta;
-    %ds;
-    %braking+cooldownfunction(temp)];
 end
 

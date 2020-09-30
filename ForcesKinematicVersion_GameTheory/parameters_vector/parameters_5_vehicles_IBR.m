@@ -1,6 +1,6 @@
 % go kart parameters
-maxSpeed = 7;
-maxxacc = 4;
+maxSpeed = 9;
+maxxacc = 5;
 maxyacc = 8;
 latacclim = 6;
 rotacceffect  = 2;
@@ -40,7 +40,7 @@ planintervall = 1;
 
 %% controller params %%RECOMPILE IF MODIFIED!
 NUM_const=7; % number of nonlinear constraint
-P_H_length=70; % prediction horizon length
+P_H_length=40; % prediction horizon length
 MAX_IT= 500; % N of max iterations
 
 % ds constraint (delta progress)
@@ -72,8 +72,7 @@ points4 = [30,35,40,45,50,55,60,65,70,75,80,85,90;...          %x
 points5 = [70,65,60,55,50,45,40,35,30,25,20;...          %x
           40,40,40,40,40,40,40,40,40,40,40; ...    %y
           3,3,3,3,3,3,3,3,3,3,3]';
-
-%        
+     
 solvetimes  = [];
 solvetimes2 = [];
 solvetimes3 = [];

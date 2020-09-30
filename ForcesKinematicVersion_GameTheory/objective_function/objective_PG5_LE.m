@@ -1,32 +1,26 @@
-function f = objective_PG5_LE(z,points,radii,points2,radii2,points3,radii3,points4,radii4,points5,radii5,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function f = objective_PG5_LE(z,points,points2,points3,points4,points5,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
     global index
 
     %get the fancy spline
-    l = 1.19;
     [splx,sply] = casadiDynamicBSPLINE(z(index.s),points);
     [spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
     [splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index.s),points);
-    r = casadiDynamicBSPLINERadius(z(index.s),radii);
     
     [splx_k2,sply_k2] = casadiDynamicBSPLINE(z(index.s_k2),points2);
     [spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points2);
     [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points2);
-    r_k2 = casadiDynamicBSPLINERadius(z(index.s_k2),radii2);
     
     [splx_k3,sply_k3] = casadiDynamicBSPLINE(z(index.s_k3),points3);
     [spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points3);
     [splsx_k3, splsy_k3] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points3);
-    r_k3 = casadiDynamicBSPLINERadius(z(index.s_k3),radii3);
     
     [splx_k4,sply_k4] = casadiDynamicBSPLINE(z(index.s_k4),points4);
     [spldx_k4, spldy_k4] = casadiDynamicBSPLINEforward(z(index.s_k4),points4);
     [splsx_k4, splsy_k4] = casadiDynamicBSPLINEsidewards(z(index.s_k4),points4);
-    r_k4 = casadiDynamicBSPLINERadius(z(index.s_k4),radii4);
     
     [splx_k5,sply_k5] = casadiDynamicBSPLINE(z(index.s_k5),points5);
     [spldx_k5, spldy_k5] = casadiDynamicBSPLINEforward(z(index.s_k5),points5);
     [splsx_k5, splsy_k5] = casadiDynamicBSPLINEsidewards(z(index.s_k5),points5);
-    r_k5 = casadiDynamicBSPLINERadius(z(index.s_k5),radii5);
     
     forward = [spldx;spldy];
     sidewards = [splsx;splsy];
@@ -87,10 +81,6 @@ function f = objective_PG5_LE(z,points,radii,points2,radii2,points3,radii3,point
     %trackViolation = outsideTrack^2;
     
     %% Costs objective function
-    
-    %beta = z(index.beta);
-    %tangentspeed = z(index.v);
-    %forwardacc = z(index.ab);
     slack = z(index.slack);
     slack2 = z(index.slack2);
     slack3 = z(index.slack3);
@@ -99,17 +89,6 @@ function f = objective_PG5_LE(z,points,radii,points2,radii2,points3,radii3,point
     slack_k3 = z(index.slack_k3);
     slack_k4 = z(index.slack_k4);
     slack_k5 = z(index.slack_k5);
-    %dotbeta = z(index.dotbeta);
-    %ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
-    %dAckermannAngle = -0.58*3*beta*beta*dotbeta+0.93*dotbeta;
-    %latacc = (tan(ackermannAngle)*tangentspeed^2)/l;
-    %rotacc = dAckermannAngle*tangentspeed/l;
-    %frontaxlelatacc = abs(latacc+rotacc*rotacceffect);
-    %torquevectoringcapability = torqueveccapsmooth(forwardacc)*torqueveceffect;
-    %torquevectoringcapability = 0;
-    %understeer = max(0,frontaxlelatacc - latacclim-torquevectoringcapability)^2;
-    %accnorm = ((latacc/maxyacc)^2+(z(index.ab)/maxxacc)^2);
-    %accviolation = max(0,accnorm-1)^2;
     
     speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
@@ -140,9 +119,8 @@ function f = objective_PG5_LE(z,points,radii,points2,radii2,points3,radii3,point
     latcost_k5 = platerror*latErrorPunisher(laterror_k5);
     prog_k5 = -pprog*z(index.ds_k5);
     reg_k5 = z(index.dotab_k5).^2*pab+z(index.dotbeta_k5).^2*pdotbeta;
-    %f = error'*Q*error+reg+speedcost+over75d*over75d*0.001+1*trackViolation;
-    %f = lagcost+latcost+reg+prog+over75d*over75d*0.001+speedcost+accviolation+trackViolation;
-    f = lagcost+latcost+reg+prog+pslack*slack+speedcost+...
+
+    f = lagcost   +latcost   +reg   +prog   +pslack*slack   +speedcost   +...
         lagcost_k2+latcost_k2+reg_k2+prog_k2+pslack*slack_k2+speedcost_k2+...
         lagcost_k3+latcost_k3+reg_k3+prog_k3+pslack*slack_k3+speedcost_k3+...
         lagcost_k4+latcost_k4+reg_k4+prog_k4+pslack*slack_k4+speedcost_k4+...
