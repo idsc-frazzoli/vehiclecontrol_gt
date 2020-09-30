@@ -1,4 +1,4 @@
-function f = objective_IBR_alpha(z,points,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function f = objective_IBR_alpha_v1(z,points,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
     global index_IBR
 
     [splx,sply] = casadiDynamicBSPLINE(z(index_IBR.s),points);
@@ -22,7 +22,7 @@ function f = objective_IBR_alpha(z,points,vmax,plagerror, platerror, pprog, pab,
     slack2= z(index_IBR.slack2);
     speedcost = speedPunisher(z(index_IBR.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
-    latcost = platerror*laterror^2;
+    latcost = platerror*latErrorPunisher(laterror);
     prog = pprog/(z(index_IBR.ds).^2);
     reg = z(index_IBR.dotab).^2*pab+z(index_IBR.dotbeta).^2*pdotbeta;
 

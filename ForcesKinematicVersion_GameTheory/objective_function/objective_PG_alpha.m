@@ -1,20 +1,16 @@
-function f = objective_PG_alpha(z,points,radii,points2,radii2,vmax,...
-    maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect, brakeeffect,...
+function f = objective_PG_alpha(z,points,points2,vmax,...
     plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,...
     pslack,pslack2,alpha1,alpha2)
     global index
 
     %get the fancy spline
-    l = 1.19;
     [splx,sply] = casadiDynamicBSPLINE(z(index.s),points);
     [spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
     [splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index.s),points);
-    r = casadiDynamicBSPLINERadius(z(index.s),radii);
     
     [splx_k2,sply_k2] = casadiDynamicBSPLINE(z(index.s_k2),points2);
     [spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points2);
     [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points2);
-    r_k2 = casadiDynamicBSPLINERadius(z(index.s_k2),radii2);
     
     forward = [spldx;spldy];
     sidewards = [splsx;splsy];
@@ -46,13 +42,13 @@ function f = objective_PG_alpha(z,points,radii,points2,radii2,vmax,...
     
     speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
-    latcost = platerror*laterror^2;
+    latcost = platerror*latErrorPunisher(laterror);
     prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
     speedcost_k2 = speedPunisher(z(index.v_k2),vmax)*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
-    latcost_k2 = platerror*laterror_k2^2;
+    latcost_k2 = platerror*latErrorPunisher(laterror_k2);
     prog_k2 = -pprog*z(index.ds_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
    
