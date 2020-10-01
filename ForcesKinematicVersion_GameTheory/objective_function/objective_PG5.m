@@ -1,7 +1,9 @@
-function f = objective_PG3(z,points,points2,points3,vmax,plagerror, ...
-               platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function f = objective_PG5(z,points,points2,points3,points4,points5,...
+    vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,...
+    pslack,pslack2)
     global index
 
+    %get the fancy spline
     [splx,sply] = casadiDynamicBSPLINE(z(index.s),points);
     [spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
     [splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index.s),points);
@@ -13,6 +15,14 @@ function f = objective_PG3(z,points,points2,points3,vmax,plagerror, ...
     [splx_k3,sply_k3] = casadiDynamicBSPLINE(z(index.s_k3),points3);
     [spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points3);
     [splsx_k3, splsy_k3] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points3);
+    
+    [splx_k4,sply_k4] = casadiDynamicBSPLINE(z(index.s_k4),points4);
+    [spldx_k4, spldy_k4] = casadiDynamicBSPLINEforward(z(index.s_k4),points4);
+    [splsx_k4, splsy_k4] = casadiDynamicBSPLINEsidewards(z(index.s_k4),points4);
+    
+    [splx_k5,sply_k5] = casadiDynamicBSPLINE(z(index.s_k5),points5);
+    [spldx_k5, spldy_k5] = casadiDynamicBSPLINEforward(z(index.s_k5),points5);
+    [splsx_k5, splsy_k5] = casadiDynamicBSPLINEsidewards(z(index.s_k5),points5);
     
     forward = [spldx;spldy];
     sidewards = [splsx;splsy];
@@ -47,10 +57,31 @@ function f = objective_PG3(z,points,points2,points3,vmax,plagerror, ...
     lagerror_k3 = forward_k3'*error_k3;
     laterror_k3 = sidewards_k3'*error_k3;
     
-%     laterror=min(sidewards'*error,0);
-%     laterror_k2=min(sidewards_k2'*error_k2,0);
-%     laterror_k3=min(sidewards_k3'*error_k3,0);
-%     
+    forward_k4 = [spldx_k4;spldy_k4];
+    sidewards_k4 = [splsx_k4;splsy_k4];
+    
+    realPos_k4 = z([index.x_k4,index.y_k4]);
+    centerOffset_k4 = 0.4*gokartforward(z(index.theta_k4))';
+    centerPos_k4 = realPos_k4+centerOffset_k4;%+0.4*forward;
+    wantedpos_k4 = [splx_k4;sply_k4];
+    error_k4 = centerPos_k4-wantedpos_k4;
+    lagerror_k4 = forward_k4'*error_k4;
+    laterror_k4 = sidewards_k4'*error_k4;
+    
+    forward_k5 = [spldx_k5;spldy_k5];
+    sidewards_k5 = [splsx_k5;splsy_k5];
+    
+    realPos_k5 = z([index.x_k5,index.y_k5]);
+    centerOffset_k5 = 0.4*gokartforward(z(index.theta_k5))';
+    centerPos_k5 = realPos_k5+centerOffset_k5;%+0.4*forward;
+    wantedpos_k5 = [splx_k5;sply_k5];
+    error_k5 = centerPos_k5-wantedpos_k5;
+    lagerror_k5 = forward_k5'*error_k5;
+    laterror_k5 = sidewards_k5'*error_k5;
+    %latdist = abs(laterror);
+    %outsideTrack = max(0,latdist-r);
+    %trackViolation = outsideTrack^2;
+    
     %% Costs objective function
     slack = z(index.slack);
     slack2 = z(index.slack2);
@@ -58,7 +89,9 @@ function f = objective_PG3(z,points,points2,points3,vmax,plagerror, ...
     slack4 = z(index.slack4);
     slack_k2 = z(index.slack_k2);
     slack_k3 = z(index.slack_k3);
-       
+    slack_k4 = z(index.slack_k4);
+    slack_k5 = z(index.slack_k5);
+    
     speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*laterror^2;
@@ -76,9 +109,23 @@ function f = objective_PG3(z,points,points2,points3,vmax,plagerror, ...
     latcost_k3 = platerror*laterror_k3^2;
     prog_k3 = -pprog*z(index.ds_k3);
     reg_k3 = z(index.dotab_k3).^2*pab+z(index.dotbeta_k3).^2*pdotbeta;
-   
-    f = lagcost+latcost+reg+prog+pslack*slack+speedcost+...
+    
+    speedcost_k4 = speedPunisher(z(index.v_k4),vmax)*pspeedcost;
+    lagcost_k4 = plagerror*lagerror_k4^2;
+    latcost_k4 = platerror*laterror_k4^2;
+    prog_k4 = -pprog*z(index.ds_k4);
+    reg_k4 = z(index.dotab_k4).^2*pab+z(index.dotbeta_k4).^2*pdotbeta;
+    
+    speedcost_k5 = speedPunisher(z(index.v_k5),vmax)*pspeedcost;
+    lagcost_k5 = plagerror*lagerror_k5^2;
+    latcost_k5 = platerror*laterror_k5^2;
+    prog_k5 = -pprog*z(index.ds_k5);
+    reg_k5 = z(index.dotab_k5).^2*pab+z(index.dotbeta_k5).^2*pdotbeta;
+
+    f = lagcost   +latcost   +reg   +prog   +pslack*slack   +speedcost   +...
         lagcost_k2+latcost_k2+reg_k2+prog_k2+pslack*slack_k2+speedcost_k2+...
         lagcost_k3+latcost_k3+reg_k3+prog_k3+pslack*slack_k3+speedcost_k3+...
+        lagcost_k4+latcost_k4+reg_k4+prog_k4+pslack*slack_k4+speedcost_k4+...
+        lagcost_k5+latcost_k5+reg_k5+prog_k5+pslack*slack_k5+speedcost_k5+...
         pslack2*slack2+pslack2*slack3+pslack2*slack4;
 end

@@ -15,14 +15,13 @@ function f = objective_IBR_alpha(z,points,vmax,plagerror, platerror, pprog, pab,
     error = centerPos-wantedpos;
     lagerror = forward'*error;
     laterror = sidewards'*error;
-    laterror1=min(sidewards'*error,0);
     %% Costs objective function
   
     slack = z(index_IBR.slack);
     slack2= z(index_IBR.slack2);
     speedcost = max((z(index_IBR.v)-vmax),0)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
-    latcost = platerror*laterror1^2;
+    latcost = platerror*laterror^2;
     prog = -pprog*z(index_IBR.ds);
     reg = z(index_IBR.dotab).^2*pab+z(index_IBR.dotbeta).^2*pdotbeta;
 

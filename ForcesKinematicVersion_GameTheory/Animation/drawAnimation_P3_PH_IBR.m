@@ -1,5 +1,5 @@
 global index_IBR
-frames = 40;
+frames = length(outputM(:,1));
 vidfile = VideoWriter('PH_IBR','Motion JPEG AVI');
 vidfile.FrameRate = 10;
 open(vidfile);

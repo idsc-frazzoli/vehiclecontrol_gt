@@ -1,4 +1,4 @@
-function f = objective_IBR(z,points,vmax, plagerror, platerror,...
+function f = objective_IBR_LE(z,points,vmax, plagerror, platerror,...
                            pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
      global index_IBR
 
@@ -25,7 +25,7 @@ function f = objective_IBR(z,points,vmax, plagerror, platerror,...
     
     speedcost = speedPunisher(z(index_IBR.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
-    latcost = platerror*laterror^2;
+    latcost = platerror*latErrorPunisher(laterror);
     prog = -pprog*z(index_IBR.ds);
     reg = z(index_IBR.dotab).^2*pab+z(index_IBR.dotbeta).^2*pdotbeta;
    
