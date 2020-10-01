@@ -1,4 +1,4 @@
-function v = nlconst_IBR_alpha_5(z,p)
+function v = nlconst_IBR_5(z,p)
 global index_IBR
 
 slack = z(index_IBR.slack);

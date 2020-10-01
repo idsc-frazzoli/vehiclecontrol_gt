@@ -696,7 +696,7 @@ if strcmp(Compiled,'no')
                                 -inf;-inf;-inf];%
                 case 'IBR'
                     model.nh = 5; 
-                    model.ineq = @(z,p) nlconst_IBR_alpha_3(z,p);
+                    model.ineq = @(z,p) nlconst_IBR_3(z,p);
                     model.hu = [0;0;0;0;0];
                     model.hl = [-inf;-inf;-inf;-inf;-inf];
             end
@@ -806,7 +806,7 @@ if strcmp(Compiled,'no')
                                 -inf];%
                 case 'IBR'
                     model.nh = 7; 
-                    model.ineq = @(z,p) nlconst_IBR_alpha_5(z,p);
+                    model.ineq = @(z,p) nlconst_IBR_5(z,p);
                     model.hu = [0;0;0;0;0;0;0];
                     model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];
             end
