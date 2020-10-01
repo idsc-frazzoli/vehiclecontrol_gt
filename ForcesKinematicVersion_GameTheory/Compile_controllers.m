@@ -24,17 +24,17 @@ clear all
 %close all
 
 % configuration
-NUM_Vehicles = 3; %1,2,3,5
+NUM_Vehicles = 2; %1,2,3,5
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
-                    % Simulation must be no, it requires compiled
-                    % IBR+alpha and PG+alpha
+                    % Simulation must be no, it requires compiled IBR and
+                    % PG+alpha
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'PG'; % 'PG'; 'IBR' has simulation for 'dec' only.
-Alpha       = 'no'; % 'yes' (2 vehicles only), 'no'; 'yes' for 'cen' condition only
+Game        = 'IBR'; % 'PG'; 'IBR' has simulation for 'dec' only.
+Alpha       = 'yes'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Alpha')
@@ -148,14 +148,8 @@ if strcmp(Compiled,'no')
                                 @(x,u,p)interstagedx_PG_alpha(x,u),integrator_stepsize,p);
                     end
                 case 'IBR'
-                    switch Alpha
-                        case 'no'
-                            model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                                   @(x,u,p)interstagedx_IBR(x,u), integrator_stepsize,p);
-                        case 'yes'
-                            model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                                @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
-                    end
+                        model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
+                               @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
                 otherwise
                     error('Change Game')
             end
@@ -167,7 +161,7 @@ if strcmp(Compiled,'no')
                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                               @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
+                               @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
                 
             end
         case 5
@@ -177,8 +171,7 @@ if strcmp(Compiled,'no')
                                @(x,u,p)interstagedx_PG5(x,u),integrator_stepsize,p);
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                               @(x,u,p)interstagedx_IBR_alpha(x,u),integrator_stepsize,p);
-                
+                               @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
             end
     end
     
