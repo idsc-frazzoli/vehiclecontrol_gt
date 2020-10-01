@@ -28,9 +28,9 @@ distance_Y=(z(index_IBR.y)-yVehicle2);
 squared_distance_array   = sqrt(distance_X.^2+distance_Y.^2);
 
 v1 = z(index_IBR.ab)-casadiGetSmoothMaxAcc(z(index_IBR.v));
-v3 = laterror-r-0.5*slack;
-v4 = -laterror-r-0.5*slack;
-v7 = -squared_distance_array+dist-slack2;
-v = [v1;v3;v4;v7];
+v2 = laterror-r-0.5*slack;
+v3 = -laterror-r-0.5*slack;
+v4 = -squared_distance_array+dist-slack2;
+v = [v1;v2;v3;v4];
 end
 

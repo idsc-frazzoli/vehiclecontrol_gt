@@ -38,7 +38,7 @@ eulersteps = 10;
 planintervall = 1;
 
 %% controller params %%RECOMPILE IF MODIFIED!
-NUM_const=13; % number of nonlinear constraint
+NUM_const=7; % number of nonlinear constraint
 P_H_length=40;% prediction horizon length
 MAX_IT= 400;  % N of max iterations
 

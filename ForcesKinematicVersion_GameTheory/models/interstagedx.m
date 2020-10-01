@@ -13,7 +13,7 @@ function dx = interstagedx(x,u)
     beta = x(index.beta-index.nu);
     
     l = 1.19;
-    ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
+    %ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
    
     import casadi.*
     if isa(x(1), 'double')
@@ -25,7 +25,7 @@ function dx = interstagedx(x,u)
     % Update states
     dx(index.x-index.nu)=v*cos(theta);
     dx(index.y-index.nu)=v*sin(theta);
-    dx(index.theta-index.nu)=v/l*tan(ackermannAngle);
+    dx(index.theta-index.nu)=v/l*tan(beta);
     dx(index.v-index.nu)=ab;
     dx(index.ab-index.nu)=dotab;
     dx(index.beta-index.nu)=dotbeta;

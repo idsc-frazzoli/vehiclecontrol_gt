@@ -58,7 +58,7 @@ switch NUM_Vehicles
             end
             if strcmp(Game,'IBR')
                 pointsO=18;
-                NUM_const=7;
+                NUM_const=4;
             end
         else
             parameters_2_vehicles_TestAlpha
@@ -567,8 +567,8 @@ if strcmp(Compiled,'no')
             %limit lateral acceleration
             model.nh = NUM_const; 
             model.ineq = @(z,p) nlconst(z,p);
-            model.hu = [0;1;0;0;0;0];
-            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];
+            model.hu = [0;0;0];
+            model.hl = [-inf;-inf;-inf];
         case 2
             switch Game
                 case 'PG'
@@ -600,11 +600,11 @@ if strcmp(Compiled,'no')
                             %non linear
                             model.nh = NUM_const; 
                             model.ineq = @(z,p) nlconst_PG(z,p);
-                            model.hu = [0;1;0;0;0;0;...
-                                        0;1;0;0;0;0;...
+                            model.hu = [0;0;0;...
+                                        0;0;0;...
                                         0];%
-                            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
-                                        -inf;-inf;-inf;-inf;-inf;-inf;...
+                            model.hl = [-inf;-inf;-inf;...
+                                        -inf;-inf;-inf;...
                                         -inf];%
                         case 'yes'
                             %limit lateral acceleration
@@ -618,21 +618,21 @@ if strcmp(Compiled,'no')
                                         -inf];
                     end
                 case 'IBR'
-                    switch Alpha
-                        case 'no'
-                            %limit lateral acceleration
-                            model.nh = NUM_const; 
-                            model.ineq = @(z,p) nlconst_IBR(z,p);
-                            model.hu = [0;1;0;0;0;0;...
-                                        0];
-                            model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;...
-                                        -inf];
-                        case 'yes'
+%                     switch Alpha
+%                         case 'no'
+%                             %limit lateral acceleration
+%                             model.nh = NUM_const; 
+%                             model.ineq = @(z,p) nlconst_IBR(z,p);
+%                             model.hu = [0;0;0;...
+%                                         0];
+%                             model.hl = [-inf;-inf;-inf;...
+%                                         -inf];
+%                         case 'yes'
                             model.nh = 4; 
-                            model.ineq = @(z,p) nlconst_IBR_alpha(z,p);
+                            model.ineq = @(z,p) nlconst_IBR(z,p);
                             model.hu = [0;0;0;0];
                             model.hl = [-inf;-inf;-inf;-inf];
-                    end
+%                     end
              end
         case 3
             switch Game

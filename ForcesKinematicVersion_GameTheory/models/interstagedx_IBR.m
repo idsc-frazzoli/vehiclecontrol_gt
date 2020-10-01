@@ -13,7 +13,7 @@ function dx = interstagedx_IBR(x,u)
     beta = x(index_IBR.beta-index_IBR.nu);
     
     l = 1.19;
-    ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
+    %ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
    
     import casadi.*
     if isa(x(1), 'double')
@@ -25,7 +25,7 @@ function dx = interstagedx_IBR(x,u)
     % Update states
     dx(index_IBR.x-index_IBR.nu)=v*cos(theta);
     dx(index_IBR.y-index_IBR.nu)=v*sin(theta);
-    dx(index_IBR.theta-index_IBR.nu)=v/l*tan(ackermannAngle);
+    dx(index_IBR.theta-index_IBR.nu)=v/l*tan(beta);
     dx(index_IBR.v-index_IBR.nu)=ab;
     dx(index_IBR.ab-index_IBR.nu)=dotab;
     dx(index_IBR.beta-index_IBR.nu)=dotbeta;
