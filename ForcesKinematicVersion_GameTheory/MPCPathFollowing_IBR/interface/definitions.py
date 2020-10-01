@@ -1,11 +1,11 @@
 import numpy
 import ctypes
 
-name = "MPCPathFollowing_2v_alpha"
+name = "MPCPathFollowing_IBR"
 requires_callback = True
-lib = "lib/MPCPathFollowing_2v_alpha.dll"
-lib_static = "lib/MPCPathFollowing_2v_alpha_static.lib"
-c_header = "include/MPCPathFollowing_2v_alpha.h"
+lib = "lib/MPCPathFollowing_IBR.dll"
+lib_static = "lib/MPCPathFollowing_IBR_static.lib"
+c_header = "include/MPCPathFollowing_IBR.h"
 
 # Parameter             | Type    | Scalar type      | Ctypes type    | Numpy type   | Shape     | Len
 params = \

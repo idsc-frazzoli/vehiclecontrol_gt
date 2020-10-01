@@ -32,9 +32,9 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
                     % PG+alpha
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
-Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
+Condition   = 'dec'; % 'cen','dec'; 'dec' for 2 vehicles only
 Game        = 'IBR'; % 'PG'; 'IBR' has simulation for 'dec' only.
-Alpha       = 'yes'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
+Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Alpha')
@@ -116,14 +116,14 @@ switch NUM_Vehicles
             case 'PG'
                 indexes_3_vehicles
             case 'IBR'
-                indexes_3_vehicles_IBR %%% Not supported
+                indexes_3_vehicles_IBR 
         end
     case 5
         switch Game
             case 'PG'
                 indexes_5_vehicles
             case 'IBR'
-                indexes_5_vehicles_IBR %%% Not supported
+                indexes_5_vehicles_IBR
        end
 end
 
