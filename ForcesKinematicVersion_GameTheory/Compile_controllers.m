@@ -24,7 +24,7 @@ clear all
 %close all
 
 % configuration
-NUM_Vehicles = 2; %1,2,3,5
+NUM_Vehicles = 5; %1,2,3,5
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
@@ -32,8 +32,8 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
                     % PG+alpha
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
-Condition   = 'dec'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'IBR'; % 'PG'; 'IBR' has simulation for 'dec' only.
+Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
+Game        = 'PG'; % 'PG'; 'IBR' has simulation for 'dec' only.
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
@@ -42,6 +42,10 @@ if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
 end
 if strcmp(Condition,'dec') && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Condition')
+    return
+end
+if strcmp(Condition,'cen') && strcmp(Game,'IBR') && NUM_Vehicles==2
+    warning('Configuration not supported, change NUM_Vehicles or Condition or Game')
     return
 end
 %% Parameters Definitions (parameters_vector folder)
@@ -87,29 +91,25 @@ switch NUM_Vehicles
     case 1
         indexes_1_vehicle
     case 2
-        switch Alpha
-            case 'no'
-                switch Game
-                    case 'PG'
+        switch Game
+            case 'IBR'
+                indexes_2_vehicles_IBR
+            case 'PG'
+                switch Alpha
+                    case 'no'
                         indexes_2_vehicles
-                    case 'IBR'
-                        indexes_2_vehicles_IBR
-                    otherwise
-                        error('Change Game')
-                end
-            case 'yes'
-                if strcmp(TestAlpha1shot,'no')
-                    switch Game
-                        case 'PG'
+                    case 'yes'
+                        if strcmp(TestAlpha1shot,'no')
                             indexes_2_vehicles_alpha
-                        case 'IBR'
-                            indexes_2_vehicles_IBR
-                    end
-                else
-                    index_2_vehicles_TestAlpha
+                        else
+                            index_2_vehicles_TestAlpha
+                            
+                        end
+                    otherwise
+                        error('Change Alpha')
                 end
             otherwise
-                error('Change Alpha')
+                error('Change Game')
         end
     case 3
         switch Game
@@ -139,14 +139,8 @@ if strcmp(Compiled,'no')
         case 2
             switch Game
                 case 'PG'
-                    switch Alpha
-                        case 'no'
-                            model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
-                                @(x,u,p)interstagedx_PG(x,u),integrator_stepsize,p);
-                        case 'yes'
-                            model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
-                                @(x,u,p)interstagedx_PG_alpha(x,u),integrator_stepsize,p);
-                    end
+                        model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                               @(x,u,p)interstagedx_PG(x,u),integrator_stepsize,p);
                 case 'IBR'
                         model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
@@ -588,44 +582,20 @@ if strcmp(Compiled,'no')
 
                     % collision
                     model.lb(index.slack2)=0;
-                    switch Alpha
-                        case 'no'
-                            %non linear
-                            model.nh = NUM_const; 
-                            model.ineq = @(z,p) nlconst_PG(z,p);
-                            model.hu = [0;0;0;...
-                                        0;0;0;...
-                                        0];%
-                            model.hl = [-inf;-inf;-inf;...
-                                        -inf;-inf;-inf;...
-                                        -inf];%
-                        case 'yes'
-                            %limit lateral acceleration
-                            model.nh = 7; 
-                            model.ineq = @(z,p) nlconst_alpha(z,p);
-                            model.hu = [0;0;0;...
-                                        0;0;0;...
-                                        0];%
-                            model.hl = [-inf;-inf;-inf;...
-                                        -inf;-inf;-inf;...
-                                        -inf];
-                    end
+                    
+                    model.nh = NUM_const; 
+                    model.ineq = @(z,p) nlconst_PG(z,p);
+                    model.hu = [0;0;0;...
+                                0;0;0;...
+                                0];%
+                    model.hl = [-inf;-inf;-inf;...
+                                -inf;-inf;-inf;...
+                                -inf];%
                 case 'IBR'
-%                     switch Alpha
-%                         case 'no'
-%                             %limit lateral acceleration
-%                             model.nh = NUM_const; 
-%                             model.ineq = @(z,p) nlconst_IBR(z,p);
-%                             model.hu = [0;0;0;...
-%                                         0];
-%                             model.hl = [-inf;-inf;-inf;...
-%                                         -inf];
-%                         case 'yes'
-                            model.nh = 4; 
-                            model.ineq = @(z,p) nlconst_IBR(z,p);
-                            model.hu = [0;0;0;0];
-                            model.hl = [-inf;-inf;-inf;-inf];
-%                     end
+                    model.nh = 4; 
+                    model.ineq = @(z,p) nlconst_IBR(z,p);
+                    model.hu = [0;0;0;0];
+                    model.hl = [-inf;-inf;-inf;-inf];
              end
         case 3
             switch Game
@@ -810,17 +780,17 @@ if strcmp(Compiled,'no')
         case 1
             codeoptions = getOptions('MPCPathFollowing_1v');
         case 2
-            switch Alpha
-                case 'no'
-                    switch Game
-                        case 'PG'
-                            codeoptions = getOptions('MPCPathFollowing_2v');
-                        case 'IBR'
-                            codeoptions = getOptions('MPCPathFollowing_IBR');
+            switch Game
+                case 'PG'
+                    switch Alpha
+                        case 'no'
+                        	codeoptions = getOptions('MPCPathFollowing_2v');
+                        case 'yes'
+                            codeoptions = getOptions('MPCPathFollowing_2v_alpha');
                     end
-                case 'yes'
-                    codeoptions = getOptions('MPCPathFollowing_2v_alpha');
-            end
+                case 'IBR'
+                    codeoptions = getOptions('MPCPathFollowing_2v_IBR');
+           end
         case 3
             switch Game
                 case 'PG'

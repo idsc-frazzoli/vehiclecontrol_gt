@@ -300,7 +300,7 @@ for i =1:tend
 
     x0 = outputM';
     u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
-    [xhist,time] = euler(@(x,u)interstagedx_IBR_alpha(x,u),xs,u,...
+    [xhist,time] = euler(@(x,u)interstagedx_IBR(x,u),xs,u,...
         integrator_stepsize/eulersteps);
     xs = xhist(end,:);
     %xs
@@ -320,7 +320,7 @@ for i =1:tend
     %outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
     x02 = outputM2';
     u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
-    [xhist2,time2] = euler(@(x2,u2)interstagedx_IBR_alpha(x2,u2),...
+    [xhist2,time2] = euler(@(x2,u2)interstagedx_IBR(x2,u2),...
         xs2,u2,integrator_stepsize/eulersteps);
     xs2 = xhist2(end,:);
     %xs2
@@ -340,7 +340,7 @@ for i =1:tend
     
     x03 = outputM3';
     u3 = repmat(outputM3(1,1:index_IBR.nu),eulersteps,1);
-    [xhist3,time3] = euler(@(x3,u3)interstagedx_IBR_alpha(x3,u3),...
+    [xhist3,time3] = euler(@(x3,u3)interstagedx_IBR(x3,u3),...
         xs3,u3,integrator_stepsize/eulersteps);
     xs3 = xhist3(end,:);
     %xs3

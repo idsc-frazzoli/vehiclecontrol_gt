@@ -166,7 +166,7 @@ for i =1:tend
     
      
     %go kart 1
-    [output,exitflag,info] = MPCPathFollowing_IBR(problem);
+    [output,exitflag,info] = MPCPathFollowing_2v_IBR(problem);
     solvetimes(end+1)=info.solvetime;
     if(exitflag==0)
         a =a+ 1;
@@ -181,7 +181,7 @@ for i =1:tend
     problem2.all_parameters(index_IBR.yComp:model.npar:end)=...
         outputM(:,index_IBR.y);
     %go kart 2
-    [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem2);
+    [output2,exitflag2,info2] = MPCPathFollowing_2v_IBR(problem2);
     solvetimes2(end+1)=info2.solvetime;
     if(exitflag2==0)
         a2 =a2+ 1;
@@ -203,7 +203,7 @@ for i =1:tend
 
     x0 = outputM';
     u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
-    [xhist,time] = euler(@(x,u)interstagedx_IBR_alpha(x,u),xs,u,...
+    [xhist,time] = euler(@(x,u)interstagedx_IBR(x,u),xs,u,...
         integrator_stepsize/eulersteps);
     xs = xhist(end,:);
     xs
@@ -224,7 +224,7 @@ for i =1:tend
     Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
     x02 = outputM2';
     u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
-    [xhist2,time2] = euler(@(x2,u2)interstagedx_IBR_alpha(x2,u2),...
+    [xhist2,time2] = euler(@(x2,u2)interstagedx_IBR(x2,u2),...
         xs2,u2,integrator_stepsize/eulersteps);
     xs2 = xhist2(end,:);
     xs2
