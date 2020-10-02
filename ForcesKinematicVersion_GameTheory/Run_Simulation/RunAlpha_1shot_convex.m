@@ -269,7 +269,7 @@ for kk=1:length(alpha1)
                                                                 Pos2(end,2)];
             problem_IBR.x0 = x0_IBR(:);
             %go kart 1
-            [output,exitflag,info] = MPCPathFollowing_IBR(problem_IBR);
+            [output,exitflag,info] = MPCPathFollowing_2v_IBR(problem_IBR);
             if(exitflag==0)
                 a =a+ 1;
             end
@@ -289,7 +289,7 @@ for kk=1:length(alpha1)
             problem_IBR2.x0 = x0_IBR2(:);
 
             %go kart 2
-            [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem_IBR2);
+            [output2,exitflag2,info2] = MPCPathFollowing_2v_IBR(problem_IBR2);
             if(exitflag2==0)
                 a2 =a2+ 1;
             end
@@ -332,7 +332,7 @@ for kk=1:length(alpha1)
             problem_IBR2.x0 = x0_IBR2(:);
 
             %go kart 1
-            [output2,exitflag2,info2] = MPCPathFollowing_IBR(problem_IBR2);
+            [output2,exitflag2,info2] = MPCPathFollowing_2v_IBR(problem_IBR2);
             if(exitflag2==0)
                 a2 =a2+ 1;
             end
@@ -350,7 +350,7 @@ for kk=1:length(alpha1)
                 outputM2(:,index_IBR.y);
             problem_IBR.x0 = x0_IBR(:);
             %go kart 2
-            [output,exitflag,info] = MPCPathFollowing_IBR(problem_IBR);
+            [output,exitflag,info] = MPCPathFollowing_2v_IBR(problem_IBR);
             if(exitflag==0)
                 a =a+ 1;
             end
