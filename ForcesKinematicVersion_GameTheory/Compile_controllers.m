@@ -44,6 +44,10 @@ if strcmp(Condition,'dec') && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Condition')
     return
 end
+if strcmp(Simulation,'yes') && strcmp(TestAlpha1shot,'yes')
+    warning('Configuration not supported, change Simulation or TestAlpha1shot')
+    return
+end
 %% Parameters Definitions (parameters_vector folder)
 switch NUM_Vehicles
     case 1

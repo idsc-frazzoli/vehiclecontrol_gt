@@ -127,25 +127,31 @@ tstart = 1;
 tstart2 = 1;
 for kk=1:length(alpha1)
     
-    if(1)
+    if kk==1
         figure(1)
         plot(pstart(1),pstart(2)-dis,'g*')
         hold on
         plot(pstart2(1)+dis,pstart2(2),'g*') 
         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-        hold on
-        plot(leftline(:,1),leftline(:,2),'k')
-        plot(middleline(:,1),middleline(:,2),'k--')
-        plot(rightline(:,1),rightline(:,2),'k')
-        plot(leftline2(:,1),leftline2(:,2),'k')
-        plot(middleline2(:,1),middleline2(:,2),'k--')
-        plot(rightline2(:,1),rightline2(:,2),'k')
+        I=imread('strada1.png');
+        h=image([20 80],[20 80],I);
+        CP=0:0.01:2*pi;
+        gklx = 1.5*cos(CP);
+        gkly = 1.5*sin(CP);
+        gklp = [gklx;gkly];
+
+%         plot(leftline(:,1),leftline(:,2),'k')
+%         plot(middleline(:,1),middleline(:,2),'k--')
+%         plot(rightline(:,1),rightline(:,2),'k')
+%         plot(leftline2(:,1),leftline2(:,2),'k')
+%         plot(middleline2(:,1),middleline2(:,2),'k--')
+%         plot(rightline2(:,1),rightline2(:,2),'k')
         grid on
         title('trajectory')
         xlabel('X')
         ylabel('Y')
-
+        
         figure(2)
         hold on
         grid on
@@ -272,11 +278,19 @@ for kk=1:length(alpha1)
         opt(kk)=optA(kk)+optB(kk);
         Progress1(kk)=outputM(1,index_IBR.s);
         Progress2(kk)=outputM2(1,index_IBR.s);
-        
+        iff=1;
         figure(1)
         plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'.-','Color',[0,alpha1(kk),1])
         plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'.-','Color',[1,1-alpha1(kk),0])
-
+        theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
+        R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+        rgklp = [outputM(iff+1,index_IBR.x);outputM(iff+1,index_IBR.y)]+R*gklp;
+        fill(rgklp(1,:),rgklp(2,:),'b');
+    %     
+        theta2 = atan2(outputM2(iff+1,index_IBR.y)-outputM2(iff,index_IBR.y),outputM2(iff+1,index_IBR.x)-outputM2(iff,index_IBR.x)); % to rotate 90 counterclockwise
+        R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
+        rgklp = [outputM2(iff+1,index_IBR.x);outputM2(iff+1,index_IBR.y)]+R*gklp;
+        fill(rgklp(1,:),rgklp(2,:),'r');
         figure(2)
         plot(outputM(:,index_IBR.theta),'.-','Color',[0,alpha1(kk),1])
         plot(outputM2(:,index_IBR.theta),'.-','Color',[1,1-alpha1(kk),0])
@@ -376,7 +390,7 @@ for kk=1:length(alpha1)
         figure(1)
         plot(outputM(:,index.x),outputM(:,index.y),'.-','Color',[0,alpha1(kk),1])
         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'.-','Color',[1,1-alpha1(kk),0])
-
+        axis equal
         figure(2)
         plot(outputM(:,index.theta),'.-','Color',[0,alpha1(kk),1])
         plot(outputM(:,index.theta_k2),'.-','Color',[1,1-alpha1(kk),0])
