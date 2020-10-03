@@ -1,5 +1,5 @@
 % go kart parameters
-maxSpeed = 9;
+maxSpeed = 9;%10;
 maxxacc = 5;
 maxyacc = 8;
 latacclim = 6;
@@ -17,6 +17,13 @@ pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
 dist=3;            % min distance available
+
+% alpha parameters for CF (only if alpha condition active, update pointsO)
+alpha1=1;
+alpha2=1;
+alpha3=1;
+alpha4=1;
+alpha5=1;
 
 % Splines
 pointsO = 23;      % N gokart parameters + N cost function parameters
@@ -50,6 +57,7 @@ ds_min=-1;
 % beta constraint (steering angle)
 beta_max=0.5;
 beta_min=-0.5;
+
 %% Spline Points
 points3 = [30,35,40,45,50,55,60,65,70,75,80,85,90;...          %x
            50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y

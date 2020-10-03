@@ -9,30 +9,21 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=0.6;    % lateral error param cost
+platerror=2;    % lateral error param cost
 pprog=0.2;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
-pdotbeta=0.2;      % steering velocity parameter cost
+pdotbeta=0.4;      % steering velocity parameter cost
 pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
 dist=3;            % min distance available
 
-% % cost function parameters
-% plagerror=1;       % proj error param cost
-% platerror=0.01;    % lateral error param cost
-% pprog=0.2;         % progress parameter cost
-% pab=0.0004;        % acc parameter cost
-% pdotbeta=0.1;      % steering velocity parameter cost
-% pspeedcost=0.2;    % parameter for cost that occurs when max_speed is exceeded
-% pslack=5;          % slack variable 
-% pslack2=10;        % collision cost
-% dist=3;            % min distance available
-
 % alpha parameters for CF (only if alpha condition active, update pointsO)
-alpha1=0.5;
+alpha1=1;
 alpha2=1;
 alpha3=1;
+alpha4=1;
+alpha5=1;
 
 % Splines
 pointsO = 16;      % N gokart parameters + N cost function parameters
@@ -89,7 +80,7 @@ points4 = [30,35,40,45,50,55,60,65,70,75,80,85,90;...          %x
 points5 = [70,65,60,55,50,45,40,35,30,25,20;...          %x
           40,40,40,40,40,40,40,40,40,40,40; ...    %y
           3,3,3,3,3,3,3,3,3,3,3]';
-%        
+     
 solvetimes  = [];
 solvetimes2 = [];
 solvetimes3 = [];

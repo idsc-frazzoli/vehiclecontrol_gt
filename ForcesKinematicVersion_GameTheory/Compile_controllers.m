@@ -33,7 +33,7 @@ TestAlpha1shot='yes';% 'yes' or 'no', yes if you want to test alpha.
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'PG'; % 'PG'; 'IBR';
+Game        = 'IBR'; % 'PG'; 'IBR';
 Alpha       = 'yes'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
@@ -83,44 +83,43 @@ end
 
 %% State and Input Definitions 
 global index index_IBR
-switch NUM_Vehicles
-    case 1
-        indexes_1_vehicle
-    case 2
-        switch Game
-            case 'IBR'
-                indexes_2_vehicles_IBR
-            case 'PG'
-                switch Alpha
-                    case 'no'
-                        indexes_2_vehicles
-                    case 'yes'
-                        if strcmp(TestAlpha1shot,'no')
+if strcmp(TestAlpha1shot,'no')
+    switch NUM_Vehicles
+        case 1
+            indexes_1_vehicle
+        case 2
+            switch Game
+                case 'IBR'
+                    indexes_2_vehicles_IBR
+                case 'PG'
+                    switch Alpha
+                        case 'no'
+                            indexes_2_vehicles
+                        case 'yes'
                             indexes_2_vehicles_alpha
-                        else
-                            index_2_vehicles_TestAlpha
-                            
-                        end
-                    otherwise
-                        error('Change Alpha')
-                end
-            otherwise
-                error('Change Game')
-        end
-    case 3
-        switch Game
-            case 'PG'
-                indexes_3_vehicles
-            case 'IBR'
-                indexes_3_vehicles_IBR 
-        end
-    case 5
-        switch Game
-            case 'PG'
-                indexes_5_vehicles
-            case 'IBR'
-                indexes_5_vehicles_IBR
-       end
+                        otherwise
+                            error('Change Alpha')
+                    end
+                otherwise
+                    error('Change Game')
+            end
+        case 3
+            switch Game
+                case 'PG'
+                    indexes_3_vehicles
+                case 'IBR'
+                    indexes_3_vehicles_IBR 
+            end
+        case 5
+            switch Game
+                case 'PG'
+                    indexes_5_vehicles
+                case 'IBR'
+                    indexes_5_vehicles_IBR
+            end
+    end
+else
+    index_2_vehicles_TestAlpha
 end
 
 if strcmp(Compiled,'no')
@@ -654,7 +653,7 @@ if strcmp(Compiled,'no')
                                 -inf;-inf;-inf;...
                                 -inf;-inf;-inf];%
                 case 'IBR'
-                    model.nh = 5; 
+                    model.nh = NUM_const; 
                     model.ineq = @(z,p) nlconst_IBR_3(z,p);
                     model.hu = [0;0;0;0;0];
                     model.hl = [-inf;-inf;-inf;-inf;-inf];
@@ -764,7 +763,7 @@ if strcmp(Compiled,'no')
                                 -inf;-inf;-inf;-inf;-inf;-inf;...
                                 -inf];%
                 case 'IBR'
-                    model.nh = 7; 
+                    model.nh = NUM_const; 
                     model.ineq = @(z,p) nlconst_IBR_5(z,p);
                     model.hu = [0;0;0;0;0;0;0];
                     model.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];

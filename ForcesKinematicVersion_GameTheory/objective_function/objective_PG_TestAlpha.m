@@ -43,19 +43,19 @@ function [lagcost,latcost,reg,prog,slack,speedcost,lagcost_k2,...
     
     speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
-    latcost = platerror*laterror^2;
+    latcost = platerror*latErrorPunisher(laterror);
     prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
     speedcost_k2 = speedPunisher(z(index.v_k2),vmax)*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
-    latcost_k2 = platerror*laterror_k2^2;
+    latcost_k2 = platerror*latErrorPunisher(laterror_k2);
     prog_k2 = -pprog*z(index.ds_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
-    f = alpha1*(lagcost+latcost+reg+prog+pslack*slack+speedcost)+...
-        alpha2*(lagcost_k2+latcost_k2+reg_k2+prog_k2+pslack*slack_k2+...
-        speedcost_k2)+pslack2*slack2;
-    f1 = lagcost+latcost+reg+prog+pslack*slack+speedcost;
-    f2 = lagcost_k2+latcost_k2+reg_k2+prog_k2+pslack*slack_k2+...
+    f = alpha1*prog+lagcost+latcost+reg+pslack*slack+speedcost+...
+        alpha2*prog_k2+lagcost_k2+latcost_k2+reg_k2+pslack*slack_k2+...
+        speedcost_k2+pslack2*slack2;
+    f1 = prog+lagcost+latcost+reg++pslack*slack+speedcost;
+    f2 = prog_k2+lagcost_k2+latcost_k2+reg_k2+pslack*slack_k2+...
         speedcost_k2;
 end
