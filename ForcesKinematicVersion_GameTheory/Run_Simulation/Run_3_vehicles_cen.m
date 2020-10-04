@@ -61,7 +61,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs(index.x_k3-index.nu)=pstart3(1)-dis;
 xs(index.y_k3-index.nu)=pstart3(2);
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=7;
+xs(index.v_k3-index.nu)=6;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
@@ -206,17 +206,19 @@ if tend==1
 %         plot(rightline(:,1),rightline(:,2),'k')
 %         plot(leftline2(:,1),leftline2(:,2),'k')
 %         plot(middleline2(:,1),middleline2(:,2),'k-.')
-%         plot(rightline2(:,1),rightline2(:,2),'k')
-        CP=0:0.01:2*pi;
-        gklx = 1.5*cos(CP);
-        gkly = 1.5*sin(CP);
-        gklp = [gklx;gkly];
+% %         plot(rightline2(:,1),rightline2(:,2),'k')
+%         CP=0:0.01:2*pi;
+%         gklx = 1.5*cos(CP);
+%         gkly = 1.5*sin(CP);
+%         gklp = [gklx;gkly];
+%        I=imread('strada1.png');
+%        h=image([20 80],[20 80],I);
+%        grid on
         I=imread('strada1.png');
-        h=image([20 80],[20 80],I);
-        grid on
-        title('trajectory')
-        xlabel('X')
-        ylabel('Y')
+        h=image([20 80],[80 20],I);
+        title('Trajectory')
+%         xlabel('X')
+%         ylabel('Y')
 
         figure(2)
         hold on
@@ -228,16 +230,52 @@ if tend==1
         figure(3)
         hold on
         grid on
-        title('vel')
-        xlabel('step')
-        ylabel('')
+        title('Speed')
+        xlabel('Prediction Horizon [s]')
+        ylabel('speed [m/s]')
 
         figure(1)
-        
-        plot(outputM(:,index.x),outputM(:,index.y),'b.-','Linewidth',1)
-        plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'r.-','Linewidth',1)
-        plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'g.-','Linewidth',1)
-        idx=[1,25,39];
+
+        maxxacc=max(abs(outputM(:,index.ab)));
+        maxxacc2=max(abs(outputM(:,index.ab_k2)));
+        maxxacc3=max(abs(outputM(:,index.ab_k3)));
+        hold on
+
+        for ii=1:length(outputM(1:60,index.x))-1
+            vc = outputM(ii,index.ab)/maxxacc;
+            vc2 = outputM(ii,index.ab_k2)/maxxacc2;
+            vc3 = outputM(ii,index.ab_k3)/maxxacc3;
+            next = ii+1;
+            x = [outputM(ii,index.x),outputM(next,index.x)];
+            y = [outputM(ii,index.y),outputM(next,index.y)];
+            x2 = [outputM(ii,index.x_k2),outputM(next,index.x_k2)];
+            y2 = [outputM(ii,index.y_k2),outputM(next,index.y_k2)];
+            x3 = [outputM(ii,index.x_k3),outputM(next,index.x_k3)];
+            y3 = [outputM(ii,index.y_k3),outputM(next,index.y_k3)];
+            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',2)
+            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',2)
+            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',2)
+        end
+        set(gca,'visible','off')
+        axis equal
+        CP=0:0.01:2*pi;
+        gklx = 1.5*cos(CP);
+        gkly = 1.5*sin(CP);
+        gklp = [gklx;gkly];
+%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+%         hold on
+%         plot(leftline(:,1),leftline(:,2),'k')
+%         plot(middleline(:,1),middleline(:,2),'k--')
+%         plot(rightline(:,1),rightline(:,2),'k')
+%         plot(leftline2(:,1),leftline2(:,2),'k')
+%         plot(middleline2(:,1),middleline2(:,2),'k--')
+%         plot(rightline2(:,1),rightline2(:,2),'k')
+%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
+%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
+%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
+%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+        idx=[1,33,59];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
@@ -256,6 +294,8 @@ if tend==1
             fill(rgklp(1,:),rgklp(2,:),'g');
         end
         axis equal
+        savefig('figures/3v_PG_intersection')
+        saveas(gcf,'figures/3v_PG_intersection','epsc')
         figure(2)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta),'b.-','Linewidth',1)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta_k2),'r.-','Linewidth',1)
@@ -265,7 +305,11 @@ if tend==1
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v),'b.-','Linewidth',1)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v_k2),'r.-','Linewidth',1)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v_k3),'g.-','Linewidth',1)
-        legend('Kart1','Kart2','Kart3')
+        legend('V 1','V 2','V 3')
+        set(gca,'FontSize',12)
+        savefig('figures/3v_PG_speed')
+        saveas(gcf,'figures/3v_PG_speed','epsc')
+        
         drawAnimation_P3_PH
 %         figure
 %         hold on

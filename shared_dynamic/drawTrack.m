@@ -16,7 +16,9 @@ function [leftline,middleline,rightline] = drawTrack(points,radii)
         r = casadiDynamicBSPLINERadius(prog,radii);
         middleline(i,:)=[splx,sply];
         rightline(i,:) = [splx,sply]+r*sidewards;
+        rightline1(i,:) = [splx,sply]+r/2*sidewards;
         leftline(i,:) = [splx,sply]-r*sidewards;
+        leftline1(i,:) = [splx,sply]-r/2*sidewards;
     end
 end
 

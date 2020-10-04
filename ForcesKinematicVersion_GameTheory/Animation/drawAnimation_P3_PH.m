@@ -1,10 +1,11 @@
 global index
-frames = 40;
+frames = length(outputM(:,1));
 vidfile = VideoWriter('PH_PG','Motion JPEG AVI');
 vidfile.FrameRate = 10;
 open(vidfile);
 set(gcf,'position',[100,100,1000,800])
 tracelength = 500;
+maxxacc=max(abs([outputM(:,index.ab);outputM(:,index.ab_k2);outputM(:,index.ab_k3)]));
 for iff = 1:frames-1
     figure(100)
     clf

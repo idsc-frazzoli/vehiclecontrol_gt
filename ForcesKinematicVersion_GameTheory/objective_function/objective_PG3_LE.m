@@ -16,14 +16,17 @@ function f = objective_PG3_LE(z,points,points2,points3,vmax,plagerror, platerror
     
     forward = [spldx;spldy];
     sidewards = [splsx;splsy];
-    
+    r=3;
     realPos = z([index.x,index.y]);
     centerOffset = 0.4*gokartforward(z(index.theta))';
     centerPos = realPos+centerOffset;%+0.4*forward;
     wantedpos = [splx;sply];
+    wantedpos1= [splx;sply]+r/2*sidewards;
     error = centerPos-wantedpos;
+    error1= centerPos-wantedpos1;
     lagerror = forward'*error;
     laterror = sidewards'*error;
+    laterror1 = sidewards'*error1;
     
     forward_k2 = [spldx_k2;spldy_k2];
     sidewards_k2 = [splsx_k2;splsy_k2];
@@ -32,9 +35,12 @@ function f = objective_PG3_LE(z,points,points2,points3,vmax,plagerror, platerror
     centerOffset_k2 = 0.4*gokartforward(z(index.theta_k2))';
     centerPos_k2 = realPos_k2+centerOffset_k2;%+0.4*forward;
     wantedpos_k2 = [splx_k2;sply_k2];
+    wantedpos1_k2= [splx_k2;sply_k2]+r/2*sidewards_k2;
     error_k2 = centerPos_k2-wantedpos_k2;
+    error1_k2= centerPos_k2-wantedpos1_k2;
     lagerror_k2 = forward_k2'*error_k2;
     laterror_k2 = sidewards_k2'*error_k2;
+    laterror1_k2 = sidewards_k2'*error1_k2;
     
     forward_k3 = [spldx_k3;spldy_k3];
     sidewards_k3 = [splsx_k3;splsy_k3];
@@ -43,10 +49,12 @@ function f = objective_PG3_LE(z,points,points2,points3,vmax,plagerror, platerror
     centerOffset_k3 = 0.4*gokartforward(z(index.theta_k3))';
     centerPos_k3 = realPos_k3+centerOffset_k3;%+0.4*forward;
     wantedpos_k3 = [splx_k3;sply_k3];
+    wantedpos1_k3= [splx_k3;sply_k3]+r/2*sidewards_k3;
     error_k3 = centerPos_k3-wantedpos_k3;
+    error1_k3= centerPos_k3-wantedpos1_k3;
     lagerror_k3 = forward_k3'*error_k3;
     laterror_k3 = sidewards_k3'*error_k3;
-   
+    laterror1_k3 = sidewards_k3'*error1_k3;
     %% Costs objective function
 
     slack = z(index.slack);
@@ -59,23 +67,26 @@ function f = objective_PG3_LE(z,points,points2,points3,vmax,plagerror, platerror
     speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*latErrorPunisher(laterror);
+    latcost1 = platerror/200*latErrorPunisher(laterror1);
     prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
     speedcost_k2 = speedPunisher(z(index.v_k2),vmax)*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
     latcost_k2 = platerror*latErrorPunisher(laterror_k2);
+    latcost1_k2 = platerror/200*latErrorPunisher(laterror1_k2);
     prog_k2 = -pprog*z(index.ds_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
     
     speedcost_k3 = speedPunisher(z(index.v_k3),vmax)*pspeedcost;
     lagcost_k3 = plagerror*lagerror_k3^2;
     latcost_k3 = platerror*latErrorPunisher(laterror_k3);
+    latcost1_k3 = platerror/200*latErrorPunisher(laterror1_k3);
     prog_k3 = -pprog*z(index.ds_k3);
     reg_k3 = z(index.dotab_k3).^2*pab+z(index.dotbeta_k3).^2*pdotbeta;
-    
-    f = (lagcost+latcost+reg+prog+speedcost)+pslack*slack+...
-        (lagcost_k2+latcost_k2+reg_k2+prog_k2+speedcost_k2)+pslack*slack_k2+...
-        (lagcost_k3+latcost_k3+reg_k3+prog_k3+speedcost_k3)+pslack*slack_k3+...
+    %
+    f = (lagcost+latcost+latcost1+reg+prog+speedcost)+pslack*slack+...
+        (lagcost_k2+latcost_k2+latcost1_k2+reg_k2+prog_k2+speedcost_k2)+pslack*slack_k2+...
+        (lagcost_k3+latcost_k3+latcost1_k3+reg_k3+prog_k3+speedcost_k3)+pslack*slack_k3+...
         pslack2*slack2+pslack2*slack3+pslack2*slack4;
 end

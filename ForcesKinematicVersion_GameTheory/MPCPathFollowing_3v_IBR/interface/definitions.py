@@ -9,13 +9,13 @@ c_header = "include/MPCPathFollowing_3v_IBR.h"
 
 # Parameter             | Type    | Scalar type      | Ctypes type    | Numpy type   | Shape     | Len
 params = \
-[("x0"                  , "dense" , ""               , ctypes.c_double, numpy.float64, (1200,   1), 1200),
+[("x0"                  , "dense" , ""               , ctypes.c_double, numpy.float64, (720,   1),  720),
  ("xinit"               , "dense" , ""               , ctypes.c_double, numpy.float64, (  7,   1),    7),
- ("all_parameters"      , "dense" , ""               , ctypes.c_double, numpy.float64, (5600,   1), 5600)]
+ ("all_parameters"      , "dense" , ""               , ctypes.c_double, numpy.float64, (3360,   1), 3360)]
 
 # Output                | Type    | Scalar type      | Ctypes type    | Numpy type   | Shape     | Len
 outputs = \
-[("alldata"             , ""      , ""               , ctypes.c_double, numpy.float64,     ( 12,), 1200)]
+[("alldata"             , ""      , ""               , ctypes.c_double, numpy.float64,     ( 12,),  720)]
 
 # Info Struct Fields
 info = \

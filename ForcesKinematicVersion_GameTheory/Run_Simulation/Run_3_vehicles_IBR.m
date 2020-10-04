@@ -11,7 +11,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
 xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=6;
+xs(index_IBR.v-index_IBR.nu)=7;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -46,7 +46,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs3(index_IBR.x-index_IBR.nu)=pstart3(1)-dis;
 xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
 xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-xs3(index_IBR.v-index_IBR.nu)=7;
+xs3(index_IBR.v-index_IBR.nu)=6;
 xs3(index_IBR.ab-index_IBR.nu)=0;
 xs3(index_IBR.beta-index_IBR.nu)=0;
 xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -228,7 +228,9 @@ for i =1:tend
     problem3.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos2(:,2);...
                                                          Pos2(end,2)];
     problem3.x0 = x03(:);
-        
+    
+  
+    
     %go kart 1
     [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
     solvetimes(end+1)=info.solvetime;
@@ -271,7 +273,7 @@ for i =1:tend
     problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
         outputM2(:,index_IBR.y);
     
-    %go kart 3
+        %go kart 3
     [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
     solvetimes3(end+1)=info3.solvetime;
     if(exitflag3==0)
@@ -292,6 +294,7 @@ for i =1:tend
         outputM3(:,index_IBR.x);
     problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
         outputM3(:,index_IBR.y);
+    
     
     costT1(i)=info.pobj;
     costT2(i)=info2.pobj;
@@ -390,15 +393,16 @@ end
 %[t,ab,dotbeta,x,y,theta,v,beta,s]
 if tend==1
         figure(4)
-        plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
-        hold on
-        plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
-        plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
+%         plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
+         hold on
+%         plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
+%         plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
 
-        grid on
-        title('trajectory')
-        xlabel('X')
-        ylabel('Y')
+        %grid on
+        title('Trajectory')
+        set(gca,'visible','off')
+%         xlabel('X')
+%         ylabel('Y')
         %axis equal
         
         figure(5)
@@ -415,11 +419,27 @@ if tend==1
         figure(4)
         I=imread('strada1.png');
         h=image([20 80],[20 80],I);
+        maxxacc=max(abs(outputM(:,index_IBR.ab)));
+        maxxacc2=max(abs(outputM2(:,index_IBR.ab)));
+        maxxacc3=max(abs(outputM3(:,index_IBR.ab)));
         hold on
+        
+        for ii=1:length(outputM(1:60,index_IBR.x))-1
+            vc = outputM(ii,index_IBR.ab)/maxxacc;
+            vc2 = outputM2(ii,index_IBR.ab)/maxxacc2;
+            vc3 = outputM3(ii,index_IBR.ab)/maxxacc3;
+            next = ii+1;
+            x = [outputM(ii,index_IBR.x),outputM(next,index_IBR.x)];
+            y = [outputM(ii,index_IBR.y),outputM(next,index_IBR.y)];
+            x2 = [outputM2(ii,index_IBR.x),outputM2(next,index_IBR.x)];
+            y2 = [outputM2(ii,index_IBR.y),outputM2(next,index_IBR.y)];
+            x3 = [outputM3(ii,index_IBR.x),outputM3(next,index_IBR.x)];
+            y3 = [outputM3(ii,index_IBR.y),outputM3(next,index_IBR.y)];
+            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',2)
+            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',2)
+            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',2)
+        end
         axis equal
-        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'b.-','Linewidth',1)
-        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'r.-','Linewidth',1)
-        plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'g.-','Linewidth',1)
         CP=0:0.01:2*pi;
         gklx = 1.5*cos(CP);
         gkly = 1.5*sin(CP);
@@ -437,7 +457,7 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,25,39];
+        idx=[1,30,59];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
@@ -455,18 +475,11 @@ if tend==1
             rgklp = [outputM3(iff+1,index_IBR.x);outputM3(iff+1,index_IBR.y)]+R*gklp;
             fill(rgklp(1,:),rgklp(2,:),'g');
             
-%             theta4 = atan2(outputM4(iff+1,index_IBR.y)-outputM4(iff,index_IBR.y),outputM4(iff+1,index_IBR.x)-outputM4(iff,index_IBR.x)); % to rotate 90 counterclockwise
-%             R = [cos(theta4) -sin(theta4); sin(theta4) cos(theta4)];
-%             rgklp = [outputM4(iff+1,index_IBR.x);outputM4(iff+1,index_IBR.y)]+R*gklp;
-%             fill(rgklp(1,:),rgklp(2,:),'c');
-%     
-%             theta5 = atan2(outputM5(iff+1,index_IBR.y)-outputM5(iff,index_IBR.y),outputM5(iff+1,index_IBR.x)-outputM5(iff,index_IBR.x)); % to rotate 90 counterclockwise
-%             R = [cos(theta5) -sin(theta5); sin(theta5) cos(theta5)];
-%             rgklp = [outputM5(iff+1,index_IBR.x);outputM5(iff+1,index_IBR.y)]+R*gklp;
-%             fill(rgklp(1,:),rgklp(2,:),'m');
         end
-        legend ('Vehicle 1','V 2','V 3','Trajectory 1','T 2','T 3')
+        %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
         set(gca,'FontSize',12)
+        savefig('figures/3v_IBR_intersection_b')
+        saveas(gcf,'figures/3v_IBR_intersection_b','epsc')
         figure(5)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
@@ -482,6 +495,8 @@ if tend==1
         xlabel('Prediction horizon [s]')
         ylabel('speed [m/s]')
         set(gca,'FontSize',12)
+        savefig('figures/3v_IBR_speed_b')
+        saveas(gcf,'figures/3v_IBR_speed_b','epsc')
         figure(7)
         hold on
         plot(cost1,'b*')

@@ -9,13 +9,13 @@ c_header = "include/MPCPathFollowing_3v.h"
 
 # Parameter             | Type    | Scalar type      | Ctypes type    | Numpy type   | Shape     | Len
 params = \
-[("x0"                  , "dense" , ""               , ctypes.c_double, numpy.float64, (1440,   1), 1440),
+[("x0"                  , "dense" , ""               , ctypes.c_double, numpy.float64, (2160,   1), 2160),
  ("xinit"               , "dense" , ""               , ctypes.c_double, numpy.float64, ( 21,   1),   21),
- ("all_parameters"      , "dense" , ""               , ctypes.c_double, numpy.float64, (4240,   1), 4240)]
+ ("all_parameters"      , "dense" , ""               , ctypes.c_double, numpy.float64, (7440,   1), 7440)]
 
 # Output                | Type    | Scalar type      | Ctypes type    | Numpy type   | Shape     | Len
 outputs = \
-[("alldata"             , ""      , ""               , ctypes.c_double, numpy.float64,     ( 36,), 1440)]
+[("alldata"             , ""      , ""               , ctypes.c_double, numpy.float64,     ( 36,), 2160)]
 
 # Info Struct Fields
 info = \
