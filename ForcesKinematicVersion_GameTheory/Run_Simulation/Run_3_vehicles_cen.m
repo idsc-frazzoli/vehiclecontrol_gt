@@ -194,19 +194,25 @@ end
 
 if tend==1
     figure(1)
-        plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
+%         plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
         hold on
-        plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
-        plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
-        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-        [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-        hold on
-        plot(leftline(:,1),leftline(:,2),'k')
-        plot(middleline(:,1),middleline(:,2),'k-.')
-        plot(rightline(:,1),rightline(:,2),'k')
-        plot(leftline2(:,1),leftline2(:,2),'k')
-        plot(middleline2(:,1),middleline2(:,2),'k-.')
-        plot(rightline2(:,1),rightline2(:,2),'k')
+%         plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
+%         plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
+%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+%         hold on
+%         plot(leftline(:,1),leftline(:,2),'k')
+%         plot(middleline(:,1),middleline(:,2),'k-.')
+%         plot(rightline(:,1),rightline(:,2),'k')
+%         plot(leftline2(:,1),leftline2(:,2),'k')
+%         plot(middleline2(:,1),middleline2(:,2),'k-.')
+%         plot(rightline2(:,1),rightline2(:,2),'k')
+        CP=0:0.01:2*pi;
+        gklx = 1.5*cos(CP);
+        gkly = 1.5*sin(CP);
+        gklp = [gklx;gkly];
+        I=imread('strada1.png');
+        h=image([20 80],[20 80],I);
         grid on
         title('trajectory')
         xlabel('X')
@@ -227,19 +233,38 @@ if tend==1
         ylabel('')
 
         figure(1)
+        
         plot(outputM(:,index.x),outputM(:,index.y),'b.-','Linewidth',1)
         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'r.-','Linewidth',1)
         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'g.-','Linewidth',1)
-        
+        idx=[1,25,39];
+        for jjj=1:length(idx)
+            iff= idx(jjj);
+            theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
+            R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+            rgklp = [outputM(iff+1,index.x);outputM(iff+1,index.y)]+R*gklp;
+            fill(rgklp(1,:),rgklp(2,:),'b');
+        %     
+            theta2 = atan2(outputM(iff+1,index.y_k2)-outputM(iff,index.y_k2),outputM(iff+1,index.x_k2)-outputM(iff,index.x_k2)); % to rotate 90 counterclockwise
+            R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
+            rgklp = [outputM(iff+1,index.x_k2);outputM(iff+1,index.y_k2)]+R*gklp;
+            fill(rgklp(1,:),rgklp(2,:),'r');
+        %     
+            theta3 = atan2(outputM(iff+1,index.y_k3)-outputM(iff,index.y_k3),outputM(iff+1,index.x_k3)-outputM(iff,index.x_k3)); % to rotate 90 counterclockwise
+            R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
+            rgklp = [outputM(iff+1,index.x_k3);outputM(iff+1,index.y_k3)]+R*gklp;
+            fill(rgklp(1,:),rgklp(2,:),'g');
+        end
+        axis equal
         figure(2)
-        plot(0.1:0.1:4,outputM(:,index.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM(:,index.theta_k2),'r.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM(:,index.theta_k3),'g.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta),'b.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta_k2),'r.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta_k3),'g.-','Linewidth',1)
         legend('Kart1','Kart2','Kart3')
         figure(3)
-        plot(0.1:0.1:4,outputM(:,index.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM(:,index.v_k2),'r.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM(:,index.v_k3),'g.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v),'b.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v_k2),'r.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v_k3),'g.-','Linewidth',1)
         legend('Kart1','Kart2','Kart3')
         drawAnimation_P3_PH
 %         figure

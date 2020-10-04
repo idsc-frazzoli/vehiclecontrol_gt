@@ -24,17 +24,17 @@ clear all
 %close all
 
 % configuration
-NUM_Vehicles = 2; %1,2,3,5
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
-Simulation  = 'no';% 'yes' or 'no', no if you don't want to run simulation
-TestAlpha1shot='yes';% 'yes' or 'no', yes if you want to test alpha. 
+NUM_Vehicles = 3; %1,2,3,5
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
+TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
                     % PG+alpha
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
 Game        = 'IBR'; % 'PG'; 'IBR';
-Alpha       = 'yes'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
+Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Alpha')
@@ -68,11 +68,14 @@ switch NUM_Vehicles
             parameters_2_vehicles_TestAlpha
         end
     case 3
+        parameters_3_vehicles
         switch Game
             case 'PG'
-                parameters_3_vehicles
+                pointsO = 16; 
+                NUM_const=12; % number of nonlinear constraint
             case 'IBR'
-                parameters_3_vehicles_IBR
+                pointsO = 20; 
+                NUM_const=5; % number of nonlinear constraint
         end
     case 5
         switch Game

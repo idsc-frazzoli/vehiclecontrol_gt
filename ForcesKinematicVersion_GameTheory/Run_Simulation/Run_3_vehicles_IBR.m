@@ -413,35 +413,71 @@ if tend==1
         title('Speed')
 
         figure(4)
+        I=imread('strada1.png');
+        h=image([20 80],[20 80],I);
+        hold on
+        axis equal
         plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'b.-','Linewidth',1)
         plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'r.-','Linewidth',1)
         plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'g.-','Linewidth',1)
-        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-        [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-        hold on
-        plot(leftline(:,1),leftline(:,2),'k')
-        plot(middleline(:,1),middleline(:,2),'k--')
-        plot(rightline(:,1),rightline(:,2),'k')
-        plot(leftline2(:,1),leftline2(:,2),'k')
-        plot(middleline2(:,1),middleline2(:,2),'k--')
-        plot(rightline2(:,1),rightline2(:,2),'k')
+        CP=0:0.01:2*pi;
+        gklx = 1.5*cos(CP);
+        gkly = 1.5*sin(CP);
+        gklp = [gklx;gkly];
+%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+%         hold on
+%         plot(leftline(:,1),leftline(:,2),'k')
+%         plot(middleline(:,1),middleline(:,2),'k--')
+%         plot(rightline(:,1),rightline(:,2),'k')
+%         plot(leftline2(:,1),leftline2(:,2),'k')
+%         plot(middleline2(:,1),middleline2(:,2),'k--')
+%         plot(rightline2(:,1),rightline2(:,2),'k')
 %         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+        idx=[1,25,39];
+        for jjj=1:length(idx)
+            iff= idx(jjj);
+            theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
+            R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+            rgklp = [outputM(iff+1,index_IBR.x);outputM(iff+1,index_IBR.y)]+R*gklp;
+            fill(rgklp(1,:),rgklp(2,:),'b');
+        %     
+            theta2 = atan2(outputM2(iff+1,index_IBR.y)-outputM2(iff,index_IBR.y),outputM2(iff+1,index_IBR.x)-outputM2(iff,index_IBR.x)); % to rotate 90 counterclockwise
+            R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
+            rgklp = [outputM2(iff+1,index_IBR.x);outputM2(iff+1,index_IBR.y)]+R*gklp;
+            fill(rgklp(1,:),rgklp(2,:),'r');
+        %     
+            theta3 = atan2(outputM3(iff+1,index_IBR.y)-outputM3(iff,index_IBR.y),outputM3(iff+1,index_IBR.x)-outputM3(iff,index_IBR.x)); % to rotate 90 counterclockwise
+            R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
+            rgklp = [outputM3(iff+1,index_IBR.x);outputM3(iff+1,index_IBR.y)]+R*gklp;
+            fill(rgklp(1,:),rgklp(2,:),'g');
+            
+%             theta4 = atan2(outputM4(iff+1,index_IBR.y)-outputM4(iff,index_IBR.y),outputM4(iff+1,index_IBR.x)-outputM4(iff,index_IBR.x)); % to rotate 90 counterclockwise
+%             R = [cos(theta4) -sin(theta4); sin(theta4) cos(theta4)];
+%             rgklp = [outputM4(iff+1,index_IBR.x);outputM4(iff+1,index_IBR.y)]+R*gklp;
+%             fill(rgklp(1,:),rgklp(2,:),'c');
+%     
+%             theta5 = atan2(outputM5(iff+1,index_IBR.y)-outputM5(iff,index_IBR.y),outputM5(iff+1,index_IBR.x)-outputM5(iff,index_IBR.x)); % to rotate 90 counterclockwise
+%             R = [cos(theta5) -sin(theta5); sin(theta5) cos(theta5)];
+%             rgklp = [outputM5(iff+1,index_IBR.x);outputM5(iff+1,index_IBR.y)]+R*gklp;
+%             fill(rgklp(1,:),rgklp(2,:),'m');
+        end
         legend ('Vehicle 1','V 2','V 3','Trajectory 1','T 2','T 3')
         set(gca,'FontSize',12)
         figure(5)
-        plot(0.1:0.1:4,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3')
         xlabel('Prediction horizon [s]')
         set(gca,'FontSize',12)
         figure(6)
-        plot(0.1:0.1:4,outputM(:,index_IBR.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.v),'b.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3')
         xlabel('Prediction horizon [s]')
         ylabel('speed [m/s]')

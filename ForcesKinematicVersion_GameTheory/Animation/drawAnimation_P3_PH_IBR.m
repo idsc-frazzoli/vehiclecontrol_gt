@@ -6,7 +6,7 @@ open(vidfile);
 set(gcf,'position',[100,100,1000,800])
 tracelength = 500;
 for iff = 1:frames-1
-    figure(1)
+    figure(100)
     clf
     daspect([1 1 1])
     hold on
@@ -14,18 +14,20 @@ for iff = 1:frames-1
     if(1)
     %points = [36.2,52,57.2,53,55,47,41.8;44.933,58.2,53.8,49,44,43,38.33;1.8,1.8,1.8,0.2,0.2,0.2,1.8]';
     %points = [36.2,52,57.2,53,52,47,41.8;44.933,58.2,53.8,49,44,43,38.33;1.8,1.8,1.8,0.5,0.5,0.5,1.8]';
-       [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3)+0.5);
-       [rleftline,rmiddleline,rrightline] = drawTrack(points(:,1:2),points(:,3));
-       plot(leftline(:,1),leftline(:,2),'b')
-       plot(rightline(:,1),rightline(:,2),'b')
-       plot(rleftline(:,1),rleftline(:,2),'--b')
-       plot(rrightline(:,1),rrightline(:,2),'--b')
-       [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3)+0.5);
-       [rleftline2,rmiddleline2,rrightline2] = drawTrack(points2(:,1:2),points2(:,3));
-       plot(leftline2(:,1),leftline2(:,2),'b')
-       plot(rightline2(:,1),rightline2(:,2),'b')
-       plot(rleftline2(:,1),rleftline2(:,2),'--b')
-       plot(rrightline2(:,1),rrightline2(:,2),'--b')
+         I=imread('strada1.png');
+         h=image([20 80],[20 80],I);
+%        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3)+0.5);
+%        [rleftline,rmiddleline,rrightline] = drawTrack(points(:,1:2),points(:,3));
+%        plot(leftline(:,1),leftline(:,2),'b')
+%        plot(rightline(:,1),rightline(:,2),'b')
+%        plot(rleftline(:,1),rleftline(:,2),'--b')
+%        plot(rrightline(:,1),rrightline(:,2),'--b')
+%        [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3)+0.5);
+%        [rleftline2,rmiddleline2,rrightline2] = drawTrack(points2(:,1:2),points2(:,3));
+%        plot(leftline2(:,1),leftline2(:,2),'b')
+%        plot(rightline2(:,1),rightline2(:,2),'b')
+%        plot(rleftline2(:,1),rleftline2(:,2),'--b')
+%        plot(rrightline2(:,1),rrightline2(:,2),'--b')
 %        [leftline3,middleline3,rightline3] = drawTrack(points3(:,1:2),points3(:,3)+0.5);
 %        [rleftline3,rmiddleline3,rrightline3] = drawTrack(points3(:,1:2),points3(:,3));
 %        plot(leftline3(:,1),leftline3(:,2),'b')

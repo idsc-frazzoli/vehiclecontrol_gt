@@ -12,42 +12,44 @@ for iff = 1:frames-1
     hold on
     set(gca,'visible','off')
     if(1)
+        I=imread('strada3.png');
+        h=image([20 80],[20 80],I);
     %points = [36.2,52,57.2,53,55,47,41.8;44.933,58.2,53.8,49,44,43,38.33;1.8,1.8,1.8,0.2,0.2,0.2,1.8]';
     %points = [36.2,52,57.2,53,52,47,41.8;44.933,58.2,53.8,49,44,43,38.33;1.8,1.8,1.8,0.5,0.5,0.5,1.8]';
-       [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3)+0.5);
-       [rleftline,rmiddleline,rrightline] = drawTrack(points(:,1:2),points(:,3));
-       plot(leftline(:,1),leftline(:,2),'b')
-       plot(rightline(:,1),rightline(:,2),'b')
-       plot(rleftline(:,1),rleftline(:,2),'--b')
-       plot(rrightline(:,1),rrightline(:,2),'--b')
-       
-       [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3)+0.5);
-       [rleftline2,rmiddleline2,rrightline2] = drawTrack(points2(:,1:2),points2(:,3));
-       plot(leftline2(:,1),leftline2(:,2),'r')
-       plot(rightline2(:,1),rightline2(:,2),'r')
-       plot(rleftline2(:,1),rleftline2(:,2),'--r')
-       plot(rrightline2(:,1),rrightline2(:,2),'--r')
-       
-       [leftline3,middleline3,rightline3] = drawTrack(points3(:,1:2),points3(:,3)+0.5);
-       [rleftline3,rmiddleline3,rrightline3] = drawTrack(points3(:,1:2),points3(:,3));
-       plot(leftline3(:,1),leftline3(:,2),'g')
-       plot(rightline3(:,1),rightline3(:,2),'g')
-       plot(rleftline3(:,1),rleftline3(:,2),'--g')
-       plot(rrightline3(:,1),rrightline3(:,2),'--g')
-       
-       [leftline4,middleline4,rightline4] = drawTrack(points4(:,1:2),points4(:,3)+0.5);
-       [rleftline4,rmiddleline4,rrightline4] = drawTrack(points4(:,1:2),points4(:,3));
-       plot(leftline4(:,1),leftline4(:,2),'c')
-       plot(rightline4(:,1),rightline4(:,2),'c')
-       plot(rleftline4(:,1),rleftline4(:,2),'--c')
-       plot(rrightline4(:,1),rrightline4(:,2),'--c')
-       
-       [leftline5,middleline5,rightline5] = drawTrack(points5(:,1:2),points5(:,3)+0.5);
-       [rleftline5,rmiddleline5,rrightline5] = drawTrack(points5(:,1:2),points5(:,3));
-       plot(leftline5(:,1),leftline5(:,2),'m')
-       plot(rightline5(:,1),rightline5(:,2),'m')
-       plot(rleftline5(:,1),rleftline5(:,2),'--m')
-       plot(rrightline5(:,1),rrightline5(:,2),'--m')
+%        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3)+0.5);
+%        [rleftline,rmiddleline,rrightline] = drawTrack(points(:,1:2),points(:,3));
+%        plot(leftline(:,1),leftline(:,2),'b')
+%        plot(rightline(:,1),rightline(:,2),'b')
+%        plot(rleftline(:,1),rleftline(:,2),'--b')
+%        plot(rrightline(:,1),rrightline(:,2),'--b')
+%        
+%        [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3)+0.5);
+%        [rleftline2,rmiddleline2,rrightline2] = drawTrack(points2(:,1:2),points2(:,3));
+%        plot(leftline2(:,1),leftline2(:,2),'r')
+%        plot(rightline2(:,1),rightline2(:,2),'r')
+%        plot(rleftline2(:,1),rleftline2(:,2),'--r')
+%        plot(rrightline2(:,1),rrightline2(:,2),'--r')
+%        
+%        [leftline3,middleline3,rightline3] = drawTrack(points3(:,1:2),points3(:,3)+0.5);
+%        [rleftline3,rmiddleline3,rrightline3] = drawTrack(points3(:,1:2),points3(:,3));
+%        plot(leftline3(:,1),leftline3(:,2),'g')
+%        plot(rightline3(:,1),rightline3(:,2),'g')
+%        plot(rleftline3(:,1),rleftline3(:,2),'--g')
+%        plot(rrightline3(:,1),rrightline3(:,2),'--g')
+%        
+%        [leftline4,middleline4,rightline4] = drawTrack(points4(:,1:2),points4(:,3)+0.5);
+%        [rleftline4,rmiddleline4,rrightline4] = drawTrack(points4(:,1:2),points4(:,3));
+%        plot(leftline4(:,1),leftline4(:,2),'c')
+%        plot(rightline4(:,1),rightline4(:,2),'c')
+%        plot(rleftline4(:,1),rleftline4(:,2),'--c')
+%        plot(rrightline4(:,1),rrightline4(:,2),'--c')
+%        
+%        [leftline5,middleline5,rightline5] = drawTrack(points5(:,1:2),points5(:,3)+0.5);
+%        [rleftline5,rmiddleline5,rrightline5] = drawTrack(points5(:,1:2),points5(:,3));
+%        plot(leftline5(:,1),leftline5(:,2),'m')
+%        plot(rightline5(:,1),rightline5(:,2),'m')
+%        plot(rleftline5(:,1),rleftline5(:,2),'--m')
+%        plot(rrightline5(:,1),rrightline5(:,2),'--m')
        
 %        [leftline3,middleline3,rightline3] = drawTrack(points3(:,1:2),points3(:,3)+0.5);
 %        [rleftline3,rmiddleline3,rrightline3] = drawTrack(points3(:,1:2),points3(:,3));
