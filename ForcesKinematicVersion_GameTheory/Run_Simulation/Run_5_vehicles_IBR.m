@@ -11,7 +11,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
 xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=6;
+xs(index_IBR.v-index_IBR.nu)=7;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -32,7 +32,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs2(index_IBR.x-index_IBR.nu)=pstart2(1)-dis;
 xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
 xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-xs2(index_IBR.v-index_IBR.nu)=6;
+xs2(index_IBR.v-index_IBR.nu)=7;
 xs2(index_IBR.ab-index_IBR.nu)=0;
 xs2(index_IBR.beta-index_IBR.nu)=0;
 xs2(index_IBR.s-index_IBR.nu)=0.01;
@@ -46,7 +46,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs3(index_IBR.x-index_IBR.nu)=pstart3(1);
 xs3(index_IBR.y-index_IBR.nu)=pstart3(2)-dis;
 xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-xs3(index_IBR.v-index_IBR.nu)=6;
+xs3(index_IBR.v-index_IBR.nu)=7;
 xs3(index_IBR.ab-index_IBR.nu)=0;
 xs3(index_IBR.beta-index_IBR.nu)=0;
 xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -60,7 +60,7 @@ pangle4 = atan2(pdir4(2),pdir4(1));
 xs4(index_IBR.x-index_IBR.nu)=pstart4(1);
 xs4(index_IBR.y-index_IBR.nu)=pstart4(2)-dis;
 xs4(index_IBR.theta-index_IBR.nu)=pangle4;
-xs4(index_IBR.v-index_IBR.nu)=6;
+xs4(index_IBR.v-index_IBR.nu)=7;
 xs4(index_IBR.ab-index_IBR.nu)=0;
 xs4(index_IBR.beta-index_IBR.nu)=0;
 xs4(index_IBR.s-index_IBR.nu)=0.01;
@@ -74,7 +74,7 @@ pangle5 = atan2(pdir5(2),pdir5(1));
 xs5(index_IBR.x-index_IBR.nu)=pstart5(1);
 xs5(index_IBR.y-index_IBR.nu)=pstart5(2)+dis;
 xs5(index_IBR.theta-index_IBR.nu)=pangle5;
-xs5(index_IBR.v-index_IBR.nu)=6;
+xs5(index_IBR.v-index_IBR.nu)=7;
 xs5(index_IBR.ab-index_IBR.nu)=0;
 xs5(index_IBR.beta-index_IBR.nu)=0;
 xs5(index_IBR.s-index_IBR.nu)=0.01;
@@ -719,17 +719,18 @@ end
 %[t,ab,dotbeta,x,y,theta,v,beta,s]
 if tend==1
         figure(4)
-        plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
+        %plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
         hold on
-        plot(pstart2(1)-dis,pstart2(2),'r*','Linewidth',1) 
-        plot(pstart3(1),pstart3(2)-dis,'g*','Linewidth',1) 
-        plot(pstart4(1),pstart4(2)-dis,'c*','Linewidth',1) 
-        plot(pstart5(1),pstart5(2)+dis,'m*','Linewidth',1) 
-        
+        %plot(pstart2(1)-dis,pstart2(2),'r*','Linewidth',1) 
+        %plot(pstart3(1),pstart3(2)-dis,'g*','Linewidth',1) 
+        %plot(pstart4(1),pstart4(2)-dis,'c*','Linewidth',1) 
+        %plot(pstart5(1),pstart5(2)+dis,'m*','Linewidth',1) 
+        set(gca,'visible','off')
+        axis equal
         grid on
-        title('trajectory')
-        xlabel('X')
-        ylabel('Y')
+        title('Trajectory')
+%         xlabel('X')
+%         ylabel('Y')
         %axis equal
         
         figure(5)
@@ -750,12 +751,36 @@ if tend==1
         gklp = [gklx;gkly];
         I=imread('strada3.png');
         h=image([20 80],[20 80],I);
+        maxxacc=max(abs(outputM(:,index_IBR.ab)));
+        maxxacc2=max(abs(outputM2(:,index_IBR.ab)));
+        maxxacc3=max(abs(outputM3(:,index_IBR.ab)));
+        maxxacc4=max(abs(outputM4(:,index_IBR.ab)));
+        maxxacc5=max(abs(outputM5(:,index_IBR.ab)));
         hold on
-        plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'b.-','Linewidth',1)
-        plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'r.-','Linewidth',1)
-        plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'g.-','Linewidth',1)
-        plot(outputM4(:,index_IBR.x),outputM4(:,index_IBR.y),'c.-','Linewidth',1)
-        plot(outputM5(:,index_IBR.x),outputM5(:,index_IBR.y),'m.-','Linewidth',1)
+        
+        for ii=1:length(outputM(1:60,index_IBR.x))-1
+            vc = outputM(ii,index_IBR.ab)/maxxacc;
+            vc2 = outputM2(ii,index_IBR.ab)/maxxacc2;
+            vc3 = outputM3(ii,index_IBR.ab)/maxxacc3;
+            vc4 = outputM4(ii,index_IBR.ab)/maxxacc4;
+            vc5 = outputM5(ii,index_IBR.ab)/maxxacc5;
+            next = ii+1;
+            x = [outputM(ii,index_IBR.x),outputM(next,index_IBR.x)];
+            y = [outputM(ii,index_IBR.y),outputM(next,index_IBR.y)];
+            x2 = [outputM2(ii,index_IBR.x),outputM2(next,index_IBR.x)];
+            y2 = [outputM2(ii,index_IBR.y),outputM2(next,index_IBR.y)];
+            x3 = [outputM3(ii,index_IBR.x),outputM3(next,index_IBR.x)];
+            y3 = [outputM3(ii,index_IBR.y),outputM3(next,index_IBR.y)];
+            x4 = [outputM2(ii,index_IBR.x),outputM4(next,index_IBR.x)];
+            y4 = [outputM2(ii,index_IBR.y),outputM4(next,index_IBR.y)];
+            x5 = [outputM3(ii,index_IBR.x),outputM5(next,index_IBR.x)];
+            y5 = [outputM3(ii,index_IBR.y),outputM5(next,index_IBR.y)];
+            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',2)
+            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',2)
+            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',2)
+            line(x4,y4,'Color',[0,0.5+0.5*vc4,0.5+0.5*vc4],'Linewidth',2)
+            line(x5,y5,'Color',[0.5+0.5*vc5,0,0.5+0.5*vc5],'Linewidth',2)
+        end
 %         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
 %         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
 %         [leftline3,middleline3,rightline3] = drawTrack(points3(:,1:2),points3(:,3));
@@ -796,7 +821,7 @@ if tend==1
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
 %         legend ('Vehicle 1','V 2','V 3','V 4','V 5','Trajectory 1','T 2','T 3','T 4','T 5')
-        idx=[1,25,39];
+        idx=[1,25,59];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
@@ -825,27 +850,32 @@ if tend==1
             fill(rgklp(1,:),rgklp(2,:),'m');
         end
         set(gca,'FontSize',12)
-        axis equal
+        
+        savefig('figures/5v_IBR_intersection')
+        saveas(gcf,'figures/5v_IBR_intersection','epsc')
+        
         
         figure(5)
-        plot(0.1:0.1:4,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM4(:,index_IBR.theta),'c.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM5(:,index_IBR.theta),'m.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM4(:,index_IBR.theta),'c.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM5(:,index_IBR.theta),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
         xlabel('Prediction horizon [s]')
         set(gca,'FontSize',12)
         figure(6)
-        plot(0.1:0.1:4,outputM(:,index_IBR.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM4(:,index_IBR.v),'c.-','Linewidth',1)
-        plot(0.1:0.1:4,outputM5(:,index_IBR.v),'m.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.v),'b.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM4(:,index_IBR.v),'c.-','Linewidth',1)
+        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM5(:,index_IBR.v),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
         xlabel('Prediction horizon [s]')
         ylabel('speed [m/s]')
         set(gca,'FontSize',12)
+		savefig('figures/5v_IBR_speed')
+        saveas(gcf,'figures/5v_IBR_speed','epsc')
         figure(7)
         hold on
         plot(cost1,'b*')

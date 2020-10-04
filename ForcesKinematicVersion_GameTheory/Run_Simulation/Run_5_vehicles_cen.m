@@ -334,9 +334,9 @@ if tend==1
         figure(3)
         hold on
         grid on
-        title('vel')
-        xlabel('step')
-        ylabel('')
+        title('Speed')
+        xlabel('Prediction Horizon [s]')
+        ylabel('speed [m/s]')
 
         figure(1)
         plot(outputM(:,index.x),outputM(:,index.y),'b.-','Linewidth',1)
@@ -347,7 +347,57 @@ if tend==1
         %legend ('Vehicle 1','V 2','V 3','V 4','V 5','Trajectory 1','T 2','T 3','T 4','T 5')
         set(gca,'FontSize',12)
         %set(gca,'FontSize',12)
-        idx=[1,25,39];
+        %idx=[1,25,39];
+		maxxacc=max(abs(outputM(:,index.ab)));
+        maxxacc2=max(abs(outputM(:,index.ab_k2)));
+        maxxacc3=max(abs(outputM(:,index.ab_k3)));
+        maxxacc4=max(abs(outputM(:,index.ab_k4)));
+        maxxacc5=max(abs(outputM(:,index.ab_k5)));
+        hold on
+
+        for ii=1:length(outputM(1:60,index.x))-1
+            vc = outputM(ii,index.ab)/maxxacc;
+            vc2 = outputM(ii,index.ab_k2)/maxxacc2;
+            vc3 = outputM(ii,index.ab_k3)/maxxacc3;
+            vc4 = outputM(ii,index.ab_k4)/maxxacc4;
+            vc5 = outputM(ii,index.ab_k5)/maxxacc5;
+            next = ii+1;
+            x = [outputM(ii,index.x),outputM(next,index.x)];
+            y = [outputM(ii,index.y),outputM(next,index.y)];
+            x2 = [outputM(ii,index.x_k2),outputM(next,index.x_k2)];
+            y2 = [outputM(ii,index.y_k2),outputM(next,index.y_k2)];
+            x3 = [outputM(ii,index.x_k3),outputM(next,index.x_k3)];
+            y3 = [outputM(ii,index.y_k3),outputM(next,index.y_k3)];
+            x4 = [outputM(ii,index.x_k4),outputM(next,index.x_k4)];
+            y4 = [outputM(ii,index.y_k4),outputM(next,index.y_k4)];
+            x5 = [outputM(ii,index.x_k5),outputM(next,index.x_k5)];
+            y5 = [outputM(ii,index.y_k5),outputM(next,index.y_k5)];
+            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',2)
+            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',2)
+            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',2)
+            line(x4,y4,'Color',[0,0.5+0.5*vc4,0.5+0.5*vc4],'Linewidth',2)
+            line(x5,y5,'Color',[0.5+0.5*vc5,0.5+0.5*vc5,0],'Linewidth',2)
+        end
+        set(gca,'visible','off')
+        axis equal
+        CP=0:0.01:2*pi;
+        gklx = 1.5*cos(CP);
+        gkly = 1.5*sin(CP);
+        gklp = [gklx;gkly];
+%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+%         hold on
+%         plot(leftline(:,1),leftline(:,2),'k')
+%         plot(middleline(:,1),middleline(:,2),'k--')
+%         plot(rightline(:,1),rightline(:,2),'k')
+%         plot(leftline2(:,1),leftline2(:,2),'k')
+%         plot(middleline2(:,1),middleline2(:,2),'k--')
+%         plot(rightline2(:,1),rightline2(:,2),'k')
+%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
+%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
+%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
+%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+        idx=[1,33,59];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
@@ -376,7 +426,8 @@ if tend==1
             fill(rgklp(1,:),rgklp(2,:),'m');
         end
         axis equal
-
+        savefig('figures/5v_PG_intersection')
+        saveas(gcf,'figures/5v_PG_intersection','epsc')
         figure(2)
         plot(integrator_stepsize:integrator_stepsize:length(outputM(:,1))*integrator_stepsize,outputM(:,index.theta),'b.-','Linewidth',1)
         plot(integrator_stepsize:integrator_stepsize:length(outputM(:,1))*integrator_stepsize,outputM(:,index.theta_k2),'r.-','Linewidth',1)
@@ -393,6 +444,8 @@ if tend==1
         plot(integrator_stepsize:integrator_stepsize:length(outputM(:,1))*integrator_stepsize,outputM(:,index.v_k5),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
         set(gca,'FontSize',12)
+        savefig('figures/5v_PG_speed')
+        saveas(gcf,'figures/5v_PG_speed','epsc')
         
         drawAnimation_P5_PH
 %         hold on

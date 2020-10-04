@@ -5,6 +5,7 @@ vidfile.FrameRate = 10;
 open(vidfile);
 set(gcf,'position',[100,100,1000,800])
 tracelength = 500;
+maxxacc=max(abs([outputM(:,index_IBR.ab);outputM2(:,index_IBR.ab);outputM3(:,index_IBR.ab);outputM4(:,index_IBR.ab);outputM5(:,index_IBR.ab)]));
 for iff = 1:frames-1
     figure(1)
     clf
