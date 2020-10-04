@@ -11,7 +11,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
 xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=7;
+xs(index_IBR.v-index_IBR.nu)=6;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -229,51 +229,8 @@ for i =1:tend
                                                          Pos2(end,2)];
     problem3.x0 = x03(:);
     
-  
     
-    %go kart 1
-    [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
-    solvetimes(end+1)=info.solvetime;
-    if(exitflag==0)
-        a =a+ 1;
-        IND=[IND;i];
-    end
-    if(exitflag~=1 && exitflag ~=0)
-       keyboard
-    end
-    outputM = reshape(output.alldata,[model.nvar,model.N])';
-    problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
-        outputM(:,index_IBR.x);
-    problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
-        outputM(:,index_IBR.y);
-    problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
-        outputM(:,index_IBR.x);
-    problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
-        outputM(:,index_IBR.y);
-    
-    %go kart 2
-    [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
-    solvetimes2(end+1)=info2.solvetime;
-    if(exitflag2==0)
-        a2 =a2+ 1;
-        IND2=[IND2;i];
-    end
-    if(exitflag2~=1 && exitflag2 ~=0)
-        keyboard           
-    end
-
-    outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-
-    problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-        outputM2(:,index_IBR.x);
-    problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-        outputM2(:,index_IBR.y);
-    problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
-        outputM2(:,index_IBR.x);
-    problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
-        outputM2(:,index_IBR.y);
-    
-        %go kart 3
+            %go kart 3
     [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
     solvetimes3(end+1)=info3.solvetime;
     if(exitflag3==0)
@@ -295,6 +252,47 @@ for i =1:tend
     problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
         outputM3(:,index_IBR.y);
     
+   
+    %go kart 1
+    [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
+    solvetimes(end+1)=info.solvetime;
+    if(exitflag==0)
+        a =a+ 1;
+        IND=[IND;i];
+    end
+    if(exitflag~=1 && exitflag ~=0)
+       keyboard
+    end
+    outputM = reshape(output.alldata,[model.nvar,model.N])';
+    problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
+        outputM(:,index_IBR.x);
+    problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
+        outputM(:,index_IBR.y);
+    problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
+        outputM(:,index_IBR.x);
+    problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
+        outputM(:,index_IBR.y);
+     %go kart 2
+    [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
+    solvetimes2(end+1)=info2.solvetime;
+    if(exitflag2==0)
+        a2 =a2+ 1;
+        IND2=[IND2;i];
+    end
+    if(exitflag2~=1 && exitflag2 ~=0)
+        keyboard           
+    end
+
+    outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+
+    problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
+        outputM2(:,index_IBR.x);
+    problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
+        outputM2(:,index_IBR.y);
+    problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
+        outputM2(:,index_IBR.x);
+    problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
+        outputM2(:,index_IBR.y);
     
     costT1(i)=info.pobj;
     costT2(i)=info2.pobj;
@@ -478,8 +476,8 @@ if tend==1
         end
         %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
         set(gca,'FontSize',12)
-        savefig('figures/3v_IBR_intersection_b')
-        saveas(gcf,'figures/3v_IBR_intersection_b','epsc')
+        savefig('figures/3v_IBR_intersection_gbr')
+        saveas(gcf,'figures/3v_IBR_intersection_gbr','epsc')
         figure(5)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
         plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
@@ -495,8 +493,8 @@ if tend==1
         xlabel('Prediction horizon [s]')
         ylabel('speed [m/s]')
         set(gca,'FontSize',12)
-        savefig('figures/3v_IBR_speed_b')
-        saveas(gcf,'figures/3v_IBR_speed_b','epsc')
+        savefig('figures/3v_IBR_speed_gbr')
+        saveas(gcf,'figures/3v_IBR_speed_gbr','epsc')
         figure(7)
         hold on
         plot(cost1,'b*')
