@@ -9,10 +9,10 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=2;    % lateral error param cost
-pprog=0.2;         % progress parameter cost
+platerror=1;    % lateral error param cost
+pprog=0.3;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
-pdotbeta=0.4;      % steering velocity parameter cost
+pdotbeta=0.04;      % steering velocity parameter cost
 pspeedcost=0.2;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
@@ -59,9 +59,9 @@ beta_max=0.5;
 beta_min=-0.5;
 
 %% Spline Points
-points = [20,30,35,40,45,50,55,60,65,70,75,80,85,90;...          %x
-           50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y
-           3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+points = [30,35,40,45,48,50,50,50,50,50,50,50,50;...          %x
+           50,50,50,50,50,52,55,60,65,70,75,85,90; ...    %y
+           3,3,3,3,3,3,3,3,3,3,3,3,3]';
 % points = [30,35,40,45,48,50,50,52,60,65,70,80,90;...          %x
 %           50,50,50,50,50,52,57,60,60,60,60,60,60; ...    %y
 %           3,3,3,3,3,3,3,3,3,3,3,3,3]';
@@ -69,11 +69,12 @@ points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x
            80,75,70,65,60,55,50,45,40,35,30,25,20,15,10; ...    %y
            3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
 
-points3 = [50,50,50,50,50,50,50,50,50,48,45,40,35,30;...          %x
-           90,85,80,75,70,65,60,55,52,50,50,50,50,50; ...    %y
-           3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
-points3(:,2)=points3(:,2)-10;
-points3=flip(points3);
+% points3 = [50,50,50,50,50,50,50,50,50,48,45,40,35,30;...          %x
+%            90,85,80,75,70,65,60,55,52,50,50,50,50,50; ...    %y
+%            3,3,3,3,3,3,3,3,3,3,3,3,3,3]';
+% points3(:,2)=points3(:,2)-10;
+points3=flip(points2);
+points3(:,2)=points3(:,2)+10;
 
 points4 = [20,30,35,40,45,50,55,60,65,70,75,80,85,90;...          %x
           60,60,60,60,60,60,60,60,60,60,60,60,60,60; ...    %y

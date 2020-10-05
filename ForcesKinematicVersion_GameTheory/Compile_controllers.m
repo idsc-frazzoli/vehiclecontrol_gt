@@ -25,7 +25,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 5; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and

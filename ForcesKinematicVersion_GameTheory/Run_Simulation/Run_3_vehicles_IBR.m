@@ -513,5 +513,3 @@ else
     plot(cost1+cost2+cost3,'c')
     legend ('Vehicle 1','V 2','V 3','Tot')
 end
-
-
