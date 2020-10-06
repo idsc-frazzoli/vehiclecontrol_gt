@@ -92,40 +92,40 @@ function f = objective_PG5(z,points,points2,points3,points4,points5,...
     slack_k4 = z(index.slack_k4);
     slack_k5 = z(index.slack_k5);
     
-    speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
+    speedcost = (z(index.v)-vmax)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*laterror^2;
-    prog = -pprog*z(index.ds);
+    %prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
-    speedcost_k2 = speedPunisher(z(index.v_k2),vmax)*pspeedcost;
+    speedcost_k2 = (z(index.v_k2)-vmax)^2*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
     latcost_k2 = platerror*laterror_k2^2;
-    prog_k2 = -pprog*z(index.ds_k2);
+    %prog_k2 = -pprog*z(index.ds_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
     
-    speedcost_k3 = speedPunisher(z(index.v_k3),vmax)*pspeedcost;
+    speedcost_k3 = z(index.v_k3)-vmax)^2*pspeedcost;
     lagcost_k3 = plagerror*lagerror_k3^2;
     latcost_k3 = platerror*laterror_k3^2;
-    prog_k3 = -pprog*z(index.ds_k3);
+    %prog_k3 = -pprog*z(index.ds_k3);
     reg_k3 = z(index.dotab_k3).^2*pab+z(index.dotbeta_k3).^2*pdotbeta;
     
-    speedcost_k4 = speedPunisher(z(index.v_k4),vmax)*pspeedcost;
+    speedcost_k4 = (z(index.v_k4)-vmax)^2*pspeedcost;
     lagcost_k4 = plagerror*lagerror_k4^2;
     latcost_k4 = platerror*laterror_k4^2;
-    prog_k4 = -pprog*z(index.ds_k4);
+    %prog_k4 = -pprog*z(index.ds_k4);
     reg_k4 = z(index.dotab_k4).^2*pab+z(index.dotbeta_k4).^2*pdotbeta;
     
-    speedcost_k5 = speedPunisher(z(index.v_k5),vmax)*pspeedcost;
+    speedcost_k5 = (z(index.v_k5)-vmax)^2*pspeedcost;
     lagcost_k5 = plagerror*lagerror_k5^2;
     latcost_k5 = platerror*laterror_k5^2;
-    prog_k5 = -pprog*z(index.ds_k5);
+    %prog_k5 = -pprog*z(index.ds_k5);
     reg_k5 = z(index.dotab_k5).^2*pab+z(index.dotbeta_k5).^2*pdotbeta;
 
-    f = lagcost   +latcost   +reg   +prog   +pslack*slack   +speedcost   +...
-        lagcost_k2+latcost_k2+reg_k2+prog_k2+pslack*slack_k2+speedcost_k2+...
-        lagcost_k3+latcost_k3+reg_k3+prog_k3+pslack*slack_k3+speedcost_k3+...
-        lagcost_k4+latcost_k4+reg_k4+prog_k4+pslack*slack_k4+speedcost_k4+...
-        lagcost_k5+latcost_k5+reg_k5+prog_k5+pslack*slack_k5+speedcost_k5+...
+    f = lagcost   +latcost   +reg   +pslack*slack   +speedcost   +...
+        lagcost_k2+latcost_k2+reg_k2+pslack*slack_k2+speedcost_k2+...
+        lagcost_k3+latcost_k3+reg_k3+pslack*slack_k3+speedcost_k3+...
+        lagcost_k4+latcost_k4+reg_k4+pslack*slack_k4+speedcost_k4+...
+        lagcost_k5+latcost_k5+reg_k5+pslack*slack_k5+speedcost_k5+...
         pslack2*slack2+pslack2*slack3+pslack2*slack4;
 end

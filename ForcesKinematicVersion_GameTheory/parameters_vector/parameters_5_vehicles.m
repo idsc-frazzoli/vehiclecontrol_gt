@@ -16,7 +16,7 @@ pdotbeta=0.04;      % steering velocity parameter cost
 pspeedcost=0.2;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
-dist=3.5;            % min distance available
+dist=4;            % min distance available
 
 % alpha parameters for CF (only if alpha condition active, update pointsO)
 alpha1=1;

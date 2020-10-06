@@ -105,31 +105,31 @@ function f = objective_PG5_LE(z,points,points2,points3,points4,points5,vmax,plag
     slack_k4 = z(index.slack_k4);
     slack_k5 = z(index.slack_k5);
     
-    speedcost = z(index.v)^2*pspeedcost;
+    speedcost = (z(index.v)-vmax)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*latErrorPunisher(laterror);
     latcost1 = platerror/200*latErrorPunisher(laterror1);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
-    speedcost_k2 = z(index.v_k2)^2*pspeedcost;
+    speedcost_k2 = (z(index.v_k2)-vmax)^2*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
     latcost_k2 = platerror*latErrorPunisher(laterror_k2);
     latcost1_k2 = platerror/200*latErrorPunisher(laterror1_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
     
-    speedcost_k3 = z(index.v_k3)^2*pspeedcost;
+    speedcost_k3 = (z(index.v_k3)-vmax)^2*pspeedcost;
     lagcost_k3 = plagerror*lagerror_k3^2;
     latcost_k3 = platerror*latErrorPunisher(laterror_k3);
     latcost1_k3 = platerror/200*latErrorPunisher(laterror1_k3);
     reg_k3 = z(index.dotab_k3).^2*pab+z(index.dotbeta_k3).^2*pdotbeta;
     
-    speedcost_k4 = z(index.v_k4)^2*pspeedcost;
+    speedcost_k4 = (z(index.v_k4)-vmax)^2*pspeedcost;
     lagcost_k4 = plagerror*lagerror_k4^2;
     latcost_k4 = platerror*latErrorPunisher(laterror_k4);
     latcost1_k4 = platerror/200*latErrorPunisher(laterror1_k4);
     reg_k4 = z(index.dotab_k4).^2*pab+z(index.dotbeta_k4).^2*pdotbeta;
     
-    speedcost_k5 = z(index.v_k5)^2*pspeedcost;
+    speedcost_k5 = (z(index.v_k5)-vmax)^2*pspeedcost;
     lagcost_k5 = plagerror*lagerror_k5^2;
     latcost_k5 = platerror*latErrorPunisher(laterror_k5);
     latcost1_k5 = platerror/200*latErrorPunisher(laterror1_k5);

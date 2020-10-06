@@ -40,19 +40,19 @@ function f = objective_PG_alpha(z,points,points2,vmax,...
     slack2 = z(index.slack2);
     slack_k2 = z(index.slack_k2);
     
-    speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
+    speedcost = (z(index.v)-vmax)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*laterror^2;
-    prog = -pprog*z(index.ds);
+    %prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
-    speedcost_k2 = speedPunisher(z(index.v_k2),vmax)*pspeedcost;
+    speedcost_k2 = (z(index.v_k2)-vmax)^2*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
     latcost_k2 = platerror*laterror_k2^2;
-    prog_k2 = -pprog*z(index.ds_k2);
+    %prog_k2 = -pprog*z(index.ds_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
    
-    f = alpha1*prog+alpha2*prog_k2+lagcost+latcost+reg+pslack*slack+speedcost+...
+    f = +lagcost+latcost+reg+pslack*slack+alpha1*speedcost+...
         +lagcost_k2+latcost_k2+reg_k2+pslack*slack_k2+...
-        speedcost_k2+pslack2*slack2;
+        alpha1*speedcost_k2+pslack2*slack2;
 end

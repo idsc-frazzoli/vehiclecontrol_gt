@@ -23,11 +23,11 @@ function f = objective_LE(z,points,vmax, plagerror, platerror,...
 
     slack = z(index.slack);
 
-    speedcost = speedPunisher(z(index.v),vmax)*pspeedcost;
+    speedcost = (z(index.v)-vmax)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*latErrorPunisher(laterror);
     prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
-    f = lagcost+latcost+reg+prog+pslack*slack+speedcost;
+    f = lagcost+latcost+prog+reg+pslack*slack+speedcost;%
 end
