@@ -26,7 +26,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
 xs(index.y-index.nu)=pstart(2)-dis;
 xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=6;
+xs(index.v-index.nu)=8;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
@@ -43,7 +43,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs(index.x_k2-index.nu)=pstart2(1)+dis;
 xs(index.y_k2-index.nu)=pstart2(2);
 xs(index.theta_k2-index.nu)=pangle2;
-xs(index.v_k2-index.nu)=6;
+xs(index.v_k2-index.nu)=8;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
@@ -61,7 +61,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs(index.x_k3-index.nu)=pstart3(1)-dis;
 xs(index.y_k3-index.nu)=pstart3(2);
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=6;
+xs(index.v_k3-index.nu)=8;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
@@ -241,7 +241,7 @@ if tend==1
         maxxacc3=max(abs(outputM(:,index.ab_k3)));
         hold on
 
-        for ii=1:length(outputM(1:60,index.x))-1
+        for ii=1:length(outputM(1:P_H_length,index.x))-1
             vc = outputM(ii,index.ab)/maxxacc;
             vc2 = outputM(ii,index.ab_k2)/maxxacc2;
             vc3 = outputM(ii,index.ab_k3)/maxxacc3;
@@ -275,7 +275,7 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,33,59];
+        idx=[1,33,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise

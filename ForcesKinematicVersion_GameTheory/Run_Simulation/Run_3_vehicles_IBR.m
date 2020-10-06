@@ -11,7 +11,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
 xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=6;
+xs(index_IBR.v-index_IBR.nu)=8;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -32,7 +32,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs2(index_IBR.x-index_IBR.nu)=pstart2(1)+dis;
 xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
 xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-xs2(index_IBR.v-index_IBR.nu)=6;
+xs2(index_IBR.v-index_IBR.nu)=8;
 xs2(index_IBR.ab-index_IBR.nu)=0;
 xs2(index_IBR.beta-index_IBR.nu)=0;
 xs2(index_IBR.s-index_IBR.nu)=0.01;
@@ -46,7 +46,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs3(index_IBR.x-index_IBR.nu)=pstart3(1)-dis;
 xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
 xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-xs3(index_IBR.v-index_IBR.nu)=6;
+xs3(index_IBR.v-index_IBR.nu)=8;
 xs3(index_IBR.ab-index_IBR.nu)=0;
 xs3(index_IBR.beta-index_IBR.nu)=0;
 xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -422,7 +422,7 @@ if tend==1
         maxxacc3=max(abs(outputM3(:,index_IBR.ab)));
         hold on
         
-        for ii=1:length(outputM(1:60,index_IBR.x))-1
+        for ii=1:length(outputM(1:P_H_length,index_IBR.x))-1
             vc = outputM(ii,index_IBR.ab)/maxxacc;
             vc2 = outputM2(ii,index_IBR.ab)/maxxacc2;
             vc3 = outputM3(ii,index_IBR.ab)/maxxacc3;
@@ -455,7 +455,7 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,30,59];
+        idx=[1,30,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise

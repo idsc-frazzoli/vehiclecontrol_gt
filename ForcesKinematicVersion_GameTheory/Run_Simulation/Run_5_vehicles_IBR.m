@@ -758,7 +758,7 @@ if tend==1
         maxxacc5=max(abs(outputM5(:,index_IBR.ab)));
         hold on
         
-        for ii=1:length(outputM(1:50,index_IBR.x))-1
+        for ii=1:length(outputM(1:P_H_length,index_IBR.x))-1
             vc = outputM(ii,index_IBR.ab)/maxxacc;
             vc2 = outputM2(ii,index_IBR.ab)/maxxacc2;
             vc3 = outputM3(ii,index_IBR.ab)/maxxacc3;
@@ -821,7 +821,7 @@ if tend==1
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
 %         legend ('Vehicle 1','V 2','V 3','V 4','V 5','Trajectory 1','T 2','T 3','T 4','T 5')
-        idx=[1,25,49];
+        idx=[1,25,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise

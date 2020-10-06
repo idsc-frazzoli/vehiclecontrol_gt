@@ -355,7 +355,7 @@ if tend==1
         maxxacc5=max(abs(outputM(:,index.ab_k5)));
         hold on
 
-        for ii=1:length(outputM(1:50,index.x))-1
+        for ii=1:length(outputM(1:P_H_length,index.x))-1
             vc = outputM(ii,index.ab)/maxxacc;
             vc2 = outputM(ii,index.ab_k2)/maxxacc2;
             vc3 = outputM(ii,index.ab_k3)/maxxacc3;
@@ -397,7 +397,7 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,20,35,49];
+        idx=[1,20,35,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
