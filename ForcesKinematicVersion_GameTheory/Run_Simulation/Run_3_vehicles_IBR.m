@@ -228,31 +228,7 @@ for i =1:tend
     problem3.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos2(:,2);...
                                                          Pos2(end,2)];
     problem3.x0 = x03(:);
-    
-    
-            %go kart 3
-    [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
-    solvetimes3(end+1)=info3.solvetime;
-    if(exitflag3==0)
-        a3 =a3+ 1;
-        IND3=[IND3;i];
-    end
-    if(exitflag3~=1 && exitflag3 ~=0)
-        keyboard           
-    end
 
-    outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
-
-    problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-        outputM3(:,index_IBR.x);
-    problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-        outputM3(:,index_IBR.y);
-    problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-        outputM3(:,index_IBR.x);
-    problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-        outputM3(:,index_IBR.y);
-    
-   
     %go kart 1
     [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
     solvetimes(end+1)=info.solvetime;
@@ -294,6 +270,27 @@ for i =1:tend
     problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
         outputM2(:,index_IBR.y);
     
+    %go kart 3
+    [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
+    solvetimes3(end+1)=info3.solvetime;
+    if(exitflag3==0)
+        a3 =a3+ 1;
+        IND3=[IND3;i];
+    end
+    if(exitflag3~=1 && exitflag3 ~=0)
+        keyboard           
+    end
+
+    outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
+
+    problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
+        outputM3(:,index_IBR.x);
+    problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
+        outputM3(:,index_IBR.y);
+    problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
+        outputM3(:,index_IBR.x);
+    problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
+        outputM3(:,index_IBR.y);
     costT1(i)=info.pobj;
     costT2(i)=info2.pobj;
     costT3(i)=info3.pobj;
@@ -455,7 +452,7 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,30,P_H_length-1];
+        idx=[1,15,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
@@ -476,25 +473,26 @@ if tend==1
         end
         %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
         set(gca,'FontSize',12)
-        savefig('figures/3v_IBR_intersection_gbr')
-        saveas(gcf,'figures/3v_IBR_intersection_gbr','epsc')
+        savefig('figures/3v_IBR_intersection_brg')
+        saveas(gcf,'figures/3v_IBR_intersection_brg','epsc')
+        int=integrator_stepsize;
         figure(5)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3')
         xlabel('Prediction horizon [s]')
         set(gca,'FontSize',12)
         figure(6)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3')
         xlabel('Prediction horizon [s]')
         ylabel('speed [m/s]')
         set(gca,'FontSize',12)
-        savefig('figures/3v_IBR_speed_gbr')
-        saveas(gcf,'figures/3v_IBR_speed_gbr','epsc')
+        savefig('figures/3v_IBR_speed_brg')
+        saveas(gcf,'figures/3v_IBR_speed_brg','epsc')
         figure(7)
         hold on
         plot(cost1,'b*')

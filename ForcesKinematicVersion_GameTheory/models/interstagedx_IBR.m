@@ -12,7 +12,7 @@ function dx = interstagedx_IBR(x,u)
     v = x(index_IBR.v-index_IBR.nu);
     beta = x(index_IBR.beta-index_IBR.nu);
     
-    l = 1.19;
+    l = 2;
     %ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
    
     import casadi.*

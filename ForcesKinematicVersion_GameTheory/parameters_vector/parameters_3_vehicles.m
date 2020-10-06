@@ -8,7 +8,7 @@ torqueveceffect = 3;
 brakeeffect = 0; 
 
 % cost function parameters
-plagerror=1;       % proj error param cost
+plagerror=0.3;       % proj error param cost
 platerror=2;    % lateral error param cost
 pprog=0.2;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
@@ -33,7 +33,7 @@ splinestart2 = 1;
 splinestart3 = 1;
 splinestart4 = 1;
 % Stepsize
-integrator_stepsize = 0.1;
+integrator_stepsize = 0.2;
 
 % Simulation length
 tend = 1;
@@ -42,7 +42,7 @@ planintervall = 1;
 
 %% controller params %%RECOMPILE IF MODIFIED!
 NUM_const=12; % number of nonlinear constraint
-P_H_length=40; % prediction horizon length
+P_H_length=30; % prediction horizon length
 MAX_IT= 500; % N of max iterations
 
 % ds constraint (delta progress)

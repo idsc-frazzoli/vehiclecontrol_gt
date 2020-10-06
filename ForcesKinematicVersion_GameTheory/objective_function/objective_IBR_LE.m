@@ -25,12 +25,12 @@ function f = objective_IBR_LE(z,points,vmax, plagerror, platerror,...
     slack = z(index_IBR.slack);
     slack2= z(index_IBR.slack2);
     
-    speedcost = speedPunisher(z(index_IBR.v),vmax)*pspeedcost;
+    speedcost = (z(index_IBR.v)-vmax)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*latErrorPunisher(laterror);
     latcost1 = platerror/200*latErrorPunisher(laterror1);
     prog = -pprog*z(index_IBR.ds);
     reg = z(index_IBR.dotab).^2*pab+z(index_IBR.dotbeta).^2*pdotbeta;
    
-    f = lagcost+latcost+latcost1+reg+prog+speedcost+pslack*slack+pslack2*slack2;
+    f = lagcost+latcost+latcost1+reg+speedcost+pslack*slack+pslack2*slack2;+prog
 end
