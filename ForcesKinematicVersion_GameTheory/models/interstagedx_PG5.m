@@ -48,7 +48,7 @@ function dx = interstagedx_PG5(x,u)
     v_k5 = x(index.v_k5-index.nu);
     beta_k5 = x(index.beta_k5-index.nu);
     
-    l = 1.19;
+    l = 2;
  
     import casadi.*
     if isa(x(1), 'double')

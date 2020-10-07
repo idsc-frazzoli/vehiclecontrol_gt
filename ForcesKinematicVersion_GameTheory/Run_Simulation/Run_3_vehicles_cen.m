@@ -220,17 +220,16 @@ if tend==1
 %         xlabel('X')
 %         ylabel('Y')
 
-        figure(2)
-        hold on
-        grid on
-        title('steer')
-        xlabel('step')
-        ylabel('')
+%         figure(2)
+%         hold on
+%         grid on
+%         title('steer')
+%         xlabel('step')
+%         ylabel('')
 
         figure(3)
         hold on
         grid on
-        title('Speed')
         xlabel('Prediction Horizon [s]')
         ylabel('speed [m/s]')
 
@@ -275,7 +274,7 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,15,P_H_length-1];
+        idx=[1,P_H_length/2,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
@@ -296,21 +295,22 @@ if tend==1
         axis equal
         savefig('figures/3v_PG_intersection')
         saveas(gcf,'figures/3v_PG_intersection','epsc')
-        figure(2)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta_k2),'r.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.theta_k3),'g.-','Linewidth',1)
-        legend('Kart1','Kart2','Kart3')
+        int=integrator_stepsize;
+%         figure(2)
+%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
+%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
+%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
+%         legend('Kart1','Kart2','Kart3')
         figure(3)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v_k2),'r.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index.v_k3),'g.-','Linewidth',1)
-        legend('V 1','V 2','V 3')
-        set(gca,'FontSize',12)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v),'b.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k2),'r.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k3),'g.-','Linewidth',1)
+        legend('Vehicle 1','V 2','V 3')
+        set(gca,'FontSize',15)
         savefig('figures/3v_PG_speed')
         saveas(gcf,'figures/3v_PG_speed','epsc')
         
-        drawAnimation_P3_PH
+       % drawAnimation_P3_PH
 %         figure
 %         hold on
 %         plot(cost1,'b*')

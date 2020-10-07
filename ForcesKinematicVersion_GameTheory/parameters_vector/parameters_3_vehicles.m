@@ -10,13 +10,13 @@ brakeeffect = 0;
 % cost function parameters
 plagerror=0.3;       % proj error param cost
 platerror=2;    % lateral error param cost
-pprog=0.2;         % progress parameter cost
+pprog=platerror/100;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
-pdotbeta=0.2;      % steering velocity parameter cost
+pdotbeta=2;      % steering velocity parameter cost
 pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
-dist=4;            % min distance available
+dist=3.5;            % min distance available
 
 % alpha parameters for CF (only if alpha condition active, update pointsO)
 alpha1=0.5;
@@ -33,7 +33,7 @@ splinestart2 = 1;
 splinestart3 = 1;
 splinestart4 = 1;
 % Stepsize
-integrator_stepsize = 0.2;
+integrator_stepsize = 0.1;
 
 % Simulation length
 tend = 1;
@@ -42,7 +42,7 @@ planintervall = 1;
 
 %% controller params %%RECOMPILE IF MODIFIED!
 NUM_const=12; % number of nonlinear constraint
-P_H_length=30; % prediction horizon length
+P_H_length=60; % prediction horizon length
 MAX_IT= 500; % N of max iterations
 
 % ds constraint (delta progress)

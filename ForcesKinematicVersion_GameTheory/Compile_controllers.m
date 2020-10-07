@@ -25,7 +25,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -33,7 +33,7 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'PG'; % 'PG'; 'IBR';
+Game        = 'IBR'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2

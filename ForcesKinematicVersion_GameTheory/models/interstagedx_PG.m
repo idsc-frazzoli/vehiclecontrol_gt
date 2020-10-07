@@ -21,7 +21,7 @@ function dx = interstagedx_PG(x,u)
     v_k2 = x(index.v_k2-index.nu);
     beta_k2 = x(index.beta_k2-index.nu);
     
-    l = 1.19;
+    l = 2;
 %     ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
 %     ackermannAngle_k2 = -0.58*beta_k2*beta_k2*beta_k2+0.93*beta_k2;
     

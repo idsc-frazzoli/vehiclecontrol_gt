@@ -30,7 +30,7 @@ function dx = interstagedx_PG3(x,u)
     v_k3 = x(index.v_k3-index.nu);
     beta_k3 = x(index.beta_k3-index.nu);
     
-    l = 1.19;
+    l = 2;
 %     ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
 %     ackermannAngle_k2 = -0.58*beta_k2*beta_k2*beta_k2+0.93*beta_k2;
 %     ackermannAngle_k3 = -0.58*beta_k3*beta_k3*beta_k3+0.93*beta_k3;

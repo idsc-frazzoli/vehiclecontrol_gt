@@ -67,21 +67,21 @@ function f = objective_PG3_LE(z,points,points2,points3,vmax,plagerror, platerror
     speedcost = (z(index.v)-vmax)^2*pspeedcost;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*latErrorPunisher(laterror);
-    latcost1 = platerror/200*latErrorPunisher(laterror1);
+    latcost1 = pprog*laterror1^2;
     %prog = -pprog*z(index.ds);
     reg = z(index.dotab).^2*pab+z(index.dotbeta).^2*pdotbeta;
     
     speedcost_k2 = (z(index.v_k2)-vmax)^2*pspeedcost;
     lagcost_k2 = plagerror*lagerror_k2^2;
     latcost_k2 = platerror*latErrorPunisher(laterror_k2);
-    latcost1_k2 = platerror/200*latErrorPunisher(laterror1_k2);
+    latcost1_k2 = pprog*laterror1_k2^2;
     %prog_k2 = -pprog*z(index.ds_k2);
     reg_k2 = z(index.dotab_k2).^2*pab+z(index.dotbeta_k2).^2*pdotbeta;
     
     speedcost_k3 = (z(index.v_k3)-vmax)^2*pspeedcost;
     lagcost_k3 = plagerror*lagerror_k3^2;
     latcost_k3 = platerror*latErrorPunisher(laterror_k3);
-    latcost1_k3 = platerror/200*latErrorPunisher(laterror1_k3);
+    latcost1_k3 = pprog*laterror1_k3^2;
     %prog_k3 = -pprog*z(index.ds_k3);
     reg_k3 = z(index.dotab_k3).^2*pab+z(index.dotbeta_k3).^2*pdotbeta;
     %
