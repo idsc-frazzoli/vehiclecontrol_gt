@@ -8,7 +8,7 @@ torqueveceffect = 3;
 brakeeffect = 0; 
 
 % cost function parameters
-plagerror=0.3;       % proj error param cost
+plagerror=1;       % proj error param cost
 platerror=2;    % lateral error param cost
 pprog=platerror/100;         % progress parameter cost
 pab=0.0004;        % acc parameter cost

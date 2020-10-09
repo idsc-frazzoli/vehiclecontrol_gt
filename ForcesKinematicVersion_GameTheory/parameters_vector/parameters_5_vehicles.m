@@ -1,5 +1,5 @@
 % go kart parameters
-maxSpeed = 9;%10;
+maxSpeed = 7.5;%10;
 maxxacc = 5;
 maxyacc = 8;
 latacclim = 6;
@@ -9,14 +9,14 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=1;    % lateral error param cost
+platerror=2;    % lateral error param cost
 pprog=0.3;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
-pdotbeta=0.04;      % steering velocity parameter cost
-pspeedcost=0.2;    % parameter for cost that occurs when max_speed is exceeded
+pdotbeta=2;      % steering velocity parameter cost
+pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
-dist=4;            % min distance available
+dist=3.5;            % min distance available
 
 % alpha parameters for CF (only if alpha condition active, update pointsO)
 alpha1=1;
@@ -47,7 +47,7 @@ planintervall = 1;
 
 %% controller params %%RECOMPILE IF MODIFIED!
 NUM_const=25; % number of nonlinear constraint
-P_H_length=50; % prediction horizon length
+P_H_length=60; % prediction horizon length
 MAX_IT= 1000; % N of max iterations
 
 % ds constraint (delta progress)
@@ -60,7 +60,7 @@ beta_min=-0.5;
 
 %% Spline Points
 points = [30,35,40,45,48,50,50,50,50,50,50,50,50;...          %x
-           50,50,50,50,50,52,55,60,65,70,75,85,90; ...    %y
+           50,50,50,50,50,52,55,60,65,70,75,90,110; ...    %y
            3,3,3,3,3,3,3,3,3,3,3,3,3]';
 % points = [30,35,40,45,48,50,50,52,60,65,70,80,90;...          %x
 %           50,50,50,50,50,52,57,60,60,60,60,60,60; ...    %y

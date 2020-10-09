@@ -11,7 +11,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
 xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=8;
+xs(index_IBR.v-index_IBR.nu)=7;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -32,7 +32,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs2(index_IBR.x-index_IBR.nu)=pstart2(1)+dis;
 xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
 xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-xs2(index_IBR.v-index_IBR.nu)=8;
+xs2(index_IBR.v-index_IBR.nu)=7;
 xs2(index_IBR.ab-index_IBR.nu)=0;
 xs2(index_IBR.beta-index_IBR.nu)=0;
 xs2(index_IBR.s-index_IBR.nu)=0.01;
@@ -46,7 +46,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs3(index_IBR.x-index_IBR.nu)=pstart3(1)-dis;
 xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
 xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-xs3(index_IBR.v-index_IBR.nu)=8;
+xs3(index_IBR.v-index_IBR.nu)=7;
 xs3(index_IBR.ab-index_IBR.nu)=0;
 xs3(index_IBR.beta-index_IBR.nu)=0;
 xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -94,9 +94,9 @@ cost3 = zeros(length(config),tend);
 Progress1 = zeros(length(config),tend);
 Progress2 = zeros(length(config),tend);
 Progress3 = zeros(length(config),tend);
-% costT1 = zeros(tend,1);
-% costT2 = zeros(tend,1);
-% costT3 = zeros(tend,1);
+Steer1 = zeros(length(config),tend);
+Steer2 = zeros(length(config),tend);
+Steer3 = zeros(length(config),tend);
 
 for jj=1:length(config)
     %% Initialization for simulation
@@ -416,6 +416,9 @@ for jj=1:length(config)
         cost1(jj,i)=info.pobj;
         cost2(jj,i)=info2.pobj;
         cost3(jj,i)=info3.pobj;
+        Steer1(jj,i)=sum((outputM(:,index_IBR.dotbeta)).^2)*pdotbeta;
+        Steer2(jj,i)=sum((outputM2(:,index_IBR.dotbeta)).^2)*pdotbeta;
+        Steer3(jj,i)=sum((outputM3(:,index_IBR.dotbeta)).^2)*pdotbeta;
         %costS(i)=costS;
         Progress1(jj,i)=outputM(1,index_IBR.s);
         Progress2(jj,i)=outputM2(1,index_IBR.s);
@@ -570,7 +573,7 @@ for jj=1:length(config)
         plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
         hold off
         legend ('Vehicle 1','V 2','V 3','Location','southeast')
-        xlabel('Prediction horizon [s]')
+        xlabel('Time [s]')
         ylabel('speed [m/s]')
         set(gca,'FontSize',15)
         if isequal(order,[1,2,3])
@@ -607,17 +610,42 @@ for jj=1:length(config)
     
 end
 %%
-figure(1)
+figure (100)
+
+semilogy(1:length(cost1),cost1,'bx','Linewidth',2)
 hold on
-plot(1:length(cost1),cost1,'b*','Linewidth',2)
-plot(1:length(cost1),cost2,'r*','Linewidth',2)
-plot(1:length(cost1),cost3,'g*','Linewidth',2)
-plot(1:length(cost1),(cost1+cost2+cost3)/3,'c*','Linewidth',2)
+semilogy(1:length(cost1),cost2,'rx','Linewidth',2)
+semilogy(1:length(cost1),cost3,'gx','Linewidth',2)
+semilogy(1:length(cost1),(cost1+cost2+cost3)/3,'cx','Linewidth',2)
+semilogy(length(cost1)+1,0.7466,'bx','Linewidth',2)
+semilogy(length(cost1)+1,0.5770,'rx','Linewidth',2)
+semilogy(length(cost1)+1,0.5870,'gx','Linewidth',2)
+semilogy(length(cost1)+1,(1.9105)/3,'cx','Linewidth',2)
 grid on
 %title('Costs')
-xticklabels({'brg','','bgr','','rbg','','rgb','','gbr','','grb'})
-legend ('Cost Vehicle 1','Cost V 2','Cost V 3','Mean of costs')
+xticklabels({'BRG','BGR','RBG','RGB','GBR','GRB','PG'})
+legend ('V 1','V 2','V 3','Mean')
 hold off
 set(gca,'FontSize',15)
 savefig('figures/3v_IBR_costs')
 saveas(gcf,'figures/3v_IBR_costs','epsc')
+
+figure (200)
+
+plot(1:length(Steer1),Steer1,'bx','Linewidth',2)
+hold on
+plot(1:length(Steer2),Steer2,'rx','Linewidth',2)
+plot(1:length(Steer3),Steer3,'gx','Linewidth',2)
+%plot(1:length(cost1),(cost1+cost2+cost3)/3,'c*','Linewidth',2)
+plot(length(Steer1)+1,0.0552,'bx','Linewidth',2)
+plot(length(Steer1)+1,0.0094,'rx','Linewidth',2)
+plot(length(Steer1)+1,0.0092,'gx','Linewidth',2)
+%plot(length(cost1)+1,(1.9105)/3,'c*','Linewidth',2)
+grid on
+%title('Costs')
+xticklabels({'BRG','BGR','RBG','RGB','GBR','GRB','PG'})
+legend ('V 1','V 2','V 3')
+hold off
+set(gca,'FontSize',15)
+savefig('figures/3v_IBR_steer')
+saveas(gcf,'figures/3v_IBR_steer','epsc')

@@ -26,7 +26,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
 xs(index.y-index.nu)=pstart(2)-dis;
 xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=8;
+xs(index.v-index.nu)=9;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
@@ -43,7 +43,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs(index.x_k2-index.nu)=pstart2(1)-dis;
 xs(index.y_k2-index.nu)=pstart2(2);
 xs(index.theta_k2-index.nu)=pangle2;
-xs(index.v_k2-index.nu)=8;
+xs(index.v_k2-index.nu)=9;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
@@ -61,7 +61,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs(index.x_k3-index.nu)=pstart3(1);
 xs(index.y_k3-index.nu)=pstart3(2)-dis;
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=8;
+xs(index.v_k3-index.nu)=9;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
@@ -79,7 +79,7 @@ pangle4 = atan2(pdir4(2),pdir4(1));
 xs(index.x_k4-index.nu)=pstart4(1);
 xs(index.y_k4-index.nu)=pstart4(2)-dis;
 xs(index.theta_k4-index.nu)=pangle4;
-xs(index.v_k4-index.nu)=8;
+xs(index.v_k4-index.nu)=9;
 xs(index.ab_k4-index.nu)=0;
 xs(index.beta_k4-index.nu)=0;
 xs(index.s_k4-index.nu)=0.01;
@@ -97,7 +97,7 @@ pangle5 = atan2(pdir5(2),pdir5(1));
 xs(index.x_k5-index.nu)=pstart5(1);
 xs(index.y_k5-index.nu)=pstart5(2)+dis;
 xs(index.theta_k5-index.nu)=pangle5;
-xs(index.v_k5-index.nu)=8;
+xs(index.v_k5-index.nu)=9;
 xs(index.ab_k5-index.nu)=0;
 xs(index.beta_k5-index.nu)=0;
 xs(index.s_k5-index.nu)=0.01;
@@ -447,7 +447,7 @@ if tend==1
         savefig('figures/5v_PG_speed')
         saveas(gcf,'figures/5v_PG_speed','epsc')
         
-        drawAnimation_P5_PH
+       % drawAnimation_P5_PH
 %         hold on
 %         plot(cost1,'b*')
 %         plot(cost2,'r*')

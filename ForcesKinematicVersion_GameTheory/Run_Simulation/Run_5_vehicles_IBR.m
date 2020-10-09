@@ -11,7 +11,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index_IBR.x-index_IBR.nu)=pstart(1);
 xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
 xs(index_IBR.theta-index_IBR.nu)=pangle;
-xs(index_IBR.v-index_IBR.nu)=7;
+xs(index_IBR.v-index_IBR.nu)=9;
 xs(index_IBR.ab-index_IBR.nu)=0;
 xs(index_IBR.beta-index_IBR.nu)=0;
 xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -32,7 +32,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs2(index_IBR.x-index_IBR.nu)=pstart2(1)-dis;
 xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
 xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-xs2(index_IBR.v-index_IBR.nu)=7;
+xs2(index_IBR.v-index_IBR.nu)=9;
 xs2(index_IBR.ab-index_IBR.nu)=0;
 xs2(index_IBR.beta-index_IBR.nu)=0;
 xs2(index_IBR.s-index_IBR.nu)=0.01;
@@ -46,7 +46,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs3(index_IBR.x-index_IBR.nu)=pstart3(1)+dis;
 xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
 xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-xs3(index_IBR.v-index_IBR.nu)=7;
+xs3(index_IBR.v-index_IBR.nu)=9;
 xs3(index_IBR.ab-index_IBR.nu)=0;
 xs3(index_IBR.beta-index_IBR.nu)=0;
 xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -60,7 +60,7 @@ pangle4 = atan2(pdir4(2),pdir4(1));
 xs4(index_IBR.x-index_IBR.nu)=pstart4(1);
 xs4(index_IBR.y-index_IBR.nu)=pstart4(2)-dis;
 xs4(index_IBR.theta-index_IBR.nu)=pangle4;
-xs4(index_IBR.v-index_IBR.nu)=7;
+xs4(index_IBR.v-index_IBR.nu)=9;
 xs4(index_IBR.ab-index_IBR.nu)=0;
 xs4(index_IBR.beta-index_IBR.nu)=0;
 xs4(index_IBR.s-index_IBR.nu)=0.01;
@@ -74,7 +74,7 @@ pangle5 = atan2(pdir5(2),pdir5(1));
 xs5(index_IBR.x-index_IBR.nu)=pstart5(1);
 xs5(index_IBR.y-index_IBR.nu)=pstart5(2)+dis;
 xs5(index_IBR.theta-index_IBR.nu)=pangle5;
-xs5(index_IBR.v-index_IBR.nu)=7;
+xs5(index_IBR.v-index_IBR.nu)=9;
 xs5(index_IBR.ab-index_IBR.nu)=0;
 xs5(index_IBR.beta-index_IBR.nu)=0;
 xs5(index_IBR.s-index_IBR.nu)=0.01;
@@ -742,7 +742,7 @@ if tend==1
         figure(6)
         hold on
         grid on
-        title('Speed')
+        %title('Speed')
 
         figure(4)
         CP=0:0.01:2*pi;
@@ -854,24 +854,24 @@ if tend==1
         savefig('figures/5v_IBR_intersection')
         saveas(gcf,'figures/5v_IBR_intersection','epsc')
         
-        
+        int=integrator_stepsize;
         figure(5)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM4(:,index_IBR.theta),'c.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM5(:,index_IBR.theta),'m.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM4(:,index_IBR.theta),'c.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM5(:,index_IBR.theta),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
-        xlabel('Prediction horizon [s]')
+        xlabel('Time [s]')
         set(gca,'FontSize',12)
         figure(6)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM(:,index_IBR.v),'b.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM4(:,index_IBR.v),'c.-','Linewidth',1)
-        plot(0.1:0.1:length(outputM(:,1))*0.1,outputM5(:,index_IBR.v),'m.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM4(:,index_IBR.v),'c.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM5(:,index_IBR.v),'m.-','Linewidth',1)
         legend ('Vehicle 1','V 2','V 3','V 4','V 5')
-        xlabel('Prediction horizon [s]')
+        xlabel('Time [s]')
         ylabel('speed [m/s]')
         set(gca,'FontSize',12)
 		savefig('figures/5v_IBR_speed')

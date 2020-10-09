@@ -55,6 +55,7 @@ function f = objective_PG3_LE(z,points,points2,points3,vmax,plagerror, platerror
     lagerror_k3 = forward_k3'*error_k3;
     laterror_k3 = sidewards_k3'*error_k3;
     laterror1_k3 = sidewards_k3'*error1_k3;
+    
     %% Costs objective function
 
     slack = z(index.slack);

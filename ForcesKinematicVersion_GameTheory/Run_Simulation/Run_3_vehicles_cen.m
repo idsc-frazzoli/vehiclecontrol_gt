@@ -73,8 +73,22 @@ targets3 = [];
 planc = 10;
 tstart = 1;
 x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
-
-
+optA = 0;
+optB = 0;
+optC = 0;
+opt =  0;
+regABA=0;
+regABB=0;
+regABC=0;
+regBetaA=0;
+regBetaB=0;
+regBetaC=0;
+latcostA=0;
+latcostB=0;
+latcostC=0;
+speedcostA=0;
+speedcostB=0;
+speedcostC=0;
 %% Simulation
 history = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist = zeros(tend,pointsN*3+pointsN2*3+pointsN3*3+1);
@@ -188,12 +202,39 @@ for i =1:tend
         targets2 = [targets2;tx2,ty2];
         [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
         targets3 = [targets3;tx3,ty3];
-    end        
+    end      
+    if tend==1
+    %% Evaluation cost function
+    for jj=1:length(outputM)
+        [lagcost,latcost,regAB,regBeta,latcost1,slack,speedcost,lagcost_k2,...
+         latcost_k2,regAB_k2,regBeta_k2,latcost1_k2,slack_k2,speedcost_k2,...
+         latcost_k3,regAB_k3,regBeta_k3,latcost1_k3,slack_k3,speedcost_k3,f,f1,f2,f3] =...
+         objective_PG_Test3(outputM(jj,:),points,points2,points3,maxSpeed,plagerror,...
+         platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+        
+        regABA=regABA+regAB;
+        regABB=regABB+regAB_k2;
+        regABC=regABC+regAB_k3;
+        regBetaA=regBetaA+regBeta;
+        regBetaB=regBetaB+regBeta_k2;
+        regBetaC=regBetaC+regBeta_k3;
+        latcostA=latcostA+latcost+latcost1;
+        latcostB=latcostA+latcost_k2+latcost1_k2;
+        latcostC=latcostC+latcost_k3+latcost1_k3;
+        speedcostA=speedcostA+speedcost;
+        speedcostB=speedcostB+speedcost_k2;
+        speedcostC=speedcostC+speedcost_k3;
+        optA = optA+ f1;
+        optB = optB+ f2;
+        optC = optC+ f3;
+        opt  = opt+ f;
+    end
+    end
     Percentage=i/tend*100
 end
 
 if tend==1
-    figure(1)
+    figure(2)
 %         plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
         hold on
 %         plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
@@ -230,10 +271,10 @@ if tend==1
         figure(3)
         hold on
         grid on
-        xlabel('Prediction Horizon [s]')
+        xlabel('Time [s]')
         ylabel('speed [m/s]')
 
-        figure(1)
+        figure(2)
 
         maxxacc=max(abs(outputM(:,index.ab)));
         maxxacc2=max(abs(outputM(:,index.ab_k2)));
@@ -309,15 +350,14 @@ if tend==1
         set(gca,'FontSize',15)
         savefig('figures/3v_PG_speed')
         saveas(gcf,'figures/3v_PG_speed','epsc')
-        
-       % drawAnimation_P3_PH
-%         figure
-%         hold on
-%         plot(cost1,'b*')
-%         plot(cost2,'r*')
-%         plot(cost3,'g*')
-%         plot(cost1+cost2+cost3,'c*')
-%         legend('Kart1','Kart2','Kart3','Tot')
+        % drawAnimation_P3_PH
+        figure(1)
+        hold on
+        plot(optA,'b*','Linewidth',2)
+        plot(optB,'r*','Linewidth',2)
+        plot(optC,'g*','Linewidth',2)
+        plot(opt/3,'c*','Linewidth',2)
+        set(gca,'Fontsize',15)
 else
     draw3
 end
