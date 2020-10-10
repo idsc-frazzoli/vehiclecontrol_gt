@@ -16,7 +16,7 @@
 global index
 %indexes_3_vehicles
 
-dis=1.5;
+dis=0;
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
@@ -26,7 +26,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
 xs(index.y-index.nu)=pstart(2)-dis;
 xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=8;
+xs(index.v-index.nu)=maxSpeed;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
@@ -43,7 +43,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs(index.x_k2-index.nu)=pstart2(1)+dis;
 xs(index.y_k2-index.nu)=pstart2(2);
 xs(index.theta_k2-index.nu)=pangle2;
-xs(index.v_k2-index.nu)=8;
+xs(index.v_k2-index.nu)=maxSpeed;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
@@ -61,7 +61,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs(index.x_k3-index.nu)=pstart3(1)-dis;
 xs(index.y_k3-index.nu)=pstart3(2);
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=8;
+xs(index.v_k3-index.nu)=maxSpeed;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
@@ -206,21 +206,21 @@ for i =1:tend
     if tend==1
     %% Evaluation cost function
     for jj=1:length(outputM)
-        [lagcost,latcost,regAB,regBeta,latcost1,slack,speedcost,lagcost_k2,...
-         latcost_k2,regAB_k2,regBeta_k2,latcost1_k2,slack_k2,speedcost_k2,...
-         latcost_k3,regAB_k3,regBeta_k3,latcost1_k3,slack_k3,speedcost_k3,f,f1,f2,f3] =...
-         objective_PG_Test3(outputM(jj,:),points,points2,points3,maxSpeed,plagerror,...
-         platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-        
+         [lagcost,latcost,regAB,regBeta,slack,speedcost,lagcost_k2,...
+          latcost_k2,regAB_k2,regBeta_k2,slack_k2,speedcost_k2,...
+          latcost_k3,regAB_k3,regBeta_k3,slack_k3,speedcost_k3,f,f1,f2,f3] =...
+          objective_PG_Test3(outputM(jj,:),points,points2,points3,maxSpeed,plagerror,...
+          platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+      
         regABA=regABA+regAB;
         regABB=regABB+regAB_k2;
         regABC=regABC+regAB_k3;
         regBetaA=regBetaA+regBeta;
         regBetaB=regBetaB+regBeta_k2;
         regBetaC=regBetaC+regBeta_k3;
-        latcostA=latcostA+latcost+latcost1;
-        latcostB=latcostA+latcost_k2+latcost1_k2;
-        latcostC=latcostC+latcost_k3+latcost1_k3;
+        latcostA=latcostA+latcost;
+        latcostB=latcostA+latcost_k2;
+        latcostC=latcostC+latcost_k3;
         speedcostA=speedcostA+speedcost;
         speedcostB=speedcostB+speedcost_k2;
         speedcostC=speedcostC+speedcost_k3;

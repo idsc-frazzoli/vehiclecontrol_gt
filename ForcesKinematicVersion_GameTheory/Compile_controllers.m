@@ -21,7 +21,7 @@ addpath('Animation');
 clear model
 clear problem
 clear all
-%close all
+close all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5

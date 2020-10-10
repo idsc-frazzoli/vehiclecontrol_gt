@@ -9,11 +9,11 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=2;    % lateral error param cost
-pprog=platerror/100;         % progress parameter cost
+platerror=0.005;    % lateral error param cost
+pprog=0.2;         % progress parameter cost
 pab=0.0004;        % acc parameter cost
-pdotbeta=2;      % steering velocity parameter cost
-pspeedcost=0.08;    % parameter for cost that occurs when max_speed is exceeded
+pdotbeta=0.03;      % steering velocity parameter cost
+pspeedcost=1;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=1000000;        % collision cost
 dist=3.5;            % min distance available
@@ -54,16 +54,19 @@ beta_max=0.5;
 beta_min=-0.5;
 %% Spline Points
 
-points = [25,30,35,40,45,50,55,60,65,90,120,200;...          %x,75,80,85,90,95
-          50,50,50,50,50,50,50,50,50,50,50,50; ...    %y,50,50,50,50,50
-          3,3,3,3,3,3,3,3,3,3,3,3]'; %,5,5,5,5,5  
-points2 = [50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50
-          25,30,35,40,45,50,55,60,65,90,120,200; ...    %y,75,80,85,90,95
-          3,3,3,3,3,3,3,3,3,3,3,3]';  %,5,5,5,5,5
-points3 = [50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50,50,65,65,50
-           75,70,65,60,55,50,45,40,35,0,-100; ...    %y,25,20,15,10,5,0,5,92,95
-           3,3,3,3,3,3,3,3,3,3,3]';%,5,5,5,5,4,3,2,2,3
-       
+points = [25,30,35,40,45,50,55,60,65,70,75,90,100,110;...          %x,75,80,85,90,95
+          50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y,50,50,50,50,50
+          1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]'; %,5,5,5,5,5  
+points(:,2)=points(:,2)-1.75;
+points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50
+          25,30,35,40,45,50,55,60,65,70,75,80,85,90; ...    %y,75,80,85,90,95
+          1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]';  %,5,5,5,5,5
+points2(:,1)=points2(:,1)+1.75;
+points3 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50,50,65,65,50
+           75,70,65,60,55,50,45,40,35,30,25,20,15,10; ...    %y,25,20,15,10,5,0,5,92,95
+           1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]';%,5,5,5,5,4,3,2,2,3
+points3(:,1)=points3(:,1)-1.75;  
+
 solvetimes  = [];
 solvetimes2 = [];
 solvetimes3 = [];
