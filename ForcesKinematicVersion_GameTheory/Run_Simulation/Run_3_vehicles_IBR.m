@@ -2,54 +2,7 @@
 global index_IBR
 
 dis=0;
-%% Initialization for simulation
-% fpoints = points(1:2,1:2);
-% pdir = diff(fpoints);
-% [pstartx,pstarty] = casadiDynamicBSPLINE(0.01,points);
-% pstart = [pstartx,pstarty];
-% pangle = atan2(pdir(2),pdir(1));
-% xs(index_IBR.x-index_IBR.nu)=pstart(1);
-% xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
-% xs(index_IBR.theta-index_IBR.nu)=pangle;
-% xs(index_IBR.v-index_IBR.nu)=7;
-% xs(index_IBR.ab-index_IBR.nu)=0;
-% xs(index_IBR.beta-index_IBR.nu)=0;
-% xs(index_IBR.s-index_IBR.nu)=0.01;
-% plansx = [];
-% plansy = [];
-% planss = [];
-% targets = [];
-% planc = 10;
 
-%x0 = [zeros(model.N,index_IBR.nu),repmat(xs,model.N,1)]';
-
-%% Initialization for simulation 2
-% fpoints2 = points2(1:2,1:2);
-% pdir2 = diff(fpoints2);
-% [pstartx2,pstarty2] = casadiDynamicBSPLINE(0.01,points2);
-% pstart2 = [pstartx2,pstarty2];
-% pangle2 = atan2(pdir2(2),pdir2(1));
-% xs2(index_IBR.x-index_IBR.nu)=pstart2(1)+dis;
-% xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
-% xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-% xs2(index_IBR.v-index_IBR.nu)=7;
-% xs2(index_IBR.ab-index_IBR.nu)=0;
-% xs2(index_IBR.beta-index_IBR.nu)=0;
-% xs2(index_IBR.s-index_IBR.nu)=0.01;
-
-%% Initialization for simulation 3
-% fpoints3 = points3(1:2,1:2);
-% pdir3 = diff(fpoints3);
-% [pstartx3,pstarty3] = casadiDynamicBSPLINE(0.01,points3);
-% pstart3 = [pstartx3,pstarty3];
-% pangle3 = atan2(pdir3(2),pdir3(1));
-% xs3(index_IBR.x-index_IBR.nu)=pstart3(1)-dis;
-% xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
-% xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-% xs3(index_IBR.v-index_IBR.nu)=7;
-% xs3(index_IBR.ab-index_IBR.nu)=0;
-% xs3(index_IBR.beta-index_IBR.nu)=0;
-% xs3(index_IBR.s-index_IBR.nu)=0.01;
 %% Simulation
 history = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist = zeros(tend,pointsN*3+1);
@@ -283,144 +236,188 @@ for jj=1:length(config(:,1))
         problem3.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos2(:,2);...
                                                              Pos2(end,2)];
         problem3.x0 = x03(:);
-        for ii=1:length(config(1,:))
-            %go kart 1
-            [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
-            solvetimes(end+1)=info.solvetime;
-            if(exitflag==0)
-                a =a+ 1;
-                IND=[IND;i];
-            end
-            if(exitflag~=1 && exitflag ~=0)
-               keyboard
-            end
-            outputM = reshape(output.alldata,[model.nvar,model.N])';
-            x0 = outputM';
-            
-            %go kart 2
-            [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
-            solvetimes2(end+1)=info2.solvetime;
-            if(exitflag2==0)
-                a2 =a2+ 1;
-                IND2=[IND2;i];
-            end
-            if(exitflag2~=1 && exitflag2 ~=0)
-                keyboard           
-            end
+        %go kart 1
+        [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
+        solvetimes(end+1)=info.solvetime;
+        if(exitflag==0)
+            a =a+ 1;
+            IND=[IND;i];
+        end
+        if(exitflag~=1 && exitflag ~=0)
+           keyboard
+        end
+        outputMA = reshape(output.alldata,[model.nvar,model.N])';
+        x0 = outputMA';
 
-            outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-            x02=outputM2';
-            %go kart 3
-            
-            [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
-            solvetimes3(end+1)=info3.solvetime;
-            if(exitflag3==0)
-                a3 =a3+ 1;
-                IND3=[IND3;i];
-            end
-            if(exitflag3~=1 && exitflag3 ~=0)
-                keyboard           
-            end
+        %go kart 2
+        [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
+        solvetimes2(end+1)=info2.solvetime;
+        if(exitflag2==0)
+            a2 =a2+ 1;
+            IND2=[IND2;i];
+        end
+        if(exitflag2~=1 && exitflag2 ~=0)
+            keyboard           
+        end
 
-            outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
-            x03 = outputM3';
-            
-            problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                outputM(:,index_IBR.x);
-            problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                outputM(:,index_IBR.y);
-            problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                outputM(:,index_IBR.x);
-            problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                outputM(:,index_IBR.y);
+        outputMB = reshape(output2.alldata,[model.nvar,model.N])';
+        x02=outputMB';
+        %go kart 3
 
-            problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                outputM2(:,index_IBR.x);
-            problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                outputM2(:,index_IBR.y);
-            problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                outputM2(:,index_IBR.x);
-            problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                outputM2(:,index_IBR.y);
-            
-            problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                outputM3(:,index_IBR.x);
-            problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                outputM3(:,index_IBR.y);
-            problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                outputM3(:,index_IBR.x);
-            problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                outputM3(:,index_IBR.y);
-            
-            problem.x0=x0(:);
-            problem2.x0 = x02(:);
-            problem3.x0 = x03(:);
-            
-            if config(jj,ii)==1
-                %go kart 1
-                [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
-                solvetimes(end+1)=info.solvetime;
-                if(exitflag==0)
-                    a =a+ 1;
-                    IND=[IND;i];
+        [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
+        solvetimes3(end+1)=info3.solvetime;
+        if(exitflag3==0)
+            a3 =a3+ 1;
+            IND3=[IND3;i];
+        end
+        if(exitflag3~=1 && exitflag3 ~=0)
+            keyboard           
+        end
+
+        outputMC = reshape(output3.alldata,[model.nvar,model.N])';
+        x03 = outputMC';
+
+        problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
+            outputMA(:,index_IBR.x);
+        problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
+            outputMA(:,index_IBR.y);
+        problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
+            outputMA(:,index_IBR.x);
+        problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
+            outputMA(:,index_IBR.y);
+
+        problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
+            outputMB(:,index_IBR.x);
+        problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
+            outputMB(:,index_IBR.y);
+        problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
+            outputMB(:,index_IBR.x);
+        problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
+            outputMB(:,index_IBR.y);
+
+        problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
+            outputMC(:,index_IBR.x);
+        problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
+            outputMC(:,index_IBR.y);
+        problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
+            outputMC(:,index_IBR.x);
+        problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
+            outputMC(:,index_IBR.y);
+
+        problem.x0=x0(:);
+        problem2.x0 = x02(:);
+        problem3.x0 = x03(:);
+        iter=1; 
+        outputMold=outputMA;
+        outputMold2=outputMB;
+        outputMold3=outputMC;
+        while iter<=10
+            iter=iter+1;
+            for ii=1:length(config(1,:))
+                if config(jj,ii)==1
+                    %go kart 1
+                    [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
+                    solvetimes(end+1)=info.solvetime;
+                    if(exitflag==0)
+                        a =a+ 1;
+                        IND=[IND;i];
+                    end
+                    if(exitflag~=1 && exitflag ~=0)
+                       iter
+                       config(jj,ii)
+                       keyboard
+                    end
+                    outputM = reshape(output.alldata,[model.nvar,model.N])';
+                    problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
+                        outputM(:,index_IBR.x);
+                    problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
+                        outputM(:,index_IBR.y);
+                    problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
+                        outputM(:,index_IBR.x);
+                    problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
+                        outputM(:,index_IBR.y);
+                elseif  config(jj,ii)==2
+                     %go kart 2
+                    [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
+                    solvetimes2(end+1)=info2.solvetime;
+                    if(exitflag2==0)
+                        a2 =a2+ 1;
+                        IND2=[IND2;i];
+                    end
+                    if(exitflag2~=1 && exitflag2 ~=0)
+                        iter
+                        config(jj,ii)
+                        keyboard           
+                    end
+
+                    outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+
+                    problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
+                        outputM2(:,index_IBR.x);
+                    problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
+                        outputM2(:,index_IBR.y);
+                    problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
+                        outputM2(:,index_IBR.x);
+                    problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
+                        outputM2(:,index_IBR.y);
+                elseif  config(jj,ii)==3
+                    %go kart 3
+                    [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
+                    solvetimes3(end+1)=info3.solvetime;
+                    if(exitflag3==0)
+                        a3 =a3+ 1;
+                        IND3=[IND3;i];
+                    end
+                    if(exitflag3~=1 && exitflag3 ~=0)
+                        iter
+                        config(jj,ii)
+                        keyboard           
+                    end
+
+                    outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
+
+                    problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
+                        outputM3(:,index_IBR.x);
+                    problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
+                        outputM3(:,index_IBR.y);
+                    problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
+                        outputM3(:,index_IBR.x);
+                    problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
+                        outputM3(:,index_IBR.y);
+                   
                 end
-                if(exitflag~=1 && exitflag ~=0)
-                   keyboard
-                end
-                outputM = reshape(output.alldata,[model.nvar,model.N])';
-                problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                    outputM(:,index_IBR.x);
-                problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                    outputM(:,index_IBR.y);
-                problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                    outputM(:,index_IBR.x);
-                problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                    outputM(:,index_IBR.y);
-            elseif  config(jj,ii)==2
-                 %go kart 2
-                [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
-                solvetimes2(end+1)=info2.solvetime;
-                if(exitflag2==0)
-                    a2 =a2+ 1;
-                    IND2=[IND2;i];
-                end
-                if(exitflag2~=1 && exitflag2 ~=0)
-                    keyboard           
-                end
+            end
+            distanceX=outputM(:,index_IBR.x)-outputMold(:,index_IBR.x);
+            distanceY=outputM(:,index_IBR.y)-outputMold(:,index_IBR.y);
+            distanceX2=outputM2(:,index_IBR.x)-outputMold2(:,index_IBR.x);
+            distanceY2=outputM2(:,index_IBR.y)-outputMold2(:,index_IBR.y);
+            distanceX3=outputM3(:,index_IBR.x)-outputMold3(:,index_IBR.x);
+            distanceY3=outputM3(:,index_IBR.y)-outputMold3(:,index_IBR.y);
 
-                outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-
-                problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                    outputM2(:,index_IBR.x);
-                problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                    outputM2(:,index_IBR.y);
-                problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                    outputM2(:,index_IBR.x);
-                problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                    outputM2(:,index_IBR.y);
-            elseif  config(jj,ii)==3
-                %go kart 3
-                [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
-                solvetimes3(end+1)=info3.solvetime;
-                if(exitflag3==0)
-                    a3 =a3+ 1;
-                    IND3=[IND3;i];
-                end
-                if(exitflag3~=1 && exitflag3 ~=0)
-                    keyboard           
-                end
-
-                outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
-
-                problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                    outputM3(:,index_IBR.x);
-                problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                    outputM3(:,index_IBR.y);
-                problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                    outputM3(:,index_IBR.x);
-                problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                    outputM3(:,index_IBR.y);
-                
+%                     distanceXold=outputMold(:,index_IBR.x)-outputMold(:,index_IBR.x);
+%                     distanceYold=outputMold(:,index_IBR.y)-outputMold(:,index_IBR.y);
+%                     distanceX2old=outputMold2(:,index_IBR.x)-outputMold2(:,index_IBR.x);
+%                     distanceY2old=outputMold2(:,index_IBR.y)-outputMold2(:,index_IBR.y);
+%                     distanceX3old=outputMold3(:,index_IBR.x)-outputMold3(:,index_IBR.x);
+%                     distanceY3old=outputMold3(:,index_IBR.y)-outputMold3(:,index_IBR.y);
+%                     
+            squared_distance_arrayX    = sum((distanceX).^2);
+            squared_distance_arrayY    = sum((distanceY).^2);
+            squared_distance_arrayX2    = sum((distanceX2).^2);
+            squared_distance_arrayY2    = sum((distanceY2).^2);
+            squared_distance_arrayX3    = sum((distanceX3).^2);
+            squared_distance_arrayY3    = sum((distanceY3).^2);
+            par=0.07;
+            if (squared_distance_arrayX<=par && squared_distance_arrayY<=par &&...
+                squared_distance_arrayX<=par && squared_distance_arrayY<=par && ...
+                squared_distance_arrayX<=par && squared_distance_arrayY<=par && ...
+                exitflag3==1 && exitflag2==1 && exitflag==1)
+                iter-1
+                iter=11;
+            else
+                outputMold=outputM;
+                outputMold2=outputM2;
+                outputMold3=outputM3;
             end
         end
 %         costT1(i)=info.pobj;
@@ -544,8 +541,8 @@ for jj=1:length(config(:,1))
         figure(6+(jj-1)*2)
         hold on
         grid on
-        %title('Speed')
-
+        ylim([5.5,8.5])
+        
         figure(5+(jj-1)*2)
         I=imread('strada1.png');
         h=image([20 80],[20 80],I);
@@ -587,7 +584,7 @@ for jj=1:length(config(:,1))
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,P_H_length/2+7,P_H_length-1];
+        idx=[1,P_H_length/2,P_H_length-1];
         for jjj=1:length(idx)
 
             iff= idx(jjj);
@@ -610,6 +607,7 @@ for jj=1:length(config(:,1))
             fill(rgklp(1,:),rgklp(2,:),'g');
 
         end
+       
         hold off
         %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
         set(gca,'FontSize',12)
@@ -641,14 +639,22 @@ for jj=1:length(config(:,1))
 %             xlabel('Prediction horizon [s]')
 %             set(gca,'FontSize',12)
         figure(6+(jj-1)*2)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b.-','Linewidth',1)
-        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r.-','Linewidth',1)
-        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g.-','Linewidth',1)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b.-','Linewidth',2.5)
+        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r.-','Linewidth',2.5)
+        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g.-','Linewidth',2.5)
+        line([0,6],[8.4,8.4],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
         hold off
-        legend ('Vehicle 1','V 2','V 3','Location','southeast')
+        %legend ('Vehicle 1','V 2','V 3','Location','southeast')
         xlabel('Time [s]')
-        ylabel('speed [m/s]')
-        set(gca,'FontSize',15)
+        if jj==1 || jj==5
+            ylabel('speed [m/s]')
+        end
+        if jj>=2 && jj~=5
+           set(gca,'yticklabel',[])
+           grid on
+        end
+        
+        set(gca,'FontSize',18)
         if isequal(order,[1,2,3])
             savefig('figures/3v_IBR_speed_brg')
             saveas(gcf,'figures/3v_IBR_speed_brg','epsc')
@@ -684,19 +690,20 @@ for jj=1:length(config(:,1))
 end
 %%
 figure (100)
-
-plot(1:length(cost1),cost1,'bx','Linewidth',2)
+load('PG.mat')
+semilogy(1:length(cost1),cost1,'bx','Linewidth',2)
 hold on
-plot(1:length(cost1),cost2,'rx','Linewidth',2)
-plot(1:length(cost1),cost3,'gx','Linewidth',2)
-plot(1:length(cost1),(cost1+cost2+cost3)/3,'kx','Linewidth',2)
-plot(length(cost1)+1,-17.4144,'bx','Linewidth',2)
-plot(length(cost1)+1,-17.5459,'rx','Linewidth',2)
-plot(length(cost1)+1,-17.5348,'gx','Linewidth',2)
-plot(length(cost1)+1,(-52.4950)/3,'kx','Linewidth',2)
+semilogy(1:length(cost1),cost2,'rx','Linewidth',2)
+semilogy(1:length(cost1),cost3,'gx','Linewidth',2)
+semilogy(1:length(cost1),(cost1+cost2+cost3)/3,'kx','Linewidth',2)
+semilogy(length(cost1)+1,optA,'bx','Linewidth',2)
+semilogy(length(cost1)+1,optB,'rx','Linewidth',2)
+semilogy(length(cost1)+1,optC,'gx','Linewidth',2)
+semilogy(length(cost1)+1,opt/3,'kx','Linewidth',2)
 grid on
 %title('Costs')
-xticklabels({'BRG','BGR','RBG','RGB','GBR','GRB','PG'})
+xlim([0,8])
+xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG',''})
 legend ('V 1','V 2','V 3','Mean')
 hold off
 set(gca,'FontSize',15)
@@ -705,20 +712,21 @@ saveas(gcf,'figures/3v_IBR_costs','epsc')
 
 figure (200)
 
-plot(1:length(Steer1),Steer1,'bx','Linewidth',2)
+plot(1:length(Steer1),Steer1,'bx','Linewidth',2.5)
 hold on
-plot(1:length(Steer2),Steer2,'rx','Linewidth',2)
-plot(1:length(Steer3),Steer3,'gx','Linewidth',2)
+plot(1:length(Steer2),Steer2,'rx','Linewidth',2.5)
+plot(1:length(Steer3),Steer3,'gx','Linewidth',2.5)
 %plot(1:length(cost1),(cost1+cost2+cost3)/3,'c*','Linewidth',2)
-plot(length(Steer1)+1,0.0552,'bx','Linewidth',2)
-plot(length(Steer1)+1,0.0094,'rx','Linewidth',2)
-plot(length(Steer1)+1,0.0092,'gx','Linewidth',2)
+plot(length(Steer1)+1,regBetaA,'bx','Linewidth',2.5)
+plot(length(Steer1)+1,regBetaB,'rx','Linewidth',2.5)
+plot(length(Steer1)+1,regBetaC,'gx','Linewidth',2.5)
 %plot(length(cost1)+1,(1.9105)/3,'c*','Linewidth',2)
 grid on
 %title('Costs')
-xticklabels({'BRG','BGR','RBG','RGB','GBR','GRB','PG'})
+xlim([0,8])
+xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG',''})
 legend ('V 1','V 2','V 3')
 hold off
-set(gca,'FontSize',15)
+set(gca,'FontSize',18)
 savefig('figures/3v_IBR_steer')
 saveas(gcf,'figures/3v_IBR_steer','epsc')

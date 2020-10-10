@@ -1,4 +1,4 @@
-function f = objective_IBR_LE(z,points,vmax, plagerror, platerror,...
+function [lagcost,latcost,regAB,regBeta,slack,slack2,speedcost,f] = objective_IBR_LE_Test(z,points,vmax, plagerror, platerror,...
                            pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
      global index_IBR
 
@@ -10,7 +10,7 @@ function f = objective_IBR_LE(z,points,vmax, plagerror, platerror,...
     forward = [spldx;spldy];
     sidewards = [splsx;splsy];
     %r=1.5;
-    realPos = z([index_IBR.x,index_IBR.y]);
+    realPos = z([index_IBR.x,index_IBR.y])';
     centerOffset = 0.4*gokartforward(z(index_IBR.theta))';
     centerPos = realPos+centerOffset;%+0.4*forward;
     wantedpos = [splx;sply];
@@ -30,7 +30,8 @@ function f = objective_IBR_LE(z,points,vmax, plagerror, platerror,...
     latcost = platerror*laterror^2;
     %latcost1 = pprog*laterror1^2;
     %prog = -pprog*z(index_IBR.ds);
-    reg = z(index_IBR.dotab).^2*pab+z(index_IBR.dotbeta).^2*pdotbeta;
+    regAB = z(index_IBR.dotab).^2*pab;
+    regBeta=z(index_IBR.dotbeta).^2*pdotbeta;
    
-    f = lagcost+latcost+reg+speedcost+pslack*slack+pslack2*slack2;%+prog
+    f = lagcost+latcost+regAB+regBeta+speedcost+pslack*slack+pslack2*slack2;%+prog
 end

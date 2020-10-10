@@ -229,6 +229,7 @@ for i =1:tend
         optC = optC+ f3;
         opt  = opt+ f;
     end
+    save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB','regBetaC')
     end
     Percentage=i/tend*100
 end
@@ -270,10 +271,12 @@ if tend==1
 
         figure(3)
         hold on
-        grid on
         xlabel('Time [s]')
-        ylabel('speed [m/s]')
-
+        line([0,6],[8.4,8.4],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+        %title('Speed')
+        set(gca,'yticklabel',[])
+        grid on
+        ylim([5.5,8.5])
         figure(2)
 
         maxxacc=max(abs(outputM(:,index.ab)));
@@ -343,11 +346,11 @@ if tend==1
 %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
 %         legend('Kart1','Kart2','Kart3')
         figure(3)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v),'b.-','Linewidth',1)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k2),'r.-','Linewidth',1)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k3),'g.-','Linewidth',1)
-        legend('Vehicle 1','V 2','V 3')
-        set(gca,'FontSize',15)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v),'b.-','Linewidth',2.5)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k2),'r.-','Linewidth',2.5)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k3),'g.-','Linewidth',2.5)
+        %legend('Vehicle 1','V 2','V 3')
+        set(gca,'FontSize',18)
         savefig('figures/3v_PG_speed')
         saveas(gcf,'figures/3v_PG_speed','epsc')
         % drawAnimation_P3_PH
