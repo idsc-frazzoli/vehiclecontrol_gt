@@ -272,11 +272,11 @@ if tend==1
         figure(3)
         hold on
         xlabel('Time [s]')
-        line([0,6],[8.4,8.4],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+        line([0,6],[8,8],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
         %title('Speed')
         set(gca,'yticklabel',[])
         grid on
-        ylim([5.5,8.5])
+        ylim([7.5,8.2])
         figure(2)
 
         maxxacc=max(abs(outputM(:,index.ab)));

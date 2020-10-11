@@ -21,7 +21,7 @@ addpath('Animation');
 clear model
 clear problem
 clear all
-close all
+%close all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
@@ -33,7 +33,7 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'PG'; % 'PG'; 'IBR';
+Game        = 'IBR'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
@@ -516,7 +516,7 @@ if strcmp(Compiled,'no')
 
         % Velocity
         model.lb(index_IBR.v)=0;
-        model.ub(index_IBR.v)=maxSpeed+0.4;
+        model.ub(index_IBR.v)=maxSpeed;
         % Steering Angle
         model.ub(index_IBR.beta)=beta_max;
         model.lb(index_IBR.beta)=beta_min;
@@ -545,7 +545,7 @@ if strcmp(Compiled,'no')
 
         % Velocity
         model.lb(index.v)=0;
-        model.ub(index.v)=maxSpeed+0.4;
+        model.ub(index.v)=maxSpeed;
         % Steering Angle
         model.ub(index.beta)=beta_max;
         model.lb(index.beta)=beta_min;
@@ -576,7 +576,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed+0.4;
+                    model.ub(index.v_k2)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
                     model.lb(index.beta_k2)=beta_min;
@@ -617,7 +617,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed+0.4;
+                    model.ub(index.v_k2)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
                     model.lb(index.beta_k2)=beta_min;
@@ -638,7 +638,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k3)=0;
-                    model.ub(index.v_k3)=maxSpeed+0.4;
+                    model.ub(index.v_k3)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k3)=beta_max;
                     model.lb(index.beta_k3)=beta_min;

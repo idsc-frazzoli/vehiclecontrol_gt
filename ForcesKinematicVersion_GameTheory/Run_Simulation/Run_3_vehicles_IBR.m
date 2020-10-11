@@ -541,7 +541,7 @@ for jj=1:length(config(:,1))
         figure(6+(jj-1)*2)
         hold on
         grid on
-        ylim([5.5,8.5])
+        ylim([7,8.5])
         
         figure(5+(jj-1)*2)
         I=imread('strada1.png');
@@ -642,7 +642,7 @@ for jj=1:length(config(:,1))
         plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b.-','Linewidth',2.5)
         plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r.-','Linewidth',2.5)
         plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g.-','Linewidth',2.5)
-        line([0,6],[8.4,8.4],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+        line([0,6],[8.0,8.0],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
         hold off
         %legend ('Vehicle 1','V 2','V 3','Location','southeast')
         xlabel('Time [s]')

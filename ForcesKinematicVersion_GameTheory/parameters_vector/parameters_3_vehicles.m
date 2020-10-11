@@ -9,14 +9,14 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=1;       % proj error param cost
-platerror=5;    % lateral error param cost
+platerror=1;    % lateral error param cost
 pprog=0;         % progress parameter cost
-pab=0.0005;        % acc parameter cost
-pdotbeta=0.003;      % steering velocity parameter cost
-pspeedcost=0.04;    % parameter for cost that occurs when max_speed is exceeded
+pab=0.000004;        % acc parameter cost
+pdotbeta=0.03;      % steering velocity parameter cost
+pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
 pslack=10000;          % slack variable 
 pslack2=10000;        % collision cost
-dist=3.5;            % min distance available
+dist=4;            % min distance available
 
 % alpha parameters for CF (only if alpha condition active, update pointsO)
 alpha1=0.5;
@@ -54,10 +54,11 @@ beta_max=0.5;
 beta_min=-0.5;
 %% Spline Points
 
-points = [25,30,35,40,45,50,55,60,65,70,75,90,100,110;...          %x,75,80,85,90,95
+points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75;...          %x,75,80,85,90,95
           50,50,50,50,50,50,50,50,50,50,50,50,50,50; ...    %y,50,50,50,50,50
           1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]'; %,5,5,5,5,5  
-points(:,2)=points(:,2)-1.75;
+points(:,2)=points(:,2)+1.75;
+points=flip(points);
 points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50
           25,30,35,40,45,50,55,60,65,70,75,80,85,90; ...    %y,75,80,85,90,95
           1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]';  %,5,5,5,5,5
