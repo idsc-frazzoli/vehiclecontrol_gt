@@ -512,7 +512,7 @@ if strcmp(Compiled,'no')
         model.lb(index_IBR.ab)=-inf;
 
         % Slack
-        model.lb(index_IBR.slack)=0;
+        %model.lb(index_IBR.slack)=0;
 
         % Velocity
         model.lb(index_IBR.v)=0;
@@ -541,11 +541,11 @@ if strcmp(Compiled,'no')
         model.lb(index.ab)=-inf;
 
         % Slack
-        model.lb(index.slack)=0;
+        %model.lb(index.slack)=0;
 
         % Velocity
         model.lb(index.v)=0;
-        model.ub(index.v)=maxSpeed;
+        model.ub(index.v)=maxSpeed+1;
         % Steering Angle
         model.ub(index.beta)=beta_max;
         model.lb(index.beta)=beta_min;
@@ -576,7 +576,8 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed;
+                    model.ub(index.v_k2)=maxSpeed+1;
+                    
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
                     model.lb(index.beta_k2)=beta_min;
@@ -613,11 +614,11 @@ if strcmp(Compiled,'no')
                     model.lb(index.ab_k2)=-inf;
 
                     % Slack Variables Constraint (input)
-                    model.lb(index.slack_k2)=0;
+                    %model.lb(index.slack_k2)=0;
 
                     % Speed Constraint (state)
                     model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed;
+                    model.ub(index.v_k2)=maxSpeed+1;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
                     model.lb(index.beta_k2)=beta_min;
@@ -634,11 +635,11 @@ if strcmp(Compiled,'no')
                     model.lb(index.ab_k3)=-inf;
 
                     % Slack Variables Constraint (input)
-                    model.lb(index.slack_k3)=0;
+                    %model.lb(index.slack_k3)=0;
 
                     % Speed Constraint (state)
                     model.lb(index.v_k3)=0;
-                    model.ub(index.v_k3)=maxSpeed;
+                    model.ub(index.v_k3)=maxSpeed+1;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k3)=beta_max;
                     model.lb(index.beta_k3)=beta_min;

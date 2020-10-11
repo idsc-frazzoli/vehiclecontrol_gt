@@ -7,7 +7,7 @@ dist=p(index.dist);
 % beta  = z(index.beta);
 % dotbeta = z(index.dotbeta);
 % forwardacc = z(index.ab);
-slack = z(index.slack);
+%slack = z(index.slack);
 
 slack2 = z(index.slack2);
 slack3 = z(index.slack3);
@@ -16,12 +16,12 @@ slack4 = z(index.slack4);
 % beta_k2  = z(index.beta_k2);
 % dotbeta_k2 = z(index.dotbeta_k2);
 % forwardacc_k2 = z(index.ab_k2);
-slack_k2 = z(index.slack_k2);
+%slack_k2 = z(index.slack_k2);
 % 
 % beta_k3  = z(index.beta_k3);
 % dotbeta_k3 = z(index.dotbeta_k3);
 % forwardacc_k3 = z(index.ab_k3);
-slack_k3 = z(index.slack_k3);
+%slack_k3 = z(index.slack_k3);
 
 % Splines Control points and radii
 pointsO = index.pointsO;
@@ -168,8 +168,8 @@ squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 %v1=(tan(z(8))*z(7)^2/l);
 v2 = z(index.ab)-casadiGetSmoothMaxAcc(z(index.v));
 % v3 = accnorm-slack;
-v4 = laterror-r-0.5*slack;
-v5 = -laterror-r-0.5*slack;
+v4 = laterror-r;%-0.5*slack
+v5 = -laterror-r;%-0.5*slack
 %understeerright
 %v6 = frontaxlelatacc - latacclim-torquevectoringcapability-slack;
 % v6 = frontaxlelatacc -torquevectoringcapability- latacclim-slack;
@@ -179,15 +179,15 @@ v5 = -laterror-r-0.5*slack;
 
 v8 = z(index.ab_k2)-casadiGetSmoothMaxAcc(z(index.v_k2));
 % v9 = accnorm_k2-slack_k2;
-v10 = laterror_k2-r_k2-0.5*slack_k2;
-v11 = -laterror_k2-r_k2-0.5*slack_k2;
+v10 = laterror_k2-r_k2;%-0.5*slack_k2
+v11 = -laterror_k2-r_k2;%-0.5*slack_k2
 % v12 = frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 % v13 = -frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 
 v14 = z(index.ab_k3)-casadiGetSmoothMaxAcc(z(index.v_k3));
 % v15 = accnorm_k3-slack_k3;
-v16 = laterror_k3-r_k3-0.5*slack_k3;
-v17 = -laterror_k3-r_k3-0.5*slack_k3;
+v16 = laterror_k3-r_k3;%-0.5*slack_k3
+v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 % v18 = frontaxlelatacc_k3-torquevectoringcapability_k3-latacclim-slack_k3;
 % v19 = -frontaxlelatacc_k3-torquevectoringcapability_k3-latacclim-slack_k3;
 v20 = -squared_distance_array+dist-slack2;

@@ -26,7 +26,7 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
 xs(index.y-index.nu)=pstart(2)-dis;
 xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=maxSpeed;
+xs(index.v-index.nu)=targetSpeed;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
@@ -43,7 +43,7 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs(index.x_k2-index.nu)=pstart2(1)+dis;
 xs(index.y_k2-index.nu)=pstart2(2);
 xs(index.theta_k2-index.nu)=pangle2;
-xs(index.v_k2-index.nu)=maxSpeed;
+xs(index.v_k2-index.nu)=targetSpeed;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
@@ -61,7 +61,7 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs(index.x_k3-index.nu)=pstart3(1)-dis;
 xs(index.y_k3-index.nu)=pstart3(2);
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=maxSpeed;
+xs(index.v_k3-index.nu)=targetSpeed;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
@@ -160,7 +160,7 @@ for i =1:tend
     splinepointhist(i,:)=[xs(index.s-index.nu),[nextSplinePoints(:);nextSplinePoints_k2(:);nextSplinePoints_k3(:)]'];
     
     % parameters
-    problem.all_parameters = repmat(getParameters_PG3(maxSpeed,maxxacc,...
+    problem.all_parameters = repmat(getParameters_PG3(targetSpeed,maxxacc,...
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror,platerror,pprog,pab,pdotbeta,...
         pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
@@ -206,10 +206,10 @@ for i =1:tend
     if tend==1
     %% Evaluation cost function
     for jj=1:length(outputM)
-         [lagcost,latcost,regAB,regBeta,slack,speedcost,lagcost_k2,...
-          latcost_k2,regAB_k2,regBeta_k2,slack_k2,speedcost_k2,...
-          latcost_k3,regAB_k3,regBeta_k3,slack_k3,speedcost_k3,f,f1,f2,f3] =...
-          objective_PG_Test3(outputM(jj,:),points,points2,points3,maxSpeed,plagerror,...
+         [lagcost,latcost,regAB,regBeta,speedcost,lagcost_k2,...
+          latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,...
+          latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,f,f1,f2,f3] =...
+          objective_PG_Test3(outputM(jj,:),points,points2,points3,targetSpeed,plagerror,...
           platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
       
         regABA=regABA+regAB;
@@ -272,11 +272,12 @@ if tend==1
         figure(3)
         hold on
         xlabel('Time [s]')
-        line([0,6],[8,8],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+        line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+        line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
         %title('Speed')
         set(gca,'yticklabel',[])
         grid on
-        ylim([7.5,8.2])
+        ylim([7,9.5])
         figure(2)
 
         maxxacc=max(abs(outputM(:,index.ab)));

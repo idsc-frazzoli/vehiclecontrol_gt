@@ -5,54 +5,54 @@ global index
 index.dotab = 1;
 index.dotbeta = 2;
 index.ds = 3;
-index.slack = 4;
+%index.slack = 4;
 
 % inputs go kart 2
-index.dotab_k2 = 5;
-index.dotbeta_k2 = 6;
-index.ds_k2 = 7;
-index.slack_k2 = 8;
+index.dotab_k2 = 4;
+index.dotbeta_k2 = 5;
+index.ds_k2 = 6;
+%index.slack_k2 = 8;
 
 % inputs go kart 2
-index.dotab_k3 = 9;
-index.dotbeta_k3 = 10;
-index.ds_k3 = 11;
-index.slack_k3 = 12;
+index.dotab_k3 = 7;
+index.dotbeta_k3 = 8;
+index.ds_k3 = 9;
+%index.slack_k3 = 12;
 
 % shared
-index.slack2 = 13;
-index.slack3 = 14;
-index.slack4 = 15;
+index.slack2 = 10;
+index.slack3 = 11;
+index.slack4 = 12;
 
 % states
-index.x = 16;
-index.y = 17;
-index.theta = 18;
-index.v = 19;
-index.ab = 20;
-index.beta = 21;
-index.s = 22;
+index.x = 13;
+index.y = 14;
+index.theta = 15;
+index.v = 16;
+index.ab = 17;
+index.beta = 18;
+index.s = 19;
 % states kart 2
-index.x_k2 = 23;
-index.y_k2 = 24;
-index.theta_k2 = 25;
-index.v_k2 = 26;
-index.ab_k2 = 27;
-index.beta_k2 = 28;
-index.s_k2 = 29;
+index.x_k2 = 20;
+index.y_k2 = 21;
+index.theta_k2 = 22;
+index.v_k2 = 23;
+index.ab_k2 = 24;
+index.beta_k2 = 25;
+index.s_k2 = 26;
 % states kart 3
-index.x_k3 = 30;
-index.y_k3 = 31;
-index.theta_k3 = 32;
-index.v_k3 = 33;
-index.ab_k3 = 34;
-index.beta_k3 = 35;
-index.s_k3 = 36;
+index.x_k3 = 27;
+index.y_k3 = 28;
+index.theta_k3 = 29;
+index.v_k3 = 30;
+index.ab_k3 = 31;
+index.beta_k3 = 32;
+index.s_k3 = 33;
 % Number of States
 index.ns = 21;
 
 % Number of Inputs
-index.nu = 15;
+index.nu = 12;
 
 % Number of Variables
 index.nv = index.ns+index.nu;

@@ -5,24 +5,24 @@ global index_IBR
 index_IBR.dotab = 1;
 index_IBR.dotbeta = 2;
 index_IBR.ds = 3;
-index_IBR.slack = 4;
+%index_IBR.slack = 4;
 % shared
-index_IBR.slack2=5;
+index_IBR.slack2=4;
 
 % States
-index_IBR.x = 6;
-index_IBR.y = 7;
-index_IBR.theta = 8;
-index_IBR.v = 9;
-index_IBR.ab = 10;
-index_IBR.beta = 11;
-index_IBR.s = 12;
+index_IBR.x = 5;
+index_IBR.y = 6;
+index_IBR.theta = 7;
+index_IBR.v = 8;
+index_IBR.ab = 9;
+index_IBR.beta = 10;
+index_IBR.s = 11;
 
 % Number of States
 index_IBR.ns = 7;
 
 % Number of Inputs
-index_IBR.nu = 5;
+index_IBR.nu = 4;
 
 % Number of Variables
 index_IBR.nv = index_IBR.ns+index_IBR.nu;

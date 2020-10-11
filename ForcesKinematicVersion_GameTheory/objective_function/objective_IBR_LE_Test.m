@@ -1,4 +1,4 @@
-function [lagcost,latcost,regAB,regBeta,slack,slack2,speedcost,f] = objective_IBR_LE_Test(z,points,vmax, plagerror, platerror,...
+function [lagcost,latcost,regAB,regBeta,slack2,speedcost,f] = objective_IBR_LE_Test(z,points,vmax, plagerror, platerror,...
                            pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
      global index_IBR
 
@@ -22,10 +22,11 @@ function [lagcost,latcost,regAB,regBeta,slack,slack2,speedcost,f] = objective_IB
     %laterror1= sidewards'*error1;
     %% Costs objective function
 
-    slack = z(index_IBR.slack);
+    %slack = z(index_IBR.slack);
     slack2= z(index_IBR.slack2);
     
-    speedcost = (z(index_IBR.v)-vmax)^2*pspeedcost;
+    speedcost = max(z(index_IBR.v)-vmax,0)^2*pspeedcost;
+    speedcost2 = min(z(index_IBR.v)-vmax,0)^2*pprog;
     lagcost = plagerror*lagerror^2;
     latcost = platerror*laterror^2;
     %latcost1 = pprog*laterror1^2;
@@ -33,5 +34,5 @@ function [lagcost,latcost,regAB,regBeta,slack,slack2,speedcost,f] = objective_IB
     regAB = z(index_IBR.dotab).^2*pab;
     regBeta=z(index_IBR.dotbeta).^2*pdotbeta;
    
-    f = lagcost+latcost+regAB+regBeta+speedcost+pslack*slack+pslack2*slack2;%+prog
+    f = lagcost+latcost+regAB+regBeta+speedcost+speedcost2+pslack2*slack2;%+prog
 end

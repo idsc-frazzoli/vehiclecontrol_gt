@@ -1,7 +1,7 @@
 function v = nlconst_IBR_3(z,p)
 global index_IBR
 
-slack = z(index_IBR.slack);
+%slack = z(index_IBR.slack);
 slack2 = z(index_IBR.slack2);
 dist = p(index_IBR.dist);
 pointsO = index_IBR.pointsO;
@@ -31,8 +31,8 @@ distance_Y_3=(z(index_IBR.y)-yVehicle3);
 squared_distance_array   = sqrt(distance_X.^2+distance_Y.^2);
 squared_distance_array_3   = sqrt(distance_X_3.^2+distance_Y_3.^2);
 v1 = z(index_IBR.ab)-casadiGetSmoothMaxAcc(z(index_IBR.v));
-v2 = laterror-r-slack;
-v3 = -laterror-r-slack;
+v2 = laterror-r;%-slack
+v3 = -laterror-r;%-slack
 v4 = -squared_distance_array+dist-slack2;
 v5 = -squared_distance_array_3+dist-slack2;
 v = [v1;v2;v3;v4;v5];
