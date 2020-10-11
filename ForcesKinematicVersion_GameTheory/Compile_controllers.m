@@ -73,6 +73,7 @@ switch NUM_Vehicles
             case 'PG'
                 pointsO = 16; 
                 NUM_const=12; % number of nonlinear constraint
+                MAX_IT= 1000; % N of max iterations
             case 'IBR'
                 pointsO = 20; 
                 NUM_const=5; % number of nonlinear constraint

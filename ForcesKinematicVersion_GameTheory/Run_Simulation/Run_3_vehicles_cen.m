@@ -8,7 +8,7 @@
 % addpath('objective_function');
 % addpath('constraints');
 % addpath('index_script');
-
+close all
 %% Parameters Definitions
 %parameters_3_vehicles
 
