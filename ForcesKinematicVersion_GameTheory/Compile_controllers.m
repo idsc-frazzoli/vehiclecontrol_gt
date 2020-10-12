@@ -21,11 +21,11 @@ addpath('Animation');
 clear model
 clear problem
 clear all
-%close all
+close all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -35,7 +35,7 @@ LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
 Game        = 'IBR'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
-
+Stack       = 1;
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Alpha')
     return
@@ -77,6 +77,7 @@ switch NUM_Vehicles
             case 'IBR'
                 pointsO = 20; 
                 NUM_const=5; % number of nonlinear constraint
+                MAX_IT= 500; % N of max iterations
         end
     case 5
         parameters_5_vehicles
@@ -523,7 +524,7 @@ if strcmp(Compiled,'no')
         model.lb(index_IBR.beta)=beta_min;
 
         %Path Progress
-        model.ub(index_IBR.s)=pointsN-2;
+        model.ub(index_IBR.s)=pointsN;
         model.lb(index_IBR.s)=0;
         % Slack
         model.lb(index_IBR.slack2)=0;
@@ -546,13 +547,13 @@ if strcmp(Compiled,'no')
 
         % Velocity
         model.lb(index.v)=0;
-        model.ub(index.v)=maxSpeed+1;
+        model.ub(index.v)=maxSpeed;
         % Steering Angle
         model.ub(index.beta)=beta_max;
         model.lb(index.beta)=beta_min;
 
         %Path Progress
-        model.ub(index.s)=pointsN-2;
+        model.ub(index.s)=pointsN;
         model.lb(index.s)=0;
     end
     switch NUM_Vehicles
@@ -577,7 +578,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed+1;
+                    model.ub(index.v_k2)=maxSpeed;
                     
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
@@ -619,13 +620,13 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed+1;
+                    model.ub(index.v_k2)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
                     model.lb(index.beta_k2)=beta_min;
 
                     % Path Progress Constraint (input)
-                    model.ub(index.s_k2)=pointsN2-2;
+                    model.ub(index.s_k2)=pointsN2;
                     model.lb(index.s_k2)=0;
 
                     % Path Progress rate Constraint (input)
@@ -646,7 +647,7 @@ if strcmp(Compiled,'no')
                     model.lb(index.beta_k3)=beta_min;
 
                     % Path Progress Constraint (input)
-                    model.ub(index.s_k3)=pointsN3-2;
+                    model.ub(index.s_k3)=pointsN3;
                     model.lb(index.s_k3)=0;
 
                     model.lb(index.slack2)=0;
@@ -857,7 +858,11 @@ if strcmp(Simulation, 'yes')
                 case 'PG'
                     Run_3_vehicles_cen
                 case 'IBR'
-                    Run_3_vehicles_IBR
+                    if Stack==1
+                        Run_3_vehicles_IBR_st
+                    else
+                        Run_3_vehicles_IBR
+                    end
             end
         case 5
             switch Game

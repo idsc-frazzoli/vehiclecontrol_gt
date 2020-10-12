@@ -8,7 +8,7 @@
 % addpath('objective_function');
 % addpath('constraints');
 % addpath('index_script');
-close all
+%close all
 %% Parameters Definitions
 %parameters_3_vehicles
 
@@ -258,6 +258,12 @@ if tend==1
 %        grid on
         I=imread('strada1.png');
         h=image([20 80],[80 20],I);
+        B=imread('BlueCarL1.png');
+        b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+        G=imread('GreencarD.png');
+        g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+        R=imread('RedcarU.png');
+        r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
         title('Trajectory')
 %         xlabel('X')
 %         ylabel('Y')
@@ -277,7 +283,7 @@ if tend==1
         %title('Speed')
         set(gca,'yticklabel',[])
         grid on
-        ylim([7,9.5])
+        ylim([7.8,9.2])
         figure(2)
 
         maxxacc=max(abs(outputM(:,index.ab)));
@@ -296,9 +302,9 @@ if tend==1
             y2 = [outputM(ii,index.y_k2),outputM(next,index.y_k2)];
             x3 = [outputM(ii,index.x_k3),outputM(next,index.x_k3)];
             y3 = [outputM(ii,index.y_k3),outputM(next,index.y_k3)];
-            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',2)
-            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',2)
-            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',2)
+            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',3)
+            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',3)
+            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
         end
         set(gca,'visible','off')
         axis equal
@@ -306,6 +312,9 @@ if tend==1
         gklx = 1.5*cos(CP);
         gkly = 1.5*sin(CP);
         gklp = [gklx;gkly];
+%         gklx = [-0.8,2,2,-0.8,-0.8];
+%         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
+%         gklp = [gklx;gkly];
 %         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
 %         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
 %         hold on
@@ -319,9 +328,12 @@ if tend==1
 %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
 %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
 %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[1,P_H_length/2,P_H_length-1];
+        idx=[P_H_length/2,P_H_length-1];
         for jjj=1:length(idx)
             iff= idx(jjj);
+%             vc = outputM(iff,index_IBR.ab)/maxxacc;
+%             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
+%             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
             R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
             rgklp = [outputM(iff+1,index.x);outputM(iff+1,index.y)]+R*gklp;
@@ -347,9 +359,12 @@ if tend==1
 %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
 %         legend('Kart1','Kart2','Kart3')
         figure(3)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v),'b.-','Linewidth',2.5)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k2),'r.-','Linewidth',2.5)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k3),'g.-','Linewidth',2.5)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v),'b','Linewidth',2)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k2),'r','Linewidth',2)
+        plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k3),'g','Linewidth',2)
+        scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index.v),'bx','Linewidth',2)
+        scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index.v_k2),'r*','Linewidth',2)
+        scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index.v_k3),'go','Linewidth',2)
         %legend('Vehicle 1','V 2','V 3')
         set(gca,'FontSize',18)
         savefig('figures/3v_PG_speed')
