@@ -18,14 +18,16 @@ addpath('constraints');
 addpath('index_script');
 addpath('Run_Simulation');
 addpath('Animation');
+addpath('ReadSVG');
+addpath('svgread');
 clear model
 clear problem
 clear all
-close all
+%close all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -35,7 +37,7 @@ LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
 Game        = 'IBR'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
-Stack       = 1;
+Stack       = 0;
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
     warning('Configuration not supported, change NUM_Vehicles or Alpha')
     return

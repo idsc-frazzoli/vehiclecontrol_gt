@@ -11,7 +11,7 @@
 %close all
 %% Parameters Definitions
 %parameters_3_vehicles
-
+Plotta=0;
 %% Initialization for simulation
 global index
 %indexes_3_vehicles
@@ -86,9 +86,15 @@ regBetaC=0;
 latcostA=0;
 latcostB=0;
 latcostC=0;
+lagcostA=0;
+lagcostB=0;
+lagcostC=0;
 speedcostA=0;
 speedcostB=0;
 speedcostC=0;
+speedcostA1=0;
+speedcostB1=0;
+speedcostC1=0;
 %% Simulation
 history = zeros(tend*eulersteps,model.nvar+1);
 splinepointhist = zeros(tend,pointsN*3+pointsN2*3+pointsN3*3+1);
@@ -206,11 +212,11 @@ for i =1:tend
     if tend==1
     %% Evaluation cost function
     for jj=1:length(outputM)
-         [lagcost,latcost,regAB,regBeta,speedcost,lagcost_k2,...
-          latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,...
-          latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,f,f1,f2,f3] =...
-          objective_PG_Test3(outputM(jj,:),points,points2,points3,targetSpeed,plagerror,...
-          platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+        [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
+        latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
+        latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
+        objective_PG_Test3(outputM(jj,:),points,points2,points3,targetSpeed,plagerror,...
+        platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
       
         regABA=regABA+regAB;
         regABB=regABB+regAB_k2;
@@ -219,77 +225,67 @@ for i =1:tend
         regBetaB=regBetaB+regBeta_k2;
         regBetaC=regBetaC+regBeta_k3;
         latcostA=latcostA+latcost;
-        latcostB=latcostA+latcost_k2;
+        latcostB=latcostB+latcost_k2;
         latcostC=latcostC+latcost_k3;
+        lagcostA=lagcostA+lagcost;
+        lagcostB=lagcostB+lagcost_k2;
+        lagcostC=lagcostC+lagcost_k3;
         speedcostA=speedcostA+speedcost;
         speedcostB=speedcostB+speedcost_k2;
         speedcostC=speedcostC+speedcost_k3;
+        speedcostA1=speedcostA1+speedcost1;
+        speedcostB1=speedcostB1+speedcost1_k2;
+        speedcostC1=speedcostC1+speedcost1_k3;
         optA = optA+ f1;
         optB = optB+ f2;
         optC = optC+ f3;
         opt  = opt+ f;
     end
-    save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB','regBetaC')
+    save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
+        'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
+        'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
+        'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1')
     end
+    MetricPG.MaxACC(1)=max(outputM(:,index.ab));
+    MetricPG.MinACC(1)=min(outputM(:,index.ab));
+    SteerEFF=cumsum(abs(outputM(:,index.dotbeta)));
+    MetricPG.SteerEff(1)=SteerEFF(end);
+    MetricPG.MaxACC(2)=max(outputM(:,index.ab_k2));
+    MetricPG.MinACC(2)=min(outputM(:,index.ab_k2));
+    SteerEFF2=cumsum(abs(outputM(:,index.dotbeta_k2)));
+    MetricPG.SteerEff(2)=SteerEFF2(end);
+    MetricPG.MaxACC(3)=max(outputM(:,index.ab_k3));
+    MetricPG.MinACC(3)=min(outputM(:,index.ab_k3));
+    SteerEFF3=cumsum(abs(outputM(:,index.dotbeta_k3)));
+    MetricPG.SteerEff(3)=SteerEFF3(end);
     Percentage=i/tend*100
 end
-
-if tend==1
-    figure(2)
-%         plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
+save('MetricPG.mat','MetricPG')
+if tend==1 && Plotta==1
+        figure(2)
         hold on
-%         plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
-%         plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
-%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-%         hold on
-%         plot(leftline(:,1),leftline(:,2),'k')
-%         plot(middleline(:,1),middleline(:,2),'k-.')
-%         plot(rightline(:,1),rightline(:,2),'k')
-%         plot(leftline2(:,1),leftline2(:,2),'k')
-%         plot(middleline2(:,1),middleline2(:,2),'k-.')
-% %         plot(rightline2(:,1),rightline2(:,2),'k')
-%         CP=0:0.01:2*pi;
-%         gklx = 1.5*cos(CP);
-%         gkly = 1.5*sin(CP);
-%         gklp = [gklx;gkly];
-%        I=imread('strada1.png');
-%        h=image([20 80],[20 80],I);
-%        grid on
-        I=imread('strada1.png');
+        I=imread('road06.png');
         h=image([20 80],[80 20],I);
-        B=imread('BlueCarL1.png');
-        b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
-        G=imread('GreencarD.png');
-        g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
-        R=imread('RedcarU.png');
-        r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-        title('Trajectory')
-%         xlabel('X')
-%         ylabel('Y')
-
-%         figure(2)
-%         hold on
-%         grid on
-%         title('steer')
-%         xlabel('step')
-%         ylabel('')
+        %title('Trajectory')
 
         figure(3)
         hold on
-        xlabel('Time [s]')
+        %xlabel('Time [s]')
         line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
         line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
         %title('Speed')
         set(gca,'yticklabel',[])
         grid on
-        ylim([7.8,9.2])
+        ylim([3,9.2])
+        
         figure(2)
-
+%         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
+%         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
+%         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
         maxxacc=max(abs(outputM(:,index.ab)));
         maxxacc2=max(abs(outputM(:,index.ab_k2)));
         maxxacc3=max(abs(outputM(:,index.ab_k3)));
-        hold on
+        
 
         for ii=1:length(outputM(1:P_H_length,index.x))-1
             vc = outputM(ii,index.ab)/maxxacc;
@@ -306,6 +302,13 @@ if tend==1
             line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',3)
             line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
         end
+        B=imread('carb.png');
+        b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+        G=imread('carg.png');
+        g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+        R=imread('carr.png');
+        r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+        
         set(gca,'visible','off')
         axis equal
         CP=0:0.01:2*pi;
@@ -337,17 +340,17 @@ if tend==1
             theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
             R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
             rgklp = [outputM(iff+1,index.x);outputM(iff+1,index.y)]+R*gklp;
-            fill(rgklp(1,:),rgklp(2,:),'b');
-        %     
+            AAA=fill(rgklp(1,:),rgklp(2,:),[0,0,1]);%,'Color','b'
+            %AAA.Color=[0,0,0.5];
             theta2 = atan2(outputM(iff+1,index.y_k2)-outputM(iff,index.y_k2),outputM(iff+1,index.x_k2)-outputM(iff,index.x_k2)); % to rotate 90 counterclockwise
             R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
             rgklp = [outputM(iff+1,index.x_k2);outputM(iff+1,index.y_k2)]+R*gklp;
-            fill(rgklp(1,:),rgklp(2,:),'r');
+            BBB=fill(rgklp(1,:),rgklp(2,:),[1,0,0]);
         %     
             theta3 = atan2(outputM(iff+1,index.y_k3)-outputM(iff,index.y_k3),outputM(iff+1,index.x_k3)-outputM(iff,index.x_k3)); % to rotate 90 counterclockwise
             R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
             rgklp = [outputM(iff+1,index.x_k3);outputM(iff+1,index.y_k3)]+R*gklp;
-            fill(rgklp(1,:),rgklp(2,:),'g');
+            CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
         end
         axis equal
         savefig('figures/3v_PG_intersection')
@@ -377,6 +380,21 @@ if tend==1
         plot(optC,'g*','Linewidth',2)
         plot(opt/3,'c*','Linewidth',2)
         set(gca,'Fontsize',15)
-else
+elseif (tend~=1)
     draw3
 end
+
+figure(1000)
+hold on
+plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',2)
+plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',2)
+plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',2)
+B=imread('carb.png');
+b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+G=imread('carg.png');
+g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+R=imread('carr.png');
+r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+set(gca,'visible','off')
+savefig('figures/3v_IBR_intall')
+saveas(gcf,'figures/3v_IBR_intall','epsc')

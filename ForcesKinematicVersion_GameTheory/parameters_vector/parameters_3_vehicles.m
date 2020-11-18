@@ -13,7 +13,7 @@ plagerror=1;       % proj error param cost
 platerror=1.8;    % lateral error param cost
 pprog=0.8;         % progress parameter cost
 pab=0.006;        % acc parameter cost
-pdotbeta=5;      % steering velocity parameter cost
+pdotbeta=4;      % steering velocity parameter cost
 pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=10000;        % collision cost
@@ -69,8 +69,8 @@ ds_max=5;
 ds_min=-1;
 
 % beta constraint (steering angle)
-beta_max=0.5;
-beta_min=-0.5;
+beta_max=pi/2;
+beta_min=-pi/2;
 %% Spline Points
 
 points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75;...          %x,75,80,85,90,95

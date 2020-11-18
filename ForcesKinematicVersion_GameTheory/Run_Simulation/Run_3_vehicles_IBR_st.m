@@ -1,6 +1,6 @@
 %% Initialization for simulation
 global index_IBR
-
+Plotta=1;
 dis=0;
 
 %% Simulation
@@ -191,14 +191,14 @@ for jj=1:length(config(:,1))
             pspeedcost,pslack,pslack2,dist,xs2(1),xs2(2),xs3(1),xs3(2),...
             nextSplinePoints),model.N ,1);
 
-        problem.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos2(:,1);...
-                                                            Pos2(end,1)];
-        problem.all_parameters(index_IBR.yComp2:model.npar:end)=[Pos2(:,2);...
-                                                            Pos2(end,2)];
-        problem.all_parameters(index_IBR.xComp3:model.npar:end)=[Pos3(:,1);...
-                                                            Pos3(end,1)];
-        problem.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos3(:,2);...
-                                                            Pos3(end,2)];
+        problem.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos2(:,1)*0;...
+                                                            Pos2(end,1)*0];
+        problem.all_parameters(index_IBR.yComp2:model.npar:end)=[Pos2(:,2)*0;...
+                                                            Pos2(end,2)*0];
+        problem.all_parameters(index_IBR.xComp3:model.npar:end)=[Pos3(:,1)*0;...
+                                                            Pos3(end,1)*0];
+        problem.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos3(:,2)*0;...
+                                                            Pos3(end,2)*0];
 
         problem.x0 = x0(:);
 
@@ -209,14 +209,14 @@ for jj=1:length(config(:,1))
             pspeedcost,pslack,pslack2,dist,xs(1),xs(2),xs3(1),xs3(2),...
             nextSplinePoints2),model.N ,1);
 
-        problem2.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos1(:,1);...
-                                                             Pos1(end,1)];
-        problem2.all_parameters(index_IBR.yComp2:model.npar:end)=[Pos1(:,2);...
-                                                             Pos1(end,2)];
-        problem2.all_parameters(index_IBR.xComp3:model.npar:end)=[Pos3(:,1);...
-                                                             Pos3(end,1)];
-        problem2.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos3(:,2);...
-                                                             Pos3(end,2)];
+        problem2.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos1(:,1)*0;...
+                                                             Pos1(end,1)*0];
+        problem2.all_parameters(index_IBR.yComp2:model.npar:end)=[Pos1(:,2)*0;...
+                                                             Pos1(end,2)*0];
+        problem2.all_parameters(index_IBR.xComp3:model.npar:end)=[Pos3(:,1)*0;...
+                                                             Pos3(end,1)*0];
+        problem2.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos3(:,2)*0;...
+                                                             Pos3(end,2)*0];
 
         problem2.x0 = x02(:);
 
@@ -227,14 +227,14 @@ for jj=1:length(config(:,1))
             pspeedcost,pslack,pslack2,dist,xs(1),xs(2),xs2(1),xs2(2),nextSplinePoints3),...
             model.N ,1);
 
-        problem3.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos1(:,1);...
-                                                             Pos1(end,1)];
+        problem3.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos1(:,1)*0;...
+                                                             Pos1(end,1)*0];
         problem3.all_parameters(index_IBR.yComp2:model.npar:end)=[Pos1(:,2);...
-                                                             Pos1(end,2)];
+                                                             Pos1(end,2)*0];
         problem3.all_parameters(index_IBR.xComp3:model.npar:end)=[Pos2(:,1);...
-                                                             Pos2(end,1)];
+                                                             Pos2(end,1)*0];
         problem3.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos2(:,2);...
-                                                             Pos2(end,2)];
+                                                             Pos2(end,2)*0];
         problem3.x0 = x03(:);
 
         for ii=1:length(config(1,:))
@@ -311,7 +311,19 @@ for jj=1:length(config(:,1))
 
             end
         end
-              
+        
+        MetricStack.MaxACC(1,jj)=max(outputM(:,index_IBR.ab));
+        MetricStack.MinACC(1,jj)=min(outputM(:,index_IBR.ab));
+        SteerEFF=cumsum(abs(outputM(:,index_IBR.dotbeta)));
+        MetricStack.SteerEff(1,jj)=SteerEFF(end);
+        MetricStack.MaxACC(2,jj)=max(outputM2(:,index_IBR.ab));
+        MetricStack.MinACC(2,jj)=min(outputM2(:,index_IBR.ab));
+        SteerEFF2=cumsum(abs(outputM2(:,index_IBR.dotbeta)));
+        MetricStack.SteerEff(2,jj)=SteerEFF2(end);
+        MetricStack.MaxACC(3,jj)=max(outputM3(:,index_IBR.ab));
+        MetricStack.MinACC(3,jj)=min(outputM3(:,index_IBR.ab));
+        SteerEFF3=cumsum(abs(outputM3(:,index_IBR.dotbeta)));
+        MetricStack.SteerEff(3,jj)=SteerEFF3(end);      
         x0 = outputM';
         u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
         [xhist,time] = euler(@(x,u)interstagedx_IBR(x,u),xs,u,...
@@ -373,9 +385,91 @@ for jj=1:length(config(:,1))
         cost1(jj,i)=info.pobj;
         cost2(jj,i)=info2.pobj;
         cost3(jj,i)=info3.pobj;
-        Steer1(jj,i)=sum((outputM(:,index_IBR.dotbeta)).^2)*pdotbeta;
-        Steer2(jj,i)=sum((outputM2(:,index_IBR.dotbeta)).^2)*pdotbeta;
-        Steer3(jj,i)=sum((outputM3(:,index_IBR.dotbeta)).^2)*pdotbeta;
+        optA=0;
+        regAB1=0;
+        regBetaA=0;
+        latcostA=0;
+        lagcostA=0;
+        optB=0;
+        regAB2=0;
+        regBetaB=0;
+        latcostB=0;
+        lagcostB=0;
+        optC=0;
+        regAB3=0;
+        regBetaC=0;
+        latcostC=0;
+        lagcostC=0;
+        slackA=0;
+        slackB=0;
+        slackC=0;
+        speedcostA=0;
+        speedcostA2=0;
+        speedcostB=0;
+        speedcostB2=0;
+        speedcostC=0;
+        speedcostC2=0;
+        for uu=1:length(outputM)
+            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM(uu,:),points,targetSpeed, plagerror, platerror,...
+                               pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+
+            regAB1=regAB1+regAB;
+            regBetaA=regBetaA+regBeta;
+            latcostA=latcostA+latcost;
+            lagcostA=lagcostA+lagcost;
+            speedcostA=speedcostA+speedcost;
+            speedcostA2=speedcostA2+speedcost2;
+            optA = optA+ f;
+            %slackA=slackA+pslack*slack;
+            slackA=slackA+pslack2*slack2;
+        end
+        Steer1(jj,i)=regBetaA;
+        Jerk1(jj,i)=regAB1;
+        Speed1(jj,i)=speedcostA;
+        Speed1_1(jj,i)=speedcostA2;
+        LatError1(jj,i)=latcostA;
+        LagError1(jj,i)=lagcostA;
+        
+        for uu=1:length(outputM2)
+            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM2(uu,:),points2,targetSpeed, plagerror, platerror,...
+                               pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+
+            regAB2=regAB2+regAB;
+            regBetaB=regBetaB+regBeta;
+            latcostB=latcostB+latcost;
+            lagcostB=lagcostB+lagcost;
+            speedcostB=speedcostB+speedcost;
+            speedcostB2=speedcostB2+speedcost2;
+            optB = optB+ f;
+            %slackA=slackA+pslack*slack;
+            slackB=slackB+pslack2*slack2;
+        end
+        Steer2(jj,i)=regBetaB;
+        Jerk2(jj,i)=regAB2;
+        Speed2(jj,i)=speedcostB;
+        Speed2_1(jj,i)=speedcostB2;
+        LatError2(jj,i)=latcostB;
+        LagError2(jj,i)=lagcostB;
+        for uu=1:length(outputM3)
+            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM3(uu,:),points3,targetSpeed, plagerror, platerror,...
+                               pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+
+            regAB3=regAB3+regAB;
+            regBetaC=regBetaC+regBeta;
+            latcostC=latcostC+latcost;
+            lagcostC=lagcostC+lagcost;
+            speedcostC=speedcostC+speedcost;
+            speedcostC2=speedcostC2+speedcost2;
+            optC = optC+ f;
+            %slackA=slackA+pslack*slack;
+            slackC=slackC+pslack2*slack2;
+        end
+        Steer3(jj,i)=regBetaC; 
+        Jerk3(jj,i)=regAB3;
+        Speed3(jj,i)=speedcostC;
+        Speed3_1(jj,i)=speedcostC2;
+        LatError3(jj,i)=latcostC;
+        LagError3(jj,i)=lagcostC;
         %costS(i)=costS;
         Progress1(jj,i)=outputM(1,index_IBR.s);
         Progress2(jj,i)=outputM2(1,index_IBR.s);
@@ -406,173 +500,142 @@ for jj=1:length(config(:,1))
     end
     %[t,ab,dotbeta,x,y,theta,v,beta,s]
     if tend==1
-        figure(5+(jj-1)*2)
-%         plot(pstart(1),pstart(2)-dis,'b*','Linewidth',1)
-         hold on
-%         plot(pstart2(1)+dis,pstart2(2),'r*','Linewidth',1) 
-%         plot(pstart3(1)-dis,pstart3(2),'g*','Linewidth',1) 
+        if Plotta==1
+            figure(5+(jj-1)*2)
+            hold on
+            set(gca,'visible','off')
 
-        %grid on
-%             title('Trajectory')
-        set(gca,'visible','off')
-%         xlabel('X')
-%         ylabel('Y')
-        %axis equal
+            figure(6+(jj-1)*2)
+            hold on
+            grid on
+            ylim([3,9.2])
+            xlim([0,6])
 
-%             figure(5)
-%             hold on
-%             grid on
-%             title('steer')
-%             ylabel('')
+            figure(5+(jj-1)*2)
+            I=imread('road06.png');
+            h=image([20 80],[20 80],I);
 
-        figure(6+(jj-1)*2)
-        hold on
-        grid on
-        ylim([3,9.2])
-        
-        figure(5+(jj-1)*2)
-        I=imread('strada1.png');
-        h=image([20 80],[20 80],I);
-        
-        maxxacc=max(abs(outputM(:,index_IBR.ab)));
-        maxxacc2=max(abs(outputM2(:,index_IBR.ab)));
-        maxxacc3=max(abs(outputM3(:,index_IBR.ab)));
-        hold on
+%             plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'Color',[0,0,1],'Linewidth',3)
+%             plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'Color',[1,0,0],'Linewidth',3)
+%             plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'Color',[0,1,0],'Linewidth',3)
+             maxxacc=max(abs(outputM(:,index_IBR.ab)));
+            maxxacc2=max(abs(outputM2(:,index_IBR.ab)));
+            maxxacc3=max(abs(outputM3(:,index_IBR.ab)));
 
-        for ii=1:length(outputM(1:P_H_length,index_IBR.x))-1
-            vc = outputM(ii,index_IBR.ab)/maxxacc;
-            vc2 = outputM2(ii,index_IBR.ab)/maxxacc2;
-            vc3 = outputM3(ii,index_IBR.ab)/maxxacc3;
-            next = ii+1;
-            x = [outputM(ii,index_IBR.x),outputM(next,index_IBR.x)];
-            y = [outputM(ii,index_IBR.y),outputM(next,index_IBR.y)];
-            x2 = [outputM2(ii,index_IBR.x),outputM2(next,index_IBR.x)];
-            y2 = [outputM2(ii,index_IBR.y),outputM2(next,index_IBR.y)];
-            x3 = [outputM3(ii,index_IBR.x),outputM3(next,index_IBR.x)];
-            y3 = [outputM3(ii,index_IBR.y),outputM3(next,index_IBR.y)];
-            line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',3)
-            line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',3)
-            line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
-        end
-        B=imread('BlueCarL1.png');
-        b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
-        G=imread('GreencarD.png');
-        g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
-        R=imread('RedcarU.png');
-        r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-        axis equal
-        CP=0:0.01:2*pi;
-        gklx = 1.5*cos(CP);
-        gkly = 1.5*sin(CP);
-        gklp = [gklx;gkly];
-%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-%         hold on
-%         plot(leftline(:,1),leftline(:,2),'k')
-%         plot(middleline(:,1),middleline(:,2),'k--')
-%         plot(rightline(:,1),rightline(:,2),'k')
-%         plot(leftline2(:,1),leftline2(:,2),'k')
-%         plot(middleline2(:,1),middleline2(:,2),'k--')
-%         plot(rightline2(:,1),rightline2(:,2),'k')
-%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
-%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
-%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
-%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
-        idx=[P_H_length/2,P_H_length-1];
-        for jjj=1:length(idx)
 
-            iff= idx(jjj);
-            vc = outputM(iff,index_IBR.ab)/maxxacc;
-            vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
-            vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
-            theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
-            R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-            rgklp = [outputM(iff+1,index_IBR.x);outputM(iff+1,index_IBR.y)]+R*gklp;
-            fill(rgklp(1,:),rgklp(2,:),'b');
-        %     
-            theta2 = atan2(outputM2(iff+1,index_IBR.y)-outputM2(iff,index_IBR.y),outputM2(iff+1,index_IBR.x)-outputM2(iff,index_IBR.x)); % to rotate 90 counterclockwise
-            R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
-            rgklp = [outputM2(iff+1,index_IBR.x);outputM2(iff+1,index_IBR.y)]+R*gklp;
-            fill(rgklp(1,:),rgklp(2,:),'r');
-        %     
-            theta3 = atan2(outputM3(iff+1,index_IBR.y)-outputM3(iff,index_IBR.y),outputM3(iff+1,index_IBR.x)-outputM3(iff,index_IBR.x)); % to rotate 90 counterclockwise
-            R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
-            rgklp = [outputM3(iff+1,index_IBR.x);outputM3(iff+1,index_IBR.y)]+R*gklp;
-            fill(rgklp(1,:),rgklp(2,:),'g');
+            for ii=1:length(outputM(1:P_H_length,index_IBR.x))-1
+                vc = outputM(ii,index_IBR.ab)/maxxacc;
+                vc2 = outputM2(ii,index_IBR.ab)/maxxacc2;
+                vc3 = outputM3(ii,index_IBR.ab)/maxxacc3;
+                next = ii+1;
+                x = [outputM(ii,index_IBR.x),outputM(next,index_IBR.x)];
+                y = [outputM(ii,index_IBR.y),outputM(next,index_IBR.y)];
+                x2 = [outputM2(ii,index_IBR.x),outputM2(next,index_IBR.x)];
+                y2 = [outputM2(ii,index_IBR.y),outputM2(next,index_IBR.y)];
+                x3 = [outputM3(ii,index_IBR.x),outputM3(next,index_IBR.x)];
+                y3 = [outputM3(ii,index_IBR.y),outputM3(next,index_IBR.y)];
+                line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',3)
+                line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',3)
+                line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
+            end
 
-        end
-       
-        hold off
-        %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
-        set(gca,'FontSize',12)
-        if isequal(order,[1,2,3])
-            savefig('figures/3v_IBR_intersection_brg_st')
-            saveas(gcf,'figures/3v_IBR_intersection_brg_st','epsc')
-        elseif isequal(order,[1,3,2])
-            savefig('figures/3v_IBR_intersection_bgr_st')
-            saveas(gcf,'figures/3v_IBR_intersection_bgr_st','epsc')
-        elseif isequal(order,[2,1,3])
-            savefig('figures/3v_IBR_intersection_rbg_st')
-            saveas(gcf,'figures/3v_IBR_intersection_rbg_st','epsc')
-        elseif isequal(order,[2,3,1])
-            savefig('figures/3v_IBR_intersection_rgb_st')
-            saveas(gcf,'figures/3v_IBR_intersection_rgb_st','epsc')
-        elseif isequal(order,[3,1,2])
-            savefig('figures/3v_IBR_intersection_gbr_st')
-            saveas(gcf,'figures/3v_IBR_intersection_gbr_st','epsc')
-        elseif isequal(order,[3,2,1])
-            savefig('figures/3v_IBR_intersection_grb_st')
-            saveas(gcf,'figures/3v_IBR_intersection_grb_st','epsc')
-        end
-        int=integrator_stepsize;
-%             figure(5)
-%             plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.theta),'b.-','Linewidth',1)
-%             plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.theta),'r.-','Linewidth',1)
-%             plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.theta),'g.-','Linewidth',1)
-%             legend ('Vehicle 1','V 2','V 3')
-%             xlabel('Prediction horizon [s]')
-%             set(gca,'FontSize',12)
-        figure(6+(jj-1)*2)
-        plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b','Linewidth',2)
-        plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r','Linewidth',2)
-        plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g','Linewidth',2)
-        scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index_IBR.v),'bx','Linewidth',2)
-        scatter(int:int*3:length(outputM(:,1))*int,outputM2(1:3:end,index_IBR.v),'r*','Linewidth',2)
-        scatter(int:int*3:length(outputM(:,1))*int,outputM3(1:3:end,index_IBR.v),'go','Linewidth',2)
-        line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
-        line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
-        
-        hold off
-        %legend ('Vehicle 1','V 2','V 3','Location','southeast')
-        xlabel('Time [s]','interpreter','latex')
-        if jj==4
-            ylabel('speed [m/s]','interpreter','latex')
-        end
-        if jj~=4
-           set(gca,'yticklabel',[])
-           grid on
-        end
-        
-        set(gca,'FontSize',18)
-        if isequal(order,[1,2,3])
-            savefig('figures/3v_IBR_speed_brg_st')
-            saveas(gcf,'figures/3v_IBR_speed_brg_st','epsc')
-        elseif isequal(order,[1,3,2])
-            savefig('figures/3v_IBR_speed_bgr_st')
-            saveas(gcf,'figures/3v_IBR_speed_bgr_st','epsc')
-        elseif isequal(order,[2,1,3])
-            savefig('figures/3v_IBR_speed_rbg_st')
-            saveas(gcf,'figures/3v_IBR_speed_rbg_st','epsc')
-        elseif isequal(order,[2,3,1])
-            savefig('figures/3v_IBR_speed_rgb_st')
-            saveas(gcf,'figures/3v_IBR_speed_rgb_st','epsc')
-        elseif isequal(order,[3,1,2])
-            savefig('figures/3v_IBR_speed_gbr_st')
-            saveas(gcf,'figures/3v_IBR_speed_gbr_st','epsc')
-        elseif isequal(order,[3,2,1])
-            savefig('figures/3v_IBR_speed_grb_st')
-            saveas(gcf,'figures/3v_IBR_speed_grb_st','epsc')
-        end
+            B=imread('carb.png');
+            b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+            G=imread('carg.png');
+            g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+            R=imread('carr.png');
+            r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+            axis equal
+            CP=0:0.01:2*pi;
+            gklx = 1.5*cos(CP);
+            gkly = 1.5*sin(CP);
+            gklp = [gklx;gkly];
+            idx=[P_H_length/2,P_H_length-1];
+            for jjj=1:length(idx)
+
+                iff= idx(jjj);
+                theta = atan2(outputM(iff+1,index_IBR.y)-outputM(iff,index_IBR.y),outputM(iff+1,index_IBR.x)-outputM(iff,index_IBR.x)); % to rotate 90 counterclockwise
+                R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+                rgklp = [outputM(iff+1,index_IBR.x);outputM(iff+1,index_IBR.y)]+R*gklp;
+                fill(rgklp(1,:),rgklp(2,:),[0,0,1]);
+            %     
+                theta2 = atan2(outputM2(iff+1,index_IBR.y)-outputM2(iff,index_IBR.y),outputM2(iff+1,index_IBR.x)-outputM2(iff,index_IBR.x)); % to rotate 90 counterclockwise
+                R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
+                rgklp = [outputM2(iff+1,index_IBR.x);outputM2(iff+1,index_IBR.y)]+R*gklp;
+                fill(rgklp(1,:),rgklp(2,:),[1,0,0]);
+            %     
+                theta3 = atan2(outputM3(iff+1,index_IBR.y)-outputM3(iff,index_IBR.y),outputM3(iff+1,index_IBR.x)-outputM3(iff,index_IBR.x)); % to rotate 90 counterclockwise
+                R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
+                rgklp = [outputM3(iff+1,index_IBR.x);outputM3(iff+1,index_IBR.y)]+R*gklp;
+                fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
+
+			end
+
+			hold off
+	        %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
+	        set(gca,'FontSize',12)
+	        if isequal(order,[1,2,3])
+	            savefig('figures/3v_IBR_intersection_brg_st')
+	            saveas(gcf,'figures/3v_IBR_intersection_brg_st','epsc')
+	        elseif isequal(order,[1,3,2])
+	            savefig('figures/3v_IBR_intersection_bgr_st')
+	            saveas(gcf,'figures/3v_IBR_intersection_bgr_st','epsc')
+	        elseif isequal(order,[2,1,3])
+	            savefig('figures/3v_IBR_intersection_rbg_st')
+	            saveas(gcf,'figures/3v_IBR_intersection_rbg_st','epsc')
+	        elseif isequal(order,[2,3,1])
+	            savefig('figures/3v_IBR_intersection_rgb_st')
+	            saveas(gcf,'figures/3v_IBR_intersection_rgb_st','epsc')
+	        elseif isequal(order,[3,1,2])
+	            savefig('figures/3v_IBR_intersection_gbr_st')
+	            saveas(gcf,'figures/3v_IBR_intersection_gbr_st','epsc')
+	        elseif isequal(order,[3,2,1])
+	            savefig('figures/3v_IBR_intersection_grb_st')
+	            saveas(gcf,'figures/3v_IBR_intersection_grb_st','epsc')
+	        end
+            int=integrator_stepsize;
+
+            figure(6+(jj-1)*2)
+            plot(int:int:length(outputM(:,1))*int,outputM(:,index_IBR.v),'b','Linewidth',2)
+            plot(int:int:length(outputM(:,1))*int,outputM2(:,index_IBR.v),'r','Linewidth',2)
+            plot(int:int:length(outputM(:,1))*int,outputM3(:,index_IBR.v),'g','Linewidth',2)
+            scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index_IBR.v),'bx','Linewidth',2)
+            scatter(int:int*3:length(outputM(:,1))*int,outputM2(1:3:end,index_IBR.v),'r*','Linewidth',2)
+            scatter(int:int*3:length(outputM(:,1))*int,outputM3(1:3:end,index_IBR.v),'go','Linewidth',2)
+            line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+            line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+            xlim([0,6])
+            hold off
+            %legend ('Vehicle 1','V 2','V 3','Location','southeast')
+            %xlabel('Time [s]','interpreter','latex')
+            if jj==1
+                ylabel('Speed [m/s]','interpreter','latex')
+            end
+            if jj~=1
+               set(gca,'yticklabel',[])
+               grid on
+            end
+            
+	        set(gca,'FontSize',18)
+	        if isequal(order,[1,2,3])
+	            savefig('figures/3v_IBR_speed_brg_st')
+	            saveas(gcf,'figures/3v_IBR_speed_brg_st','epsc')
+	        elseif isequal(order,[1,3,2])
+	            savefig('figures/3v_IBR_speed_bgr_st')
+	            saveas(gcf,'figures/3v_IBR_speed_bgr_st','epsc')
+	        elseif isequal(order,[2,1,3])
+	            savefig('figures/3v_IBR_speed_rbg_st')
+	            saveas(gcf,'figures/3v_IBR_speed_rbg_st','epsc')
+	        elseif isequal(order,[2,3,1])
+	            savefig('figures/3v_IBR_speed_rgb_st')
+	            saveas(gcf,'figures/3v_IBR_speed_rgb_st','epsc')
+	        elseif isequal(order,[3,1,2])
+	            savefig('figures/3v_IBR_speed_gbr_st')
+	            saveas(gcf,'figures/3v_IBR_speed_gbr_st','epsc')
+	        elseif isequal(order,[3,2,1])
+	            savefig('figures/3v_IBR_speed_grb_st')
+	            saveas(gcf,'figures/3v_IBR_speed_grb_st','epsc')
+	        end
         pause(0.2)        
         %drawAnimation_P3_PH_IBR
     else
@@ -585,50 +648,183 @@ for jj=1:length(config(:,1))
         plot(cost1+cost2+cost3,'c')
         legend ('Vehicle 1','V 2','V 3','Tot','interpreter','latex')
     end
-    
+    end
 end
-%%
-figure (100)
-load('PG.mat')
-COSTS=[cost1,cost2,cost3;optA,optB,optC];
-for ii=1:7
-COSTS(ii,4)=mean(COSTS(ii,1:3));
+
+if Plotta==1
+    figure (100)
+    load('PG.mat')
+    COSTS=[[1:7]',[cost1,cost2,cost3;optA,optB,optC]];
+    for ii=1:7
+    COSTS(ii,5)=mean(COSTS(ii,2:4));
+    end
+    T = array2table(COSTS);
+    T.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T,'Costs_IBR_st.txt','Delimiter',' ')
+    scatter(1:length(COSTS),COSTS(:,2),'bx','Linewidth',2);
+    %alpha(.5)  
+    hold on
+    scatter(1:length(COSTS),COSTS(:,3),'r*','Linewidth',2)
+    scatter(1:length(COSTS),COSTS(:,4),'go','Linewidth',2)
+    scatter(1:length(COSTS),COSTS(:,5),'k+','Linewidth',2)
+    %line([0,8],[opt/3,opt/3],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',0.5)
+
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3','Mean')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_costs_st')
+    saveas(gcf,'figures/3v_IBR_costs_st','epsc')
+
+    figure (200)
+    SteerCost=[[1:7]',[Steer1,Steer2,Steer3;regBetaA,regBetaB,regBetaC]];
+    for ii=1:7
+    SteerCost(ii,5)=mean(SteerCost(ii,2:4));
+    end
+    T1 = array2table(SteerCost);
+    T1.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T1,'SteerCosts_IBR_st.txt','Delimiter',' ')
+    plot(1:length(SteerCost),SteerCost(:,2),'bx','Linewidth',2.5)
+    hold on
+    plot(1:length(SteerCost),SteerCost(:,3),'r*','Linewidth',2.5)
+    plot(1:length(SteerCost),SteerCost(:,4),'go','Linewidth',2.5)
+    plot(1:length(SteerCost),SteerCost(:,5),'k+','Linewidth',2.5)
+    %plot(1:length(cost1),(cost1+cost2+cost3)/3,'c*','Linewidth',2)
+    % plot(length(Steer1)+1,regBetaA,'bx','Linewidth',2.5)
+    % plot(length(Steer1)+1,regBetaB,'r*','Linewidth',2.5)
+    % plot(length(Steer1)+1,regBetaC,'go','Linewidth',2.5)
+    %plot(length(cost1)+1,(1.9105)/3,'c*','Linewidth',2)
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_steer_st')
+    saveas(gcf,'figures/3v_IBR_steer_st','epsc')
+
+    figure (300)
+    JerkCost=[[1:7]',[Jerk1,Jerk2,Jerk3;regABA,regABB,regABC]];
+    for ii=1:7
+    JerkCost(ii,5)=mean(JerkCost(ii,2:4));
+    end
+    T2 = array2table(JerkCost);
+    T2.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T2,'JerkCost_IBR_st.txt','Delimiter',' ')
+    plot(1:length(JerkCost),JerkCost(:,2),'bx','Linewidth',2.5)
+    hold on
+    plot(1:length(JerkCost),JerkCost(:,3),'r*','Linewidth',2.5)
+    plot(1:length(JerkCost),JerkCost(:,4),'go','Linewidth',2.5)
+    plot(1:length(JerkCost),JerkCost(:,5),'k+','Linewidth',2.5)
+
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_jerk_st')
+    saveas(gcf,'figures/3v_IBR_jerk_st','epsc')
+
+    figure (500)
+    SpeedCost=[[1:7]',[Speed1,Speed2,Speed3;speedcostA,speedcostB,speedcostC]];
+    for ii=1:7
+    SpeedCost(ii,5)=mean(SpeedCost(ii,2:4));
+    end
+    T3 = array2table(SpeedCost);
+    T3.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T3,'SpeedCost_IBR_st.txt','Delimiter',' ')
+    plot(1:length(SpeedCost),SpeedCost(:,2),'bx','Linewidth',2.5)
+    hold on
+    plot(1:length(SpeedCost),SpeedCost(:,3),'r*','Linewidth',2.5)
+    plot(1:length(SpeedCost),SpeedCost(:,4),'go','Linewidth',2.5)
+    plot(1:length(SpeedCost),SpeedCost(:,5),'k+','Linewidth',2.5)
+
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_SpeedCost_st')
+    saveas(gcf,'figures/3v_IBR_SpeedCost_st','epsc')
+
+    figure (600)
+    SpeedCost1=[[1:7]',[Speed1_1,Speed2_1,Speed3_1;speedcostA1,speedcostB1,speedcostC1]];
+    for ii=1:7
+    SpeedCost1(ii,5)=mean(SpeedCost1(ii,2:4));
+    end
+    T4 = array2table(SpeedCost1);
+    T4.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T4,'SpeedCost1_IBR_st.txt','Delimiter',' ')
+    plot(1:length(SpeedCost1),SpeedCost1(:,2),'bx','Linewidth',2.5)
+    hold on
+    plot(1:length(SpeedCost1),SpeedCost1(:,3),'r*','Linewidth',2.5)
+    plot(1:length(SpeedCost1),SpeedCost1(:,4),'go','Linewidth',2.5)
+    plot(1:length(SpeedCost1),SpeedCost1(:,5),'k+','Linewidth',2.5)
+
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_SpeedCost1_st')
+    saveas(gcf,'figures/3v_IBR_SpeedCost1_st','epsc')
+
+    figure (700)
+    LatCost=[[1:7]',[LatError1,LatError2,LatError3;latcostA,latcostB,latcostC]];
+    for ii=1:7
+    LatCost(ii,5)=mean(LatCost(ii,2:4));
+    end
+    T5 = array2table(LatCost);
+    T5.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T5,'LatCost_IBR_st.txt','Delimiter',' ')
+    plot(1:length(LatCost),LatCost(:,2),'bx','Linewidth',2.5)
+    hold on
+    plot(1:length(LatCost),LatCost(:,3),'r*','Linewidth',2.5)
+    plot(1:length(LatCost),LatCost(:,4),'go','Linewidth',2.5)
+    plot(1:length(LatCost),LatCost(:,5),'k+','Linewidth',2.5)
+
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_LatCost_st')
+    saveas(gcf,'figures/3v_IBR_LatCost1_st','epsc')
+
+    figure (800)
+    LagCost=[[1:7]',[LagError1,LagError2,LagError3;lagcostA,lagcostB,lagcostC]];
+    for ii=1:7
+    LagCost(ii,5)=mean(LagCost(ii,2:4));
+    end
+    T6 = array2table(LagCost);
+    T6.Properties.VariableNames(1:5) = {'x','blue','red','green','mean'};
+    writetable(T6,'LatCost_IBR_st.txt','Delimiter',' ')
+    plot(1:length(LagCost),LagCost(:,2),'bx','Linewidth',2.5)
+    hold on
+    plot(1:length(LagCost),LagCost(:,3),'r*','Linewidth',2.5)
+    plot(1:length(LagCost),LagCost(:,4),'go','Linewidth',2.5)
+    plot(1:length(LagCost),LagCost(:,5),'k+','Linewidth',2.5)
+
+    grid on
+    %title('Costs')
+    xlim([0,8])
+    xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
+    %legend ('V 1','V 2','V 3')
+    hold off
+    set(gca,'FontSize',15)
+    savefig('figures/3v_IBR_LagCost_st')
+    saveas(gcf,'figures/3v_IBR_LagCost1_st','epsc')
 end
-scatter(1:length(COSTS),COSTS(:,1),'bx','Linewidth',2);
-%alpha(.5)  
-hold on
-scatter(1:length(COSTS),COSTS(:,2),'r*','Linewidth',2)
-scatter(1:length(COSTS),COSTS(:,3),'go','Linewidth',2)
-scatter(1:length(COSTS),COSTS(:,4),'k+','Linewidth',2)
-%line([0,8],[opt/3,opt/3],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',0.5)
-      
-grid on
-%title('Costs')
-xlim([0,8])
-xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
-%legend ('V 1','V 2','V 3','Mean')
-hold off
-set(gca,'FontSize',15)
-savefig('figures/3v_IBR_costs_st')
-saveas(gcf,'figures/3v_IBR_costs_st','epsc')
-
-figure (200)
-
-plot(1:length(Steer1),Steer1,'bx','Linewidth',2.5)
-hold on
-plot(1:length(Steer2),Steer2,'r*','Linewidth',2.5)
-plot(1:length(Steer3),Steer3,'go','Linewidth',2.5)
-%plot(1:length(cost1),(cost1+cost2+cost3)/3,'c*','Linewidth',2)
-plot(length(Steer1)+1,regBetaA,'bx','Linewidth',2.5)
-plot(length(Steer1)+1,regBetaB,'r*','Linewidth',2.5)
-plot(length(Steer1)+1,regBetaC,'go','Linewidth',2.5)
-%plot(length(cost1)+1,(1.9105)/3,'c*','Linewidth',2)
-grid on
-%title('Costs')
-xlim([0,8])
-xticklabels({'','BRG','BGR','RBG','RGB','GBR','GRB','PG','','interpreter','latex'})
-%legend ('V 1','V 2','V 3')
-hold off
-set(gca,'FontSize',15)
-savefig('figures/3v_IBR_steer_st')
-saveas(gcf,'figures/3v_IBR_steer_st','epsc')
+save('Metric_stack.mat', 'MetricStack')

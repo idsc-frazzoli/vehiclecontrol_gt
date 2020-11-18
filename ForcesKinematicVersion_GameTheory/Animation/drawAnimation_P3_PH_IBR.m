@@ -1,22 +1,23 @@
 global index_IBR
 frames = length(outputM(:,1));
-vidfile = VideoWriter('PH_IBR','Motion JPEG AVI');
+vidfile = VideoWriter('PH_IBR_St','Motion JPEG AVI');
 vidfile.FrameRate = 10;
 open(vidfile);
-set(gcf,'position',[100,100,1000,800])
-tracelength = 500;
+%set(gcf,'position',[100,100,1000,800])
+%tracelength = 500;
 maxxacc=max(abs([outputM(:,index_IBR.ab);outputM2(:,index_IBR.ab);outputM3(:,index_IBR.ab)]));
 for iff = 1:frames-1
     figure(100)
     clf
     daspect([1 1 1])
     hold on
-    set(gca,'visible','off')
     if(1)
     %points = [36.2,52,57.2,53,55,47,41.8;44.933,58.2,53.8,49,44,43,38.33;1.8,1.8,1.8,0.2,0.2,0.2,1.8]';
     %points = [36.2,52,57.2,53,52,47,41.8;44.933,58.2,53.8,49,44,43,38.33;1.8,1.8,1.8,0.5,0.5,0.5,1.8]';
-         I=imread('strada1.png');
+         I=imread('road06.png');
          h=image([20 80],[20 80],I);
+         axis equal
+         set(gca,'visible','off')
 %        [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3)+0.5);
 %        [rleftline,rmiddleline,rrightline] = drawTrack(points(:,1:2),points(:,3));
 %        plot(leftline(:,1),leftline(:,2),'b')
@@ -61,9 +62,9 @@ for iff = 1:frames-1
        vc = outputM(i,index_IBR.ab)/maxxacc;
        vc2 = outputM2(i,index_IBR.ab)/maxxacc;
        vc3 = outputM3(i,index_IBR.ab)/maxxacc;
-       line(x,y,'Color',[0.5-0.5*vc,0.5+0.5*vc,0],'LineWidth',2);
-       line(x2,y2,'Color',[0.5-0.5*vc2,0.5+0.5*vc2,0],'LineWidth',2);
-       line(x3,y3,'Color',[0.5-0.5*vc3,0.5+0.5*vc3,0],'LineWidth',2);
+       line(x,y,'Color',[0,0,0.5+0.5*vc],'LineWidth',2);
+       line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'LineWidth',2);
+       line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'LineWidth',2);
        
     end
     iff

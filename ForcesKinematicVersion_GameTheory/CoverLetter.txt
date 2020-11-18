@@ -1,0 +1,30 @@
+Dear Editor,
+We are pleased to submit the original manuscript "Social Optima are Nash 
+Equilibria in Urban Driving Games" by A. Zanardi, E. Mion, S. Bolognani, 
+A. Censi, E. Frazzoli for consideration for publication in IEEE Robotics
+and Automation Letters.
+
+In this manuscript, we describe Urban Driving Games (UDGs), a particular
+class of differential games that model the interactions and incentives of
+the urban driving task, in which drivers are self-interested but also
+possess a “communal” interest, such as not colliding with each other.
+We show that, in contrast with competitive scenarios like racing games, a 
+wider range of road interactions can be modeled as potential games, which, 
+in turn, provides existence and convergence guarantees for NE.
+Moreover, it offers also a rational tool for equilibrium selection which 
+minimizes the social cost.
+This allows to prove several interesting properties, such as the
+convergence of the iterated best response algorithm to a Nash Equilibrium
+and the fact that the social optima (minimizers of the social welfare)
+are Nash Equilibria, and that these equilibria can be found with an optimal
+control approach.
+Finally, an example with three vehicles approaching a 4-way intersection 
+has been designed to apply the findings in a realistic driving scenario 
+and prove the benefits of the social optima.
+
+This article is our original unpublished work and it has not been submitted
+to any other journal for reviews. We have no conflicts of interest to 
+disclose.
+We thank you in advance for your time. Please feel free to contact me in 
+case of any questions or concerns.
+Sincerely,
