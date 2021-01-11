@@ -49,6 +49,11 @@ pointsO = 16;      % N gokart parameters + N cost function parameters
 pointsN = 14;      % N spline points ahead considered kart 1
 pointsN2 = 14;     % N spline points ahead considered kart 2
 pointsN3 = 14;     % N spline points ahead considered kart 3 
+
+pointsO_1 = 16;      % N gokart parameters + N cost function parameters
+pointsN_1 = 14;      % N spline points ahead considered kart 1
+pointsN2_1 = 14;     % N spline points ahead considered kart 2
+pointsN3_1 = 14;     % N spline points ahead considered kart 3 
 splinestart = 1;
 splinestart2 = 1;
 splinestart3 = 1;
@@ -92,6 +97,7 @@ points3 = [48.25,48.25,48.25,48.25,48.25,48.25,52,55,60,65,70,75,80,85;...      
            1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]';%,5,5,5,5,4,3,2,2,3
 %points3(:,1)=points3(:,1)-1.75;  
 solvetimes  = [];
+solvetimes1 = [];
 solvetimes2 = [];
 solvetimes3 = [];
 trajectorytimestep = integrator_stepsize;
