@@ -11,7 +11,7 @@
 %close all
 %% Parameters Definitions
 %parameters_3_vehicles
-Plotta=0;
+Plotta=1;
 %% Initialization for simulation
 global index
 %indexes_3_vehicles
@@ -72,7 +72,9 @@ targets3 = [];
 
 planc = 10;
 tstart = 1;
-x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
+load InitializationPG.mat
+x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
+%x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 optA = 0;
 optB = 0;
 optC = 0;

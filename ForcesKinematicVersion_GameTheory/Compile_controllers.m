@@ -19,7 +19,7 @@ addpath('index_script');
 addpath('Run_Simulation');
 addpath('Animation');
 addpath('ReadSVG');
-addpath('svgread');
+%addpath('svgread');
 clear model
 clear problem
 clear all
@@ -27,7 +27,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -35,7 +35,7 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'IBR'; % 'PG'; 'IBR';
+Game        = 'PG'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 Stack       = 0;
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
@@ -805,6 +805,12 @@ if strcmp(Compiled,'no')
             switch Game
                 case 'PG'
                     codeoptions = getOptions('MPCPathFollowing_3v');
+    
+%                     codeoptions.accuracy.gmap= 1e-5; % infinity norm of the gradient map
+%                     codeoptions.FGstep = 1/1000;
+%                     codeoptions.FGautostep = 1;
+%                     codeoptions.warmstart = 0;
+                    
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
             end
