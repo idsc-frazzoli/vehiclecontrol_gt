@@ -59,13 +59,13 @@ extern void MPCPathFollowing_3v_N2_casadi2forces(MPCPathFollowing_3v_N2_float *x
 	
 
 	/* Allocate working arrays for CasADi */
-	MPCPathFollowing_3v_N2_float w[1141];
+	MPCPathFollowing_3v_N2_float w[1447];
 	
     /* temporary storage for casadi sparse output */
     MPCPathFollowing_3v_N2_float this_f;
-    MPCPathFollowing_3v_N2_float nabla_f_sparse[24];
-    MPCPathFollowing_3v_N2_float h_sparse[12];
-    MPCPathFollowing_3v_N2_float nabla_h_sparse[45];
+    MPCPathFollowing_3v_N2_float nabla_f_sparse[3];
+    MPCPathFollowing_3v_N2_float h_sparse[16];
+    MPCPathFollowing_3v_N2_float nabla_h_sparse[76];
     MPCPathFollowing_3v_N2_float c_sparse[21];
     MPCPathFollowing_3v_N2_float nabla_c_sparse[87];
             

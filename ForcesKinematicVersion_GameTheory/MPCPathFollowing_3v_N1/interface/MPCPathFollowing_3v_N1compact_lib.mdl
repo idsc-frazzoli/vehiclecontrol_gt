@@ -60,13 +60,13 @@ Model {
       }
     }
   }
-  Created		  "1/11/2021 3:43:46 PM"
+  Created		  "1/12/2021 10:24:56 AM"
   Creator		  "embotech AG"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "embotech AG"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "1/11/2021 3:43:46 PM"
+  LastModifiedDate	  "1/12/2021 10:24:56 AM"
   RTWModifiedTimeStamp	  315310195
   ModelVersionFormat	  "1.%<AutoIncrement:2>"
   ConfigurationManager	  "None"
@@ -804,12 +804,12 @@ Model {
 	Help			"MPCPathFollowing_3v_N1_simulinkBlockcompact provides an easy Simulink interface for simulating your customized solver.  \n"
 	"\nOUTPUTS = MPCPathFollowing_3v_N1(INPUTS) solves an optimization problem where:\n\n"
 	"INPUTS:\n"
-	" - x0 - column vector of length 1980\n "
+	" - x0 - column vector of length 2040\n "
 " - xinit - column vector of length 21\n "
 " - all_parameters - column vector of length 8520\n "
 
 	"\nOUTPUTS:\n"
-	" - outputs - column vector of length 1980\n "
+	" - outputs - column vector of length 2040\n "
 
 	"\n For more information, see https://www.embotech.com/FORCES-Pro/How-to-use/Simulink-Interface/Simulink-Block \n "
 

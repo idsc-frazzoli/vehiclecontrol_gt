@@ -24,36 +24,36 @@ index.ds_k3 = 9;
 index.slack2 = 10;
 index.slack3 = 11;
 index.slack4 = 12;
-
+index.slack=13;
 % states
-index.x = 13;
-index.y = 14;
-index.theta = 15;
-index.v = 16;
-index.ab = 17;
-index.beta = 18;
-index.s = 19;
+index.x = 14;
+index.y = 15;
+index.theta = 16;
+index.v = 17;
+index.ab = 18;
+index.beta = 19;
+index.s = 20;
 % states kart 2
-index.x_k2 = 20;
-index.y_k2 = 21;
-index.theta_k2 = 22;
-index.v_k2 = 23;
-index.ab_k2 = 24;
-index.beta_k2 = 25;
-index.s_k2 = 26;
+index.x_k2 = 21;
+index.y_k2 = 22;
+index.theta_k2 = 23;
+index.v_k2 = 24;
+index.ab_k2 = 25;
+index.beta_k2 = 26;
+index.s_k2 = 27;
 % states kart 3
-index.x_k3 = 27;
-index.y_k3 = 28;
-index.theta_k3 = 29;
-index.v_k3 = 30;
-index.ab_k3 = 31;
-index.beta_k3 = 32;
-index.s_k3 = 33;
+index.x_k3 = 28;
+index.y_k3 = 29;
+index.theta_k3 = 30;
+index.v_k3 = 31;
+index.ab_k3 = 32;
+index.beta_k3 = 33;
+index.s_k3 = 34;
 % Number of States
 index.ns = 21;
 
 % Number of Inputs
-index.nu = 12;
+index.nu = 13;
 
 % Number of Variables
 index.nv = index.ns+index.nu;
@@ -114,36 +114,36 @@ index1.ds_k3 = 9;
 index1.slack2 = 10;
 index1.slack3 = 11;
 index1.slack4 = 12;
-
+index1.slack = 13;
 % states
-index1.x = 13;
-index1.y = 14;
-index1.theta = 15;
-index1.v = 16;
-index1.ab = 17;
-index1.beta = 18;
-index1.s = 19;
+index1.x = 14;
+index1.y = 15;
+index1.theta = 16;
+index1.v = 17;
+index1.ab = 18;
+index1.beta = 19;
+index1.s = 20;
 % states kart 2
-index1.x_k2 = 20;
-index1.y_k2 = 21;
-index1.theta_k2 = 22;
-index1.v_k2 = 23;
-index1.ab_k2 = 24;
-index1.beta_k2 = 25;
-index1.s_k2 = 26;
+index1.x_k2 = 21;
+index1.y_k2 = 22;
+index1.theta_k2 = 23;
+index1.v_k2 = 24;
+index1.ab_k2 = 25;
+index1.beta_k2 = 26;
+index1.s_k2 = 27;
 % states kart 3
-index1.x_k3 = 27;
-index1.y_k3 = 28;
-index1.theta_k3 = 29;
-index1.v_k3 = 30;
-index1.ab_k3 = 31;
-index1.beta_k3 = 32;
-index1.s_k3 = 33;
+index1.x_k3 = 28;
+index1.y_k3 = 29;
+index1.theta_k3 = 30;
+index1.v_k3 = 31;
+index1.ab_k3 = 32;
+index1.beta_k3 = 33;
+index1.s_k3 = 34;
 % Number of States
 index1.ns = 21;
 
 % Number of Inputs
-index1.nu = 12;
+index1.nu = 13;
 
 % Number of Variables
 index1.nv = index1.ns+index1.nu;

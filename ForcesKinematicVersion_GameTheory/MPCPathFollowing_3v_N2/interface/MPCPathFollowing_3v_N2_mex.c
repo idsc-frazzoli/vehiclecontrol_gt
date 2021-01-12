@@ -119,14 +119,14 @@ void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_defau
     {
     mexErrMsgTxt("PARAMS.x0 must be a double.");
     }
-    if( mxGetM(par) != 1980 || mxGetN(par) != 1 ) 
+    if( mxGetM(par) != 2040 || mxGetN(par) != 1 ) 
 	{
-    mexErrMsgTxt("PARAMS.x0 must be of size [1980 x 1]");
+    mexErrMsgTxt("PARAMS.x0 must be of size [2040 x 1]");
     }
 #endif	 
 	if ( (mxGetN(par) != 0) && (mxGetM(par) != 0) )
 	{
-		copyMArrayToC_double(mxGetPr(par), params.x0,1980);
+		copyMArrayToC_double(mxGetPr(par), params.x0,2040);
 
 	}
 	par = mxGetField(PARAMS, 0, "xinit");
@@ -196,8 +196,8 @@ void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_defau
 
 	/* copy output to matlab arrays */
 	plhs[0] = mxCreateStructMatrix(1, 1, 1, outputnames);
-		outvar = mxCreateDoubleMatrix(1980, 1, mxREAL);
-	copyCArrayToM_double( output.alldata, mxGetPr(outvar), 1980);
+		outvar = mxCreateDoubleMatrix(2040, 1, mxREAL);
+	copyCArrayToM_double( output.alldata, mxGetPr(outvar), 2040);
 	mxSetField(plhs[0], 0, "alldata", outvar);
 
 	/* copy exitflag */

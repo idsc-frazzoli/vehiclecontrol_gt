@@ -27,7 +27,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -70,17 +70,20 @@ switch NUM_Vehicles
 %             parameters_2_vehicles_TestAlpha
 %         end
     case 3
-        parameters_3_vehicles
+        
         switch Game
             case 'PG'
+                parameters_3_vehicles
                 pointsO = 16; 
                 NUM_const=12; % number of nonlinear constraint
                 MAX_IT= 1000; % N of max iterations
             case 'IBR'
+                parameters_3_vehicles
                 pointsO = 20; 
                 NUM_const=5; % number of nonlinear constraint
                 MAX_IT= 500; % N of max iterations
             case 'LEXI'
+                parameters_3_vehicles_1
                 pointsO = 16; 
                 NUM_const=12; % number of nonlinear constraint
                 MAX_IT= 1000; % N of max iterations
@@ -178,7 +181,7 @@ if strcmp(Compiled,'no')
                     model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
                     model1.eq = @(z,p) RK4(z(index1.sb:end), z(1:index1.nu),...
-                               @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
+                               @(x,u,p)interstagedx_PG3_1(x,u),integrator_stepsize,p);
                 
             end
 %         case 5
@@ -628,11 +631,13 @@ if strcmp(Compiled,'no')
         model.lb(index.ab)=-inf;
 
         % Slack
-        %model.lb(index.slack)=0;
+        model.lb(index.slack)=0;
 
         % Velocity
-        model.lb(index.v)=0;
-        model.ub(index.v)=maxSpeed;
+        if strcmp(Game,'PG')
+            model.lb(index.v)=0;
+            model.ub(index.v)=maxSpeed;
+        end
         % Steering Angle
         model.ub(index.beta)=beta_max;
         model.lb(index.beta)=beta_min;
@@ -656,7 +661,7 @@ if strcmp(Compiled,'no')
             model1.lb(index1.ab)=-inf;
 
             % Slack
-            %model.lb(index.slack)=0;
+            %model.lb(index1.slack)=0;
 
             % Velocity
             model1.lb(index1.v)=0;
@@ -756,7 +761,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k3)=0;
-                    model.ub(index.v_k3)=maxSpeed+1;
+                    model.ub(index.v_k3)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k3)=beta_max;
                     model.lb(index.beta_k3)=beta_min;
@@ -793,8 +798,8 @@ if strcmp(Compiled,'no')
                     %model.lb(index.slack_k2)=0;
 
                     % Speed Constraint (state)
-                    model.lb(index.v_k2)=0;
-                    model.ub(index.v_k2)=maxSpeed;
+%                     model.lb(index.v_k2)=0;
+%                     model.ub(index.v_k2)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k2)=beta_max;
                     model.lb(index.beta_k2)=beta_min;
@@ -814,8 +819,8 @@ if strcmp(Compiled,'no')
                     %model.lb(index.slack_k3)=0;
 
                     % Speed Constraint (state)
-                    model.lb(index.v_k3)=0;
-                    model.ub(index.v_k3)=maxSpeed+1;
+%                     model.lb(index.v_k3)=0;
+%                     model.ub(index.v_k3)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k3)=beta_max;
                     model.lb(index.beta_k3)=beta_min;
@@ -829,15 +834,15 @@ if strcmp(Compiled,'no')
                     model.lb(index.slack4)=0;
 
                     %limit lateral acceleration
-                    model.nh = NUM_const; 
+                    model.nh = NUM_const+3; 
                     model.ineq = @(z,p) nlconst_PG3_1(z,p);
-                    model.hu = [0;0;0;...
-                                0;0;0;...
-                                0;0;0;...
+                    model.hu = [0;maxSpeed;0;0;...
+                                0;maxSpeed;0;0;...
+                                0;maxSpeed;0;0;...
                                 0;0;0];%
-                    model.hl = [-inf;-inf;-inf;...
-                                -inf;-inf;-inf;...
-                                -inf;-inf;-inf;...
+                    model.hl = [-inf;0;-inf;-inf;...
+                                -inf;0;-inf;-inf;...
+                                -inf;0;-inf;-inf;...
                                 -inf;-inf;-inf];%
                             
                     % Second controller
@@ -874,7 +879,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model1.lb(index1.v_k3)=0;
-                    model1.ub(index1.v_k3)=maxSpeed+1;
+                    model1.ub(index1.v_k3)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model1.ub(index1.beta_k3)=beta_max;
                     model1.lb(index1.beta_k3)=beta_min;
@@ -888,16 +893,16 @@ if strcmp(Compiled,'no')
                     model1.lb(index1.slack4)=0;
 
                     %limit lateral acceleration
-                    model1.nh = NUM_const_1; 
+                    model1.nh = NUM_const_1+3+1; 
                     model1.ineq = @(z,p) nlconst_PG3_2(z,p);
-                    model1.hu = [0;0;0;...
-                                0;0;0;...
-                                0;0;0;...
-                                0;0;0];%
-                    model1.hl = [-inf;-inf;-inf;...
-                                -inf;-inf;-inf;...
-                                -inf;-inf;-inf;...
-                                -inf;-inf;-inf];%
+                    model1.hu = [0;maxSpeed;0;0;...
+                                0;maxSpeed;0;0;...
+                                0;maxSpeed;0;0;...
+                                0;0;0;0];%
+                    model1.hl = [-inf;0;-inf;-inf;...
+                                -inf;0;-inf;-inf;...
+                                -inf;0;-inf;-inf;...
+                                -inf;-inf;-inf;-inf];%
 
                 case 'IBR'
                     model.nh = NUM_const; 
@@ -1108,7 +1113,7 @@ if strcmp(Simulation, 'yes')
                 case 'PG'
                     Run_3_vehicles_cen
                 case 'LEXI'
-                    Run_3_vehicles_cen_Lexi
+                    Run_3_vehicles_cen_Lexi_2
                 case 'IBR'
                     if Stack==1
                         Run_3_vehicles_IBR_st

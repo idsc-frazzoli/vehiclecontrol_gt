@@ -643,7 +643,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k3)=0;
-                    model.ub(index.v_k3)=maxSpeed+1;
+                    model.ub(index.v_k3)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k3)=beta_max;
                     model.lb(index.beta_k3)=beta_min;

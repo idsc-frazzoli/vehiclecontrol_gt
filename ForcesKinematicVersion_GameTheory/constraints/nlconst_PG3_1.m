@@ -4,12 +4,13 @@ global index
 %NLCONST Summary of this function goes here
 %   Detailed explanation goes here
 dist=p(index.dist);
+%maxSpeed=p(index.ps);
 % l = 1.19;
 % beta  = z(index.beta);
 % dotbeta = z(index.dotbeta);
 % forwardacc = z(index.ab);
 %slack = z(index.slack);
-
+slack  = z(index.slack);
 slack2 = z(index.slack2);
 slack3 = z(index.slack3);
 slack4 = z(index.slack4);
@@ -167,8 +168,8 @@ squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
 %v1=(tan(z(8))*z(7)^2/l);
-v2 = z(index.ab)-casadiGetSmoothMaxAcc(z(index.v));
-% v3 = accnorm-slack;
+v2 = z(index.ab)- casadiGetSmoothMaxAcc(z(index.v));
+v3 = z(index.v) - slack;
 v4 = laterror-r;%-0.5*slack
 v5 = -laterror-r;%-0.5*slack
 %understeerright
@@ -178,14 +179,15 @@ v5 = -laterror-r;%-0.5*slack
 % %v7 = -frontaxlelatacc - latacclim-torquevectoringcapability-slack;
 % v7 = -frontaxlelatacc -torquevectoringcapability - latacclim-slack;
 
-v8 = z(index.ab_k2)-casadiGetSmoothMaxAcc(z(index.v_k2));
-% v9 = accnorm_k2-slack_k2;
+v8 = z(index.ab_k2)- casadiGetSmoothMaxAcc(z(index.v_k2));
+v9 = z(index.v_k2) - slack;% v9 = accnorm_k2-slack_k2;
 v10 = laterror_k2-r_k2;%-0.5*slack_k2
 v11 = -laterror_k2-r_k2;%-0.5*slack_k2
 % v12 = frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 % v13 = -frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 
-v14 = z(index.ab_k3)-casadiGetSmoothMaxAcc(z(index.v_k3));
+v14 = z(index.ab_k3)- casadiGetSmoothMaxAcc(z(index.v_k3));
+v15 = z(index.v_k3) - slack;
 % v15 = accnorm_k3-slack_k3;
 v16 = laterror_k3-r_k3;%-0.5*slack_k3
 v17 = -laterror_k3-r_k3;%-0.5*slack_k3
@@ -194,6 +196,6 @@ v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 v20 = -squared_distance_array+dist-slack2;
 v21 = -squared_distance_array2+dist-slack3;
 v22 = -squared_distance_array3+dist-slack4;
-v = [v2;v4;v5;v8;v10;v11;v14;v16;v17;v20;v21;v22];%
+v = [v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22];%
 end
 
