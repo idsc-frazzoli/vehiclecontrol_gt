@@ -27,7 +27,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -97,7 +97,6 @@ if strcmp(Compiled,'no')
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
-                
             end
     end
     
@@ -295,6 +294,16 @@ if strcmp(Compiled,'no')
                                 -inf;-inf;-inf;...
                                 -inf;-inf;-inf;...
                                 -inf;-inf;-inf];%
+                    model.nhN = NUM_const+3; 
+                    model.ineqN= @(z,p) nlconst_PG3_N(z,p);
+                    model.huN = [0;45;0;0;...
+                                 0;+inf;0;0;...
+                                 0;+inf;0;0;...
+                                 0;0;0];%
+                    model.hlN = [-inf;-inf;-inf;-inf;...
+                                 -inf;55;-inf;-inf;...
+                                 -inf;50;-inf;-inf;...
+                                 -inf;-inf;-inf];%
             end
     end
 

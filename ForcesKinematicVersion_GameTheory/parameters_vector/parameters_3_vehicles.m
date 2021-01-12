@@ -9,8 +9,8 @@ torqueveceffect = 3;
 brakeeffect = 0; 
 
 % cost function parameters
-plagerror=0.001;       % proj error param cost
-platerror=0.001;    % lateral error param cost
+plagerror=1;       % proj error param cost
+platerror=0.1;    % lateral error param cost
 pprog=0.8;         % progress parameter cost
 pab=0.006;        % acc parameter cost
 pdotbeta=4;      % steering velocity parameter cost
