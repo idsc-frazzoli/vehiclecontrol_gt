@@ -63,9 +63,9 @@ extern void MPCPathFollowing_3v_N1_casadi2forces(MPCPathFollowing_3v_N1_float *x
 	
     /* temporary storage for casadi sparse output */
     MPCPathFollowing_3v_N1_float this_f;
-    MPCPathFollowing_3v_N1_float nabla_f_sparse[25];
-    MPCPathFollowing_3v_N1_float h_sparse[15];
-    MPCPathFollowing_3v_N1_float nabla_h_sparse[51];
+    MPCPathFollowing_3v_N1_float nabla_f_sparse[4];
+    MPCPathFollowing_3v_N1_float h_sparse[12];
+    MPCPathFollowing_3v_N1_float nabla_h_sparse[45];
     MPCPathFollowing_3v_N1_float c_sparse[21];
     MPCPathFollowing_3v_N1_float nabla_c_sparse[87];
             
