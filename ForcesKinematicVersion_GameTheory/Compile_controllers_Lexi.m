@@ -27,7 +27,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -127,7 +127,7 @@ if strcmp(Compiled,'no')
                             end
                         case 'yes'
                             for i=1:model.N
-                                model.objective{i} = @(z,p)objective_PG3_LE(z,...
+                                model.objective{i} = @(z,p)objective_PG3_LE_1(z,...
                                     getPointsFromParameters(p, pointsO, pointsN),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
@@ -271,7 +271,7 @@ if strcmp(Compiled,'no')
 
                     % Speed Constraint (state)
                     model.lb(index.v_k3)=0;
-                    model.ub(index.v_k3)=maxSpeed+1;
+                    model.ub(index.v_k3)=maxSpeed;
                     % Steering Angle Constraint (input)
                     model.ub(index.beta_k3)=beta_max;
                     model.lb(index.beta_k3)=beta_min;

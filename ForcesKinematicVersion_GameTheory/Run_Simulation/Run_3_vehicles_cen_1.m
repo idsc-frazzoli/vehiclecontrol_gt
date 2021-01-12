@@ -8,7 +8,7 @@
 % addpath('objective_function');
 % addpath('constraints');
 % addpath('index_script');
-%close all
+close all
 %% Parameters Definitions
 %parameters_3_vehicles
 Plotta=1;
@@ -72,9 +72,9 @@ targets3 = [];
 
 planc = 10;
 tstart = 1;
-load InitializationPG.mat
-x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
-%x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
+% load InitializationPG.mat
+% x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
+x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 optA = 0;
 optB = 0;
 optC = 0;
@@ -179,10 +179,10 @@ for i =1:tend
     if(exitflag==0)
        a = a + 1; 
     end
-    if(exitflag~=1 && exitflag ~=0)
-        draw3
-        keyboard
-    end
+%     if(exitflag~=1 && exitflag ~=0)
+%         draw3
+%         keyboard
+%     end
     %nextSplinePoints
     %get output
     outputM = reshape(output.alldata,[model.nvar,model.N])';
@@ -276,7 +276,7 @@ if tend==1 && Plotta==1
         line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
         line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
         %title('Speed')
-        set(gca,'yticklabel',[])
+        %set(gca,'yticklabel',[])
         grid on
         ylim([3,9.2])
         
@@ -311,7 +311,7 @@ if tend==1 && Plotta==1
         R=imread('carr.png');
         r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
         
-        set(gca,'visible','off')
+        %set(gca,'visible','off')
         axis equal
         CP=0:0.01:2*pi;
         gklx = 1.5*cos(CP);
@@ -400,3 +400,5 @@ end
 % set(gca,'visible','off')
 % savefig('figures/3v_IBR_intall')
 % saveas(gcf,'figures/3v_IBR_intall','epsc')
+
+%figure(100)
