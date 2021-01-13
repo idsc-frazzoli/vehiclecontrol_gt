@@ -375,28 +375,28 @@ if tend==1 && Plotta==1
         savefig('figures/3v_PG_speed')
         saveas(gcf,'figures/3v_PG_speed','epsc')
         % drawAnimation_P3_PH
-        figure(1)
-        hold on
-        plot(optA,'b*','Linewidth',2)
-        plot(optB,'r*','Linewidth',2)
-        plot(optC,'g*','Linewidth',2)
-        plot(opt/3,'c*','Linewidth',2)
-        set(gca,'Fontsize',15)
+%         figure(1)
+%         hold on
+%         plot(optA,'b*','Linewidth',2)
+%         plot(optB,'r*','Linewidth',2)
+%         plot(optC,'g*','Linewidth',2)
+%         plot(opt/3,'c*','Linewidth',2)
+%         set(gca,'Fontsize',15)
 elseif (tend~=1)
     draw3
 end
-
-figure(1000)
-hold on
-plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',2)
-plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',2)
-plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',2)
-B=imread('carb.png');
-b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
-G=imread('carg.png');
-g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
-R=imread('carr.png');
-r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-set(gca,'visible','off')
-savefig('figures/3v_IBR_intall')
-saveas(gcf,'figures/3v_IBR_intall','epsc')
+% 
+% figure(1000)
+% hold on
+% plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',2)
+% plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',2)
+% plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',2)
+% B=imread('carb.png');
+% b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+% G=imread('carg.png');
+% g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+% R=imread('carr.png');
+% r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+% set(gca,'visible','off')
+% savefig('figures/3v_IBR_intall')
+% saveas(gcf,'figures/3v_IBR_intall','epsc')

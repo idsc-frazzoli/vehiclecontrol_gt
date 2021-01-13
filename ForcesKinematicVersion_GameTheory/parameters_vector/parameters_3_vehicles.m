@@ -17,7 +17,7 @@ pdotbeta=4;      % steering velocity parameter cost
 pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=10000;        % collision cost
-dist=4;   
+dist=5;   
 % 
 % if Stack==1
 %     plagerror=1;       % proj error param cost
