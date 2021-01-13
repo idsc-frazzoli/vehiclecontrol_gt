@@ -1,4 +1,4 @@
-function f = objective_PG3_LE_1(z,points,points2,points3,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function f = objective_PG3_LE_N(z,points,points2,points3,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
     global index
 
     %get the fancy spline
@@ -95,8 +95,8 @@ function f = objective_PG3_LE_1(z,points,points2,points3,vmax,plagerror, platerr
 %   +speedcost1+speedcost)+...prog+pslack*slack+
 %   +speedcost1_k2+speedcost_k2)+...+prog_k2+pslack*slack_k2+
 %   +speedcost1_k3+speedcost_k3)+...+prog_k3+pslack*slack_k3+
-%     f = (   +latcost   +regAB   +regBeta   )+...prog+pslack*slack+
-%         (+latcost_k2+regAB_k2+regBeta_k2)+...+prog_k2+pslack*slack_k2+
-%         (+latcost_k3+regAB_k3+regBeta_k3)+...+prog_k3+pslack*slack_k3+
-    f= lagcost+lagcost_k2+lagcost_k3+pslack2*slack2+pslack2*slack3+pslack2*slack4;
+    f = (lagcost   +latcost   +regAB   +regBeta+ 0.1*((z(index.x)-10)^2+(z(index.y)-51.5))^2)+...prog+pslack*slack+
+        (lagcost_k2+latcost_k2+regAB_k2+regBeta_k2+0.1*((z(index.x_k2)-51.5)^2+(z(index.y_k2)-80))^2)+...+prog_k2+pslack*slack_k2+
+        (lagcost_k3+latcost_k3+regAB_k3+regBeta_k3+0.1*((z(index.x_k3)-80)^2+(z(index.y_k3)-48.5))^2)+...+prog_k3+pslack*slack_k3+
+        pslack2*slack2+pslack2*slack3+pslack2*slack4;
 end

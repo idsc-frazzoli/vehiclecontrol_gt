@@ -16,7 +16,7 @@ Plotta=1;
 global index
 %indexes_3_vehicles
 
-dis=0;
+dis=0;1.75;
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
@@ -24,7 +24,7 @@ pdir = diff(fpoints);
 pstart = [pstartx,pstarty];
 pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
-xs(index.y-index.nu)=pstart(2)-dis;
+xs(index.y-index.nu)=pstart(2)+dis;
 xs(index.theta-index.nu)=pangle;
 xs(index.v-index.nu)=targetSpeed;
 xs(index.ab-index.nu)=0;
@@ -72,9 +72,10 @@ targets3 = [];
 
 planc = 10;
 tstart = 1;
-% load InitializationPG.mat
-% x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
-x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
+%load InitializationPG.mat
+load IBR_init.mat
+x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
+%x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 optA = 0;
 optB = 0;
 optC = 0;
