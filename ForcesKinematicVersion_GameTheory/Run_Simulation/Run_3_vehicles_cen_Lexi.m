@@ -226,7 +226,7 @@ for i =1:tend
         pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem1.x0 = x0(:);       
     % solve mpc
-    [output1,exitflag1,info1] = MPCPathFollowing_3v_2(problem1);
+    [output1,exitflag1,info1] = MPCPathFollowing_3v_1(problem1);
     solvetimes(end+1)=info1.solvetime;
     if(exitflag1==0)
        a = a + 1; 
@@ -240,12 +240,12 @@ for i =1:tend
     
     % parameters
     problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
-        maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
+        info1.pobj,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
         pspeedcost_1,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem2.x0 = x0(:);       
     % solve mpc
-    [output2,exitflag2,info2] = MPCPathFollowing_3v_1(problem2);
+    [output2,exitflag2,info2] = MPCPathFollowing_3v_2(problem2);
     solvetimes(end+1)=info2.solvetime;
     if(exitflag1==0)
        a = a + 1; 
@@ -451,7 +451,7 @@ if tend==1 && Plotta==1
     figure(5)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[maxSpeed_1,maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
     %set(gca,'yticklabel',[])
@@ -562,7 +562,7 @@ if tend==1 && Plotta==1
     figure(7)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[maxSpeed_1,maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
     %set(gca,'yticklabel',[])

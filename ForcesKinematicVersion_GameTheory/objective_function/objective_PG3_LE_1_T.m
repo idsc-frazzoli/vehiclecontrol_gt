@@ -1,4 +1,4 @@
-function f = objective_PG3_LE_1(z,points,points2,points3,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function f = objective_PG3_LE_1_T(z,points,points2,points3,vmax,plagerror, platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
     global index
     
     r=3.5;
@@ -93,8 +93,8 @@ function f = objective_PG3_LE_1(z,points,points2,points3,vmax,plagerror, platerr
     regBeta_k3= z(index.dotbeta_k3).^2*pdotbeta;
     %prog_k3 = -pprog*z(index.ds_k3);
 
-     f = (lagcost   +latcost+latcost1   +regAB   +regBeta+speedcost1+speedcost)+...prog+pslack*slack+
-         (lagcost_k2+latcost_k2+latcost1_k2+regAB_k2+regBeta_k2+speedcost1_k2+speedcost_k2)+...+prog_k2+pslack*slack_k2+
-         (lagcost_k3+latcost_k3+latcost1_k3+regAB_k3+regBeta_k3+speedcost1_k3+speedcost_k3)+...+prog_k3+pslack*slack_k3+
+     f = (lagcost   +latcost+regAB   +regBeta+speedcost1+speedcost)+...prog+pslack*slack+
+         (lagcost_k2+latcost_k2+regAB_k2+regBeta_k2+speedcost1_k2+speedcost_k2)+...+prog_k2+pslack*slack_k2+
+         (lagcost_k3+latcost_k3+regAB_k3+regBeta_k3+speedcost1_k3+speedcost_k3)+...+prog_k3+pslack*slack_k3+
          pslack2*slack2+pslack2*slack3+pslack2*slack4;
 end

@@ -170,7 +170,7 @@ squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
 %v1=(tan(z(8))*z(7)^2/l);
-v1 = lagcost+lagcost_k2+lagcost_k3+pslack2*slack2+pslack2*slack3+...
+v1 = pslack2*slack2+pslack2*slack3+...
      pslack2*slack4-p(index1.pax);
 v2 = z(index1.ab)-casadiGetSmoothMaxAcc(z(index1.v));
 v3 = z(index1.x);

@@ -1,17 +1,20 @@
-function v = nlconst_PG3(z,p)
-global index
+function v = nlconst_PG3_N_2(z,p)
+global index1
 %NLCONST Summary of this function goes here
 %   Detailed explanation goes here
-dist=p(index.dist);
+dist=p(index1.dist);
+pslack2=p(index1.pslack2);
+plagerror=p(index1.plag);
+platerror=p(index1.plat);
 % l = 1.19;
 % beta  = z(index.beta);
 % dotbeta = z(index.dotbeta);
 % forwardacc = z(index.ab);
 %slack = z(index.slack);
 
-slack2 = z(index.slack2);
-slack3 = z(index.slack3);
-slack4 = z(index.slack4);
+slack2 = z(index1.slack2);
+slack3 = z(index1.slack3);
+slack4 = z(index1.slack4);
 
 % beta_k2  = z(index.beta_k2);
 % dotbeta_k2 = z(index.dotbeta_k2);
@@ -22,12 +25,12 @@ slack4 = z(index.slack4);
 % dotbeta_k3 = z(index.dotbeta_k3);
 % forwardacc_k3 = z(index.ab_k3);
 %slack_k3 = z(index.slack_k3);
-
+%r=1.75;
 % Splines Control points and radii
-pointsO = index.pointsO;
-pointsN = index.pointsN;
-pointsN2 = index.pointsN2;
-pointsN3 = index.pointsN3;
+pointsO = index1.pointsO;
+pointsN = index1.pointsN;
+pointsN2 = index1.pointsN2;
+pointsN3 = index1.pointsN3;
 
 points = getPointsFromParameters(p, pointsO, pointsN);
 radii = getRadiiFromParameters(p, pointsO, pointsN);
@@ -38,67 +41,77 @@ radii_k2 = getRadiiFromParameters(p, pointsO+3*pointsN, pointsN2);
 points_k3 = getPointsFromParameters(p, pointsO+3*pointsN+3*pointsN2, pointsN3);
 radii_k3 = getRadiiFromParameters(p, pointsO+3*pointsN+3*pointsN2, pointsN3);
 % Splines
-[splx,sply] = casadiDynamicBSPLINE(z(index.s),points);
-% [spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
-[splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index.s),points);
-r = casadiDynamicBSPLINERadius(z(index.s),radii);
+[splx,sply] = casadiDynamicBSPLINE(z(index1.s),points);
+[spldx, spldy] = casadiDynamicBSPLINEforward(z(index1.s),points);
+[splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index1.s),points);
+r = casadiDynamicBSPLINERadius(z(index1.s),radii);
 
-[splx_k2,sply_k2] = casadiDynamicBSPLINE(z(index.s_k2),points_k2);
-% [spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points_k2);
-[splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points_k2);
-r_k2 = casadiDynamicBSPLINERadius(z(index.s_k2),radii_k2);
+[splx_k2,sply_k2] = casadiDynamicBSPLINE(z(index1.s_k2),points_k2);
+[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index1.s_k2),points_k2);
+[splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(z(index1.s_k2),points_k2);
+r_k2 = casadiDynamicBSPLINERadius(z(index1.s_k2),radii_k2);
 
-[splx_k3,sply_k3] = casadiDynamicBSPLINE(z(index.s_k3),points_k3);
-% [spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points_k3);
-[splsx_k3, splsy_k3] = casadiDynamicBSPLINEsidewards(z(index.s_k3),points_k3);
-r_k3 = casadiDynamicBSPLINERadius(z(index.s_k3),radii_k3);
-
-% forward = [spldx;spldy];
+[splx_k3,sply_k3] = casadiDynamicBSPLINE(z(index1.s_k3),points_k3);
+[spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index1.s_k3),points_k3);
+[splsx_k3, splsy_k3] = casadiDynamicBSPLINEsidewards(z(index1.s_k3),points_k3);
+r_k3 = casadiDynamicBSPLINERadius(z(index1.s_k3),radii_k3);
+r=3.5;
+forward = [spldx;spldy];
 sidewards = [splsx;splsy];
 
-realPos = z([index.x,index.y]);
-centerOffset = 0.4*gokartforward(z(index.theta))';
+realPos = z([index1.x,index1.y]);
+centerOffset = 0.4*gokartforward(z(index1.theta))';
 centerPos = realPos+centerOffset;%+0.4*forward;
 wantedpos = [splx;sply];
+wantedpos1= [splx;sply]+r/2*sidewards;
 
 % Position error
 error = centerPos-wantedpos;
-
+error1= centerPos-wantedpos1;
 % Projection errors
-% lagerror = forward'*error;
+lagerror = forward'*error;
 laterror = sidewards'*error;
-
-% forward_k2 = [spldx_k2;spldy_k2];
+laterror1 = sidewards'*error1;
+forward_k2 = [spldx_k2;spldy_k2];
 sidewards_k2 = [splsx_k2;splsy_k2];
 
-realPos_k2 = z([index.x_k2,index.y_k2]);
-centerOffset_k2 = 0.4*gokartforward(z(index.theta_k2))';
+realPos_k2 = z([index1.x_k2,index1.y_k2]);
+centerOffset_k2 = 0.4*gokartforward(z(index1.theta_k2))';
 centerPos_k2 = realPos_k2+centerOffset_k2;%+0.4*forward;
 wantedpos_k2 = [splx_k2;sply_k2];
-
+wantedpos1_k2= [splx_k2;sply_k2]+r/2*sidewards_k2;
 % Position error
 error_k2 = centerPos_k2-wantedpos_k2;
-
+error1_k2= centerPos_k2-wantedpos1_k2;
 % Projection errors
-% lagerror_k2 = forward_k2'*error_k2;
+lagerror_k2 = forward_k2'*error_k2;
 laterror_k2 = sidewards_k2'*error_k2;
-
-% forward_k3 = [spldx_k3;spldy_k3];
+laterror1_k2 = sidewards_k2'*error1_k2;
+forward_k3 = [spldx_k3;spldy_k3];
 sidewards_k3 = [splsx_k3;splsy_k3];
 
-realPos_k3 = z([index.x_k3,index.y_k3]);
-centerOffset_k3 = 0.4*gokartforward(z(index.theta_k3))';
+realPos_k3 = z([index1.x_k3,index1.y_k3]);
+centerOffset_k3 = 0.4*gokartforward(z(index1.theta_k3))';
 centerPos_k3 = realPos_k3+centerOffset_k3;%+0.4*forward;
 wantedpos_k3 = [splx_k3;sply_k3];
-
+wantedpos1_k3= [splx_k3;sply_k3]+r/2*sidewards_k3;
 % Position error
 error_k3 = centerPos_k3-wantedpos_k3;
-
+error1_k3= centerPos_k3-wantedpos1_k3;
 % Projection errors
-% lagerror_k3 = forward_k3'*error_k3;
+lagerror_k3 = forward_k3'*error_k3;
 laterror_k3 = sidewards_k3'*error_k3;
+laterror1_k3 = sidewards_k3'*error1_k3;
+plagcost = plagerror*lagerror^2;
+plagcost_k2 = plagerror*lagerror_k2^2;
+plagcost_k3 = plagerror*lagerror_k3^2;
+platcost = platerror*10*latErrorPunisher(laterror);
+platcost_k2 = platerror*10*latErrorPunisher(laterror_k2);
+platcost_k3 = platerror*10*latErrorPunisher(laterror_k3);
 
-% %parameters
+% platcost1 = 0*laterror1^2;
+% platcost1_k2 = 0*laterror1_k2^2;
+% platcost1_k3 = 0*laterror1_k3^2;% %parameters
 % vmax =  p(index.ps);
 % maxxacc = p(index.pax);
 % maxyacc = p(index.pay);
@@ -152,27 +165,26 @@ laterror_k3 = sidewards_k3'*error_k3;
 % accbudget_k3 = (1.8-forwardacc_k3)/1.6;
 % torquevectoringcapability_k3 = accbudget_k3*torqueveceffect;
 % %torquevectoringcapability = torqueveccapsmooth(forwardacc)*torqueveceffect;
-distance_X=(z(index.x)-z(index.x_k2));
-distance_Y=(z(index.y)-z(index.y_k2));
+distance_X=(z(index1.x)-z(index1.x_k2));
+distance_Y=(z(index1.y)-z(index1.y_k2));
 
-distance_X2=(z(index.x)-z(index.x_k3));
-distance_Y2=(z(index.y)-z(index.y_k3));
+distance_X2=(z(index1.x)-z(index1.x_k3));
+distance_Y2=(z(index1.y)-z(index1.y_k3));
 
-distance_X3=(z(index.x_k2)-z(index.x_k3));
-distance_Y3=(z(index.y_k2)-z(index.y_k3));
-
-distance_X4=(z(index.x_k2)-53);
-distance_Y4=(z(index.y_k2)-58);
+distance_X3=(z(index1.x_k2)-z(index1.x_k3));
+distance_Y3=(z(index1.y_k2)-z(index1.y_k3));
 squared_distance_array = sqrt(distance_X.^2+distance_Y.^2);
 squared_distance_array2 = sqrt(distance_X2.^2+distance_Y2.^2);
 squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
-squared_distance_array4 = sqrt(distance_X4.^2+distance_Y4.^2);
-
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
 %v1=(tan(z(8))*z(7)^2/l);
-v2 = z(index.ab)-casadiGetSmoothMaxAcc(z(index.v));
-% v3 = accnorm-slack;
+v1 = pslack2*slack2+pslack2*slack3+pslack2*slack4-p(index1.pax);
+v1_1 = plagcost+plagcost_k2+plagcost_k3+platcost+platcost_k2+platcost_k3+...
+       +pslack2*slack2+pslack2*slack3+...
+       pslack2*slack4-p(index1.pay);
+v2 = z(index1.ab)-casadiGetSmoothMaxAcc(z(index1.v));
+v3 = z(index1.x);
 v4 = laterror-r;%-0.5*slack
 v5 = -laterror-r;%-0.5*slack
 %understeerright
@@ -182,23 +194,22 @@ v5 = -laterror-r;%-0.5*slack
 % %v7 = -frontaxlelatacc - latacclim-torquevectoringcapability-slack;
 % v7 = -frontaxlelatacc -torquevectoringcapability - latacclim-slack;
 
-v8 = z(index.ab_k2)-casadiGetSmoothMaxAcc(z(index.v_k2));
-% v9 = accnorm_k2-slack_k2;
+v8 = z(index1.ab_k2)-casadiGetSmoothMaxAcc(z(index1.v_k2));
+v9 = z(index1.y_k2);
 v10 = laterror_k2-r_k2;%-0.5*slack_k2
 v11 = -laterror_k2-r_k2;%-0.5*slack_k2
 % v12 = frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 % v13 = -frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 
-v14 = z(index.ab_k3)-casadiGetSmoothMaxAcc(z(index.v_k3));
-% v15 = accnorm_k3-slack_k3;
+v14 = z(index1.ab_k3)-casadiGetSmoothMaxAcc(z(index1.v_k3));
+v15 = z(index1.x_k3);
 v16 = laterror_k3-r_k3;%-0.5*slack_k3
 v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 % v18 = frontaxlelatacc_k3-torquevectoringcapability_k3-latacclim-slack_k3;
 % v19 = -frontaxlelatacc_k3-torquevectoringcapability_k3-latacclim-slack_k3;
 v20 = -squared_distance_array+dist-slack2;%;%
-v21 = -squared_distance_array2+dist-slack3;%;%
-v22 = -squared_distance_array3+dist-slack4;%;%-
-v23 = -squared_distance_array4+dist-slack3;
-v = [v2;v4;v5;v8;v10;v11;v14;v16;v17;v20;v21;v22];%
+v21 = -squared_distance_array2+dist-slack3;%
+v22 = -squared_distance_array3+dist-slack4;%;%
+v = [v1;v1_1;v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22];%v9;%v15;v18;v15;
 end
 
