@@ -27,7 +27,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -440,7 +440,7 @@ if strcmp(Compiled,'no')
         case 3
             switch Game
                 case 'PG'
-                    codeoptions = getOptions('MPCPathFollowing_3v');
+                    codeoptions = getOptions('MPCPathFollowing_3v_2');
                     codeoptions1 = getOptions('MPCPathFollowing_3v_1');
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
