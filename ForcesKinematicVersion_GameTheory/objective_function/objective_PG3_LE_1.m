@@ -91,7 +91,7 @@ function f = objective_PG3_LE_1(z,points,points2,points3,vmax,plagerror, platerr
     regAB_k3 = z(index.dotab_k3).^2*pab;
     regBeta_k3= z(index.dotbeta_k3).^2*pdotbeta;
     %prog_k3 = -pprog*z(index.ds_k3);
-    
+    %
 %   +speedcost1+speedcost)+...prog+pslack*slack+
 %   +speedcost1_k2+speedcost_k2)+...+prog_k2+pslack*slack_k2+
 %   +speedcost1_k3+speedcost_k3)+...+prog_k3+pslack*slack_k3+

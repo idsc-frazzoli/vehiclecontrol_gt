@@ -56,6 +56,7 @@ switch NUM_Vehicles
         parameters_3_vehicles
         switch Game
             case 'PG'
+                parameters_3_vehicles_1
                 pointsO = 16; 
                 NUM_const=12; % number of nonlinear constraint
                 MAX_IT= 1000; % N of max iterations
@@ -69,13 +70,14 @@ switch NUM_Vehicles
 end
 
 %% State and Input Definitions 
-global index index_IBR
+global index index1 index_IBR
 if strcmp(TestAlpha1shot,'no')
     switch NUM_Vehicles
         case 3
             switch Game
                 case 'PG'
                     indexes_3_vehicles
+                    indexes_3_vehicles_1
                 case 'IBR'
                     indexes_3_vehicles_IBR 
             end
@@ -94,6 +96,8 @@ if strcmp(Compiled,'no')
                 case 'PG'
                     model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
+                    model1.eq = @(z,p) RK4(z(index1.sb:end), z(1:index1.nu),...
+                               @(x,u,p)interstagedx_PG3_1(x,u),integrator_stepsize,p);
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
@@ -101,7 +105,7 @@ if strcmp(Compiled,'no')
     end
     
     model.E = [zeros(index.ns,index.nu), eye(index.ns)];
-    
+    model1.E = [zeros(index1.ns,index1.nu), eye(index1.ns)];
 %% Objective Function (objective_function folder)
     switch NUM_Vehicles
         case 3
@@ -139,6 +143,21 @@ if strcmp(Compiled,'no')
                                     p(index.pspeedcost),...
                                     p(index.pslack),...
                                     p(index.pslack2));
+                            end
+                            for i=1:model1.N
+                                model1.objective{i} = @(z,p)objective_PG3_LE_2(z,...
+                                    getPointsFromParameters(p, pointsO, pointsN),...
+                                    getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                                    getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
+                                    p(index1.ps),...
+                                    p(index1.plag),...
+                                    p(index1.plat),...
+                                    p(index1.pprog),...
+                                    p(index1.pab),...
+                                    p(index1.pdotbeta),...
+                                    p(index1.pspeedcost),...
+                                    p(index1.pslack),...
+                                    p(index1.pslack2));
                             end
 %                             model.objectiveN = @(z,p) objective_PG3_LE_N(z,...
 %                                     getPointsFromParameters(p, pointsO, pointsN),...
@@ -245,6 +264,34 @@ if strcmp(Compiled,'no')
         %Path Progress
         model.ub(index.s)=pointsN;
         model.lb(index.s)=0;
+        
+        
+        model1.xinitidx = index1.sb:index1.nv;
+
+        % initialization
+        model1.ub = ones(1,index1.nv)*inf;
+        model1.lb = -ones(1,index1.nv)*inf;
+
+        % Delta path progress
+        model1.ub(index1.ds)=ds_max;
+        model1.lb(index1.ds)=ds_min;
+
+        % Acceleration
+        model1.lb(index1.ab)=-inf;
+
+        % Slack
+        %model.lb(index.slack)=0;
+
+        % Velocity
+        model1.lb(index1.v)=0;
+        model1.ub(index1.v)=maxSpeed_1;
+        % Steering Angle
+        model1.ub(index1.beta)=beta_max;
+        model1.lb(index1.beta)=beta_min;
+
+        %Path Progress
+        model1.ub(index1.s)=pointsN;
+        model1.lb(index1.s)=0;
     end
     switch NUM_Vehicles
        case 3
@@ -317,6 +364,74 @@ if strcmp(Compiled,'no')
                                  -inf;60;-inf;-inf;...
                                  -inf;60;-inf;-inf;...
                                  -inf;-inf;-inf];%
+                    %%Controller 2
+                    model1.ub(index1.ds_k2)=ds_max;
+                    model1.lb(index1.ds_k2)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model1.lb(index1.ab_k2)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    %model.lb(index.slack_k2)=0;
+
+                    % Speed Constraint (state)
+                    model1.lb(index1.v_k2)=0;
+                    model1.ub(index1.v_k2)=maxSpeed_1;
+                    % Steering Angle Constraint (input)
+                    model1.ub(index1.beta_k2)=beta_max;
+                    model1.lb(index1.beta_k2)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model1.ub(index1.s_k2)=pointsN2;
+                    model1.lb(index1.s_k2)=0;
+
+                    % Path Progress rate Constraint (input)
+                    model1.ub(index1.ds_k3)=ds_max;
+                    model1.lb(index1.ds_k3)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model1.lb(index1.ab_k3)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    %model.lb(index.slack_k3)=0;
+
+                    % Speed Constraint (state)
+                    model1.lb(index1.v_k3)=0;
+                    model1.ub(index1.v_k3)=maxSpeed_1;
+                    % Steering Angle Constraint (input)
+                    model1.ub(index1.beta_k3)=beta_max;
+                    model1.lb(index1.beta_k3)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model1.ub(index1.s_k3)=pointsN3;
+                    model1.lb(index1.s_k3)=0;
+
+                    model1.lb(index1.slack2)=0;
+                    model1.lb(index1.slack3)=0;
+                    model1.lb(index1.slack4)=0;
+
+                    %limit lateral acceleration
+                    model1.nh = NUM_const+1; 
+                    model1.ineq = @(z,p) nlconst_PG3_1(z,p);
+                    model1.hu = [0;0;0;0;...
+                                0;0;0;...
+                                0;0;0;...
+                                0;0;0];%
+                    model1.hl = [-inf;-inf;-inf;-inf;...
+                                -inf;-inf;-inf;...
+                                -inf;-inf;-inf;...
+                                -inf;-inf;-inf];%
+                    model1.nhN = NUM_const+4; 
+                    model1.ineqN= @(z,p) nlconst_PG3_N_1(z,p);
+                    model1.huN = [0;0;35;0;0;...
+                                 0;+inf;0;0;...
+                                 0;+inf;0;0;...;
+                                 0;0;0];%
+                    model1.hlN = [-inf;-inf;-inf;-inf;-inf;...
+                                 -inf;60;-inf;-inf;...
+                                 -inf;60;-inf;-inf;...
+                                 -inf;-inf;-inf];%
+                             
             end
     end
 
@@ -326,6 +441,7 @@ if strcmp(Compiled,'no')
             switch Game
                 case 'PG'
                     codeoptions = getOptions('MPCPathFollowing_3v');
+                    codeoptions1 = getOptions('MPCPathFollowing_3v_1');
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
             end
@@ -338,6 +454,14 @@ if strcmp(Compiled,'no')
     codeoptions.timing = 1;
     output = newOutput('alldata', 1:model.N, 1:model.nvar);
     FORCES_NLP(model, codeoptions,output);
+    
+    codeoptions1.maxit = MAX_IT;    % Maximum number of iterations
+    codeoptions1.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+    codeoptions1.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+    codeoptions1.cleanup = false;
+    codeoptions1.timing = 1;
+    output1 = newOutput('alldata', 1:model1.N, 1:model1.nvar);
+    FORCES_NLP(model1, codeoptions1,output1);
 end
 
 %% Run simulation 
@@ -346,7 +470,8 @@ switch NUM_Vehicles
     case 3
         switch Game
             case 'PG'
-                Run_3_vehicles_cen_1
+                %Run_3_vehicles_cen_1
+                Run_3_vehicles_cen_Lexi;%_1 ;%
             case 'IBR'
                 if Stack==1
                     Run_3_vehicles_IBR_st

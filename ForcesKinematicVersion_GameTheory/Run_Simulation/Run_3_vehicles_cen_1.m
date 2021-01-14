@@ -16,7 +16,7 @@ Plotta=1;
 global index
 %indexes_3_vehicles
 
-dis=0;1.75;
+dis=1.75;0;
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
@@ -306,11 +306,11 @@ if tend==1 && Plotta==1
             line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
         end
         B=imread('carb.png');
-        b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+        b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)+dis-1.5,pstart(2)+dis+1.5],B);
         G=imread('carg.png');
-        g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+        g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
         R=imread('carr.png');
-        r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+        r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
         
         %set(gca,'visible','off')
         axis equal
