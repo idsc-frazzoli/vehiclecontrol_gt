@@ -27,7 +27,7 @@ clear all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -440,7 +440,8 @@ if strcmp(Compiled,'no')
         case 3
             switch Game
                 case 'PG'
-                    codeoptions = getOptions('MPCPathFollowing_3v_2');
+                    codeoptions = getOptions('MPCPathFollowing_3v');
+                    codeoptions2 = getOptions('MPCPathFollowing_3v_2');
                     codeoptions1 = getOptions('MPCPathFollowing_3v_1');
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
@@ -462,6 +463,18 @@ if strcmp(Compiled,'no')
     codeoptions1.timing = 1;
     output1 = newOutput('alldata', 1:model1.N, 1:model1.nvar);
     FORCES_NLP(model1, codeoptions1,output1);
+    
+    model2=model;
+    model2.ub(index1.v)=maxSpeed_1;
+    model2.ub(index1.v_k2)=maxSpeed_1;
+    model2.ub(index1.v_k3)=maxSpeed_1;
+    codeoptions2.maxit = MAX_IT;    % Maximum number of iterations
+    codeoptions2.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+    codeoptions2.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+    codeoptions2.cleanup = false;
+    codeoptions2.timing = 1;
+    output2 = newOutput('alldata', 1:model2.N, 1:model2.nvar);
+    FORCES_NLP(model2, codeoptions2,output2);
 end
 
 %% Run simulation 

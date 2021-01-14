@@ -1,5 +1,5 @@
 % go kart parameters
-maxSpeed = 9;%10;
+maxSpeed = 20;%10;
 targetSpeed=8.3;
 maxxacc = 4;
 maxyacc = 8;
