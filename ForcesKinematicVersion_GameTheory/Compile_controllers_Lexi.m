@@ -145,7 +145,7 @@ if strcmp(Compiled,'no')
                                     p(index.pslack2));
                             end
                             for i=1:model1.N
-                                model1.objective{i} = @(z,p)objective_PG3_LE_2(z,...
+                                model1.objective{i} = @(z,p)objective_PG3_LE_1(z,...
                                     getPointsFromParameters(p, pointsO, pointsN),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
@@ -356,13 +356,13 @@ if strcmp(Compiled,'no')
                                 -inf;-inf;-inf];%
                     model.nhN = NUM_const+3; 
                     model.ineqN= @(z,p) nlconst_PG3_N(z,p);
-                    model.huN = [0;35;0;0;...
+                    model.huN = [0;30;0;0;...
                                  0;+inf;0;0;...
                                  0;+inf;0;0;...;
                                  0;0;0];%
                     model.hlN = [-inf;-inf;-inf;-inf;...
-                                 -inf;60;-inf;-inf;...
-                                 -inf;60;-inf;-inf;...
+                                 -inf;70;-inf;-inf;...
+                                 -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf];%
                     %%Controller 2
                     model1.ub(index1.ds_k2)=ds_max;
@@ -440,7 +440,8 @@ if strcmp(Compiled,'no')
         case 3
             switch Game
                 case 'PG'
-                    codeoptions = getOptions('MPCPathFollowing_3v_2');
+                    codeoptions = getOptions('MPCPathFollowing_3v');
+                    codeoptions2 = getOptions('MPCPathFollowing_3v_2');
                     codeoptions1 = getOptions('MPCPathFollowing_3v_1');
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
@@ -462,6 +463,14 @@ if strcmp(Compiled,'no')
     codeoptions1.timing = 1;
     output1 = newOutput('alldata', 1:model1.N, 1:model1.nvar);
     FORCES_NLP(model1, codeoptions1,output1);
+    
+    codeoptions2.maxit = MAX_IT;    % Maximum number of iterations
+    codeoptions2.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+    codeoptions2.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+    codeoptions2.cleanup = false;
+    codeoptions2.timing = 1;
+    output2 = newOutput('alldata', 1:model1.N, 1:model1.nvar);
+    FORCES_NLP(model1, codeoptions2,output2);
 end
 
 %% Run simulation 

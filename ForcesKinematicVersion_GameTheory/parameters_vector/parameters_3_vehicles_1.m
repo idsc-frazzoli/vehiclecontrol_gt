@@ -10,14 +10,14 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror_1=1;       % proj error param cost
-platerror_1=1.2;    % lateral error param cost
-pprog=0.8;         % progress parameter cost
-pab=0.006;        % acc parameter cost
-pdotbeta=4;      % steering velocity parameter cost
-pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
-pslack=500;          % slack variable 
-pslack2=10000;        % collision cost
-dist=4;   
+platerror_1=50;    % lateral error param cost
+pprog_1=0.8;         % progress parameter cost
+pab_1=0.006;        % acc parameter cost
+pdotbeta_1=4;      % steering velocity parameter cost
+pspeedcost_1=2;    % parameter for cost that occurs when max_speed is exceeded
+pslack_1=500;          % slack variable 
+pslack2_1=10000;        % collision cost
+  
 % 
 % if Stack==1
 %     plagerror=1;       % proj error param cost

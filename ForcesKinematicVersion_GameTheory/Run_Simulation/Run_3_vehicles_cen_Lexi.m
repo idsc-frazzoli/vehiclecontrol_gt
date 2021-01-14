@@ -193,32 +193,32 @@ for i =1:tend
     [xhist,time] = euler(@(x,u)interstagedx_PG3(x,u),xs,u,integrator_stepsize/eulersteps);
     xs = xhist(end,:);
     %% second controller
-    nextSplinePoints = zeros(pointsN,3);
-    nextSplinePoints_k2 = zeros(pointsN2,3);
-    nextSplinePoints_k3 = zeros(pointsN3,3);
-    for jj=1:pointsN
-       while ip>nkp
-            ip = ip -nkp;
-       end
-       nextSplinePoints(jj,:)=points_1(ip,:);
-       ip = ip + 1;
-    end
-    for jj=1:pointsN2
-       while ip2>nkp2
-            ip2 = ip2 -nkp2;
-       end
-       nextSplinePoints_k2(jj,:)=points2_1(ip2,:);
-       ip2 = ip2 + 1;
-    end
-    for jj=1:pointsN3
-       while ip3>nkp3
-            ip3 = ip3 -nkp3;
-       end
-       nextSplinePoints_k3(jj,:)=points3_1(ip3,:);
-       ip3 = ip3 + 1;
-    end
-    splinepointhist(i,:)=[xs(index.s-index.nu),[nextSplinePoints(:);nextSplinePoints_k2(:);nextSplinePoints_k3(:)]'];
-    
+%     nextSplinePoints = zeros(pointsN,3);
+%     nextSplinePoints_k2 = zeros(pointsN2,3);
+%     nextSplinePoints_k3 = zeros(pointsN3,3);
+%     for jj=1:pointsN
+%        while ip>nkp
+%             ip = ip -nkp;
+%        end
+%        nextSplinePoints(jj,:)=points_1(ip,:);
+%        ip = ip + 1;
+%     end
+%     for jj=1:pointsN2
+%        while ip2>nkp2
+%             ip2 = ip2 -nkp2;
+%        end
+%        nextSplinePoints_k2(jj,:)=points2_1(ip2,:);
+%        ip2 = ip2 + 1;
+%     end
+%     for jj=1:pointsN3
+%        while ip3>nkp3
+%             ip3 = ip3 -nkp3;
+%        end
+%        nextSplinePoints_k3(jj,:)=points3_1(ip3,:);
+%        ip3 = ip3 + 1;
+%     end
+%     splinepointhist(i,:)=[xs(index.s-index.nu),[nextSplinePoints(:);nextSplinePoints_k2(:);nextSplinePoints_k3(:)]'];
+%     
     % parameters
     problem1.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
@@ -241,8 +241,8 @@ for i =1:tend
     % parameters
     problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
-        plagerror_1,platerror_1,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
+        plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
+        pspeedcost_1,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem2.x0 = x0(:);       
     % solve mpc
     [output2,exitflag2,info2] = MPCPathFollowing_3v_1(problem2);

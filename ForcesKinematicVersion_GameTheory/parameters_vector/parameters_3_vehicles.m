@@ -10,14 +10,14 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror=0;       % proj error param cost
-platerror=1.8;    % lateral error param cost
-pprog=0.8;         % progress parameter cost
-pab=0.006;        % acc parameter cost
-pdotbeta=4;      % steering velocity parameter cost
-pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
+platerror=0;    % lateral error param cost
+pprog=0;         % progress parameter cost
+pab=0;        % acc parameter cost
+pdotbeta=0;      % steering velocity parameter cost
+pspeedcost=0;    % parameter for cost that occurs when max_speed is exceeded
 pslack=500;          % slack variable 
 pslack2=10000;        % collision cost
-dist=2;   
+dist=4;   
 % 
 % if Stack==1
 %     plagerror=1;       % proj error param cost
@@ -97,9 +97,9 @@ points = [10,15,20,25,30,35,40,45,50,55,60,65,70,75;...          %x,75,80,85,90,
           3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5]'; %,5,5,5,5,5  
 %points(:,2)=points(:,2)+1.75;
 points=flip(points);
-points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50
+points2 = [50,50,50,50,50,50,48.7,48.7,48.7,50,50,50,50,50;...          %x,50,50,50,50,50
           25,30,35,40,45,50,55,60,65,70,75,80,85,90; ...    %y,75,80,85,90,95
-          3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5]';  %,5,5,5,5,5
+          3.5,3.5,3.5,3.5,3.5,3.5,2.3,2.3,2.3,3.5,3.5,3.5,3.5,3.5]';  %,5,5,5,5,5
 %points2(:,1)=points2(:,1)+1.75;
 % points3 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50,50,65,65,50
 %            75,70,65,60,55,50,45,40,35,30,25,20,15,10; ...    %y,25,20,15,10,5,0,5,92,95
