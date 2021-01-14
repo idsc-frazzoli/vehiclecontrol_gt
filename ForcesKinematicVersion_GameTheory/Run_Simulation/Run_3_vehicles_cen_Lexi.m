@@ -223,7 +223,7 @@ for i =1:tend
     problem1.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
+        pspeedcost,pslack,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem1.x0 = x0(:);       
     % solve mpc
     [output1,exitflag1,info1] = MPCPathFollowing_3v_1(problem1);
@@ -242,7 +242,7 @@ for i =1:tend
     problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
         info1.pobj,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
-        pspeedcost_1,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
+        pspeedcost_1,pslack_1,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem2.x0 = x0(:);       
     % solve mpc
     [output2,exitflag2,info2] = MPCPathFollowing_3v_2(problem2);
@@ -278,43 +278,43 @@ for i =1:tend
         [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
         targets3 = [targets3;tx3,ty3];
     end      
-%    if tend==1
-%     %% Evaluation cost function
-%     for jj=1:length(outputM)
-%         [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
-%         latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
-%         latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
-%         objective_PG_Test3(outputM(jj,:),points,points2,points3,targetSpeed,plagerror,...
-%         platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-%       
-%         regABA=regABA+regAB;
-%         regABB=regABB+regAB_k2;
-%         regABC=regABC+regAB_k3;
-%         regBetaA=regBetaA+regBeta;
-%         regBetaB=regBetaB+regBeta_k2;
-%         regBetaC=regBetaC+regBeta_k3;
-%         latcostA=latcostA+latcost;
-%         latcostB=latcostB+latcost_k2;
-%         latcostC=latcostC+latcost_k3;
-%         lagcostA=lagcostA+lagcost;
-%         lagcostB=lagcostB+lagcost_k2;
-%         lagcostC=lagcostC+lagcost_k3;
-%         speedcostA=speedcostA+speedcost;
-%         speedcostB=speedcostB+speedcost_k2;
-%         speedcostC=speedcostC+speedcost_k3;
-%         speedcostA1=speedcostA1+speedcost1;
-%         speedcostB1=speedcostB1+speedcost1_k2;
-%         speedcostC1=speedcostC1+speedcost1_k3;
-%         optA = optA+ f1;
-%         optB = optB+ f2;
-%         optC = optC+ f3;
-%         opt  = opt+ f;
-%     end
+   if tend==1
+    %% Evaluation cost function
+    for jj=1:length(outputM)
+        [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
+        latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
+        latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
+        objective_PG_Test3(outputM2(jj,:),points,points2,points3,targetSpeed,plagerror,...
+        platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+      
+        regABA=regABA+regAB;
+        regABB=regABB+regAB_k2;
+        regABC=regABC+regAB_k3;
+        regBetaA=regBetaA+regBeta;
+        regBetaB=regBetaB+regBeta_k2;
+        regBetaC=regBetaC+regBeta_k3;
+        latcostA=latcostA+latcost;
+        latcostB=latcostB+latcost_k2;
+        latcostC=latcostC+latcost_k3;
+        lagcostA=lagcostA+lagcost;
+        lagcostB=lagcostB+lagcost_k2;
+        lagcostC=lagcostC+lagcost_k3;
+        speedcostA=speedcostA+speedcost;
+        speedcostB=speedcostB+speedcost_k2;
+        speedcostC=speedcostC+speedcost_k3;
+        speedcostA1=speedcostA1+speedcost1;
+        speedcostB1=speedcostB1+speedcost1_k2;
+        speedcostC1=speedcostC1+speedcost1_k3;
+        optA = optA+ f1;
+        optB = optB+ f2;
+        optC = optC+ f3;
+        opt  = opt+ f;
+    end
 %     save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
 %         'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
 %         'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
 %         'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1')
-%     end
+     end
 %     MetricPG.MaxACC(1)=max(outputM(:,index.ab));
 %     MetricPG.MinACC(1)=min(outputM(:,index.ab));
 %     SteerEFF=cumsum(abs(outputM(:,index.dotbeta)));
@@ -420,6 +420,10 @@ if tend==1 && Plotta==1
         rgklp = [outputM(iff+1,index.x_k3);outputM(iff+1,index.y_k3)]+R*gklp;
         CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     end
+    th = 0:pi/50:2*pi;
+    xunit = dist * cos(th) + 53;
+    yunit = dist * sin(th) + 58;
+    plot(xunit, yunit,'k');
     axis equal
     savefig('figures/3v_PG_intersection')
     saveas(gcf,'figures/3v_PG_intersection','epsc')
@@ -531,6 +535,14 @@ if tend==1 && Plotta==1
         rgklp = [outputM1(iff+1,index1.x_k3);outputM1(iff+1,index1.y_k3)]+R*gklp;
         CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     end
+    th = 0:pi/50:2*pi;
+    xunit = dist * cos(th) + 53;
+    yunit = dist * sin(th) + 58;
+    plot(xunit, yunit,'k');
+%     theta4 = atan2(58-outputM1(iff,index1.y_k3),outputM1(iff+1,index1.x_k3)-outputM1(iff,index1.x_k3)); % to rotate 90 counterclockwise
+%     R = [cos(theta4) -sin(theta4); sin(theta4) cos(theta4)];
+%     rgklp = [outputM1(iff+1,index1.x_k3);outputM1(iff+1,index1.y_k3)]+R*gklp;
+%     CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     axis equal
     savefig('figures/3v_PG_intersection')
     saveas(gcf,'figures/3v_PG_intersection','epsc')
@@ -642,6 +654,10 @@ if tend==1 && Plotta==1
         rgklp = [outputM2(iff+1,index1.x_k3);outputM2(iff+1,index1.y_k3)]+R*gklp;
         CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     end
+    th = 0:pi/50:2*pi;
+    xunit = dist * cos(th) + 53;
+    yunit = dist * sin(th) + 58;
+    plot(xunit, yunit,'k');
     axis equal
     savefig('figures/3v_PG_intersection')
     saveas(gcf,'figures/3v_PG_intersection','epsc')

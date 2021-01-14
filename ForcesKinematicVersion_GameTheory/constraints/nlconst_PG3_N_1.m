@@ -99,9 +99,9 @@ error_k3 = centerPos_k3-wantedpos_k3;
 % Projection errors
 lagerror_k3 = forward_k3'*error_k3;
 laterror_k3 = sidewards_k3'*error_k3;
-lagcost = plagerror*lagerror^2;
-lagcost_k2 = plagerror*lagerror_k2^2;
-lagcost_k3 = plagerror*lagerror_k3^2;
+plagcost = plagerror*lagerror^2;
+plagcost_k2 = plagerror*lagerror_k2^2;
+plagcost_k3 = plagerror*lagerror_k3^2;
 % %parameters
 % vmax =  p(index.ps);
 % maxxacc = p(index.pax);
@@ -164,13 +164,19 @@ distance_Y2=(z(index1.y)-z(index1.y_k3));
 
 distance_X3=(z(index1.x_k2)-z(index1.x_k3));
 distance_Y3=(z(index1.y_k2)-z(index1.y_k3));
+
+distance_X4=(z(index1.x_k2)-53);
+distance_Y4=(z(index1.y_k2)-58);
+
 squared_distance_array = sqrt(distance_X.^2+distance_Y.^2);
 squared_distance_array2 = sqrt(distance_X2.^2+distance_Y2.^2);
 squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
+squared_distance_array4 = sqrt(distance_X4.^2+distance_Y4.^2);
+
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
 %v1=(tan(z(8))*z(7)^2/l);
-v1 = pslack2*slack2+pslack2*slack3+...
+v1 = plagcost+plagcost_k2+plagcost_k3+pslack2*slack2+pslack2*slack3+...
      pslack2*slack4-p(index1.pax);
 v2 = z(index1.ab)-casadiGetSmoothMaxAcc(z(index1.v));
 v3 = z(index1.x);
@@ -199,6 +205,8 @@ v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 v20 = -squared_distance_array+dist-slack2;%;%
 v21 = -squared_distance_array2+dist-slack3;%
 v22 = -squared_distance_array3+dist-slack4;%;%
-v = [v1;v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22];%v9;%v15;v18;v15;
+v23 = -squared_distance_array4+dist-slack3;
+
+v = [v1;v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22;v23];%v9;%v15;v18;v15;
 end
 

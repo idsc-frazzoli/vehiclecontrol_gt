@@ -199,6 +199,6 @@ v20 = -squared_distance_array+dist-slack2;%;%
 v21 = -squared_distance_array2+dist-slack3;%;%
 v22 = -squared_distance_array3+dist-slack4;%;%-
 v23 = -squared_distance_array4+dist-slack3;
-v = [v2;v4;v5;v8;v10;v11;v14;v16;v17;v20;v21;v22];%
+v = [v2;v4;v5;v8;v10;v11;v14;v16;v17;v20;v21;v22;v23];%
 end
 

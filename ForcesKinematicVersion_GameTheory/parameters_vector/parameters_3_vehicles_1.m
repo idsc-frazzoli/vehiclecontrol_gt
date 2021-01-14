@@ -1,13 +1,13 @@
 % go kart parameters
 maxSpeed = 20;%10;
 % cost function parameters
-plagerror=0;       % proj error param cost
+plagerror=1;       % proj error param cost
 platerror=0;    % lateral error param cost
 pprog=0;         % progress parameter cost
 pab=0;        % acc parameter cost
 pdotbeta=0;      % steering velocity parameter cost
 pspeedcost=0;    % parameter for cost that occurs when max_speed is exceeded
-pslack=500;          % slack variable 
+pslack=10;          % slack variable 
 pslack2=10000;        % collision cost
 dist=4;   
 % 
@@ -93,12 +93,12 @@ brakeeffect = 0;
 
 % cost function parameters
 plagerror_1=1;       % proj error param cost
-platerror_1=0.1;    % lateral error param cost
+platerror_1=1;    % lateral error param cost
 pprog_1=0.8;         % progress parameter cost
 pab_1=0.006;        % acc parameter cost
 pdotbeta_1=4;      % steering velocity parameter cost
 pspeedcost_1=2;    % parameter for cost that occurs when max_speed is exceeded
-pslack_1=500;          % slack variable 
+pslack_1=0.1;          % slack variable 
 pslack2_1=10000;        % collision cost
   
 % 
