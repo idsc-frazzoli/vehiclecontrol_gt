@@ -29,7 +29,7 @@ clear all
 NUM_Vehicles = 3; %1,2,3,5
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 ok=0;
-ok1=1;
+ok1=0;
 ok2=1;
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
@@ -99,8 +99,10 @@ if strcmp(Compiled,'no')
                 case 'PG'
                     model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
-                    model1.eq = @(z,p) RK4(z(index1.sb:end), z(1:index1.nu),...
-                               @(x,u,p)interstagedx_PG3_1(x,u),integrator_stepsize,p);
+                    model1.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
+                               @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
+                    model2.eq = @(z,p) RK4(z(index1.sb:end), z(1:index1.nu),...
+                               @(x,u,p)interstagedx_PG3_2(x,u),integrator_stepsize,p);
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
@@ -108,7 +110,8 @@ if strcmp(Compiled,'no')
     end
     
     model.E = [zeros(index.ns,index.nu), eye(index.ns)];
-    model1.E = [zeros(index1.ns,index1.nu), eye(index1.ns)];
+    model1.E = [zeros(index.ns,index.nu), eye(index.ns)];
+    model2.E = [zeros(index1.ns,index1.nu), eye(index1.ns)];
 %% Objective Function (objective_function folder)
     switch NUM_Vehicles
         case 3
@@ -152,6 +155,21 @@ if strcmp(Compiled,'no')
                                     getPointsFromParameters(p, pointsO, pointsN),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
                                     getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
+                                    p(index.ps),...
+                                    p(index.plag),...
+                                    p(index.plat),...
+                                    p(index.pprog),...
+                                    p(index.pab),...
+                                    p(index.pdotbeta),...
+                                    p(index.pspeedcost),...
+                                    p(index.pslack),...
+                                    p(index.pslack2));
+                            end
+                            for i=1:model2.N
+                                model2.objective{i} = @(z,p)objective_PG3_LE_2(z,...
+                                    getPointsFromParameters(p, pointsO, pointsN),...
+                                    getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
+                                    getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
                                     p(index1.ps),...
                                     p(index1.plag),...
                                     p(index1.plat),...
@@ -162,19 +180,6 @@ if strcmp(Compiled,'no')
                                     p(index1.pslack),...
                                     p(index1.pslack2));
                             end
-%                             model.objectiveN = @(z,p) objective_PG3_LE_N(z,...
-%                                     getPointsFromParameters(p, pointsO, pointsN),...
-%                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-%                                     getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-%                                     p(index.ps),...
-%                                     p(index.plag),...
-%                                     p(index.plat),...
-%                                     p(index.pprog),...
-%                                     p(index.pab),...
-%                                     p(index.pdotbeta),...
-%                                     p(index.pspeedcost),...
-%                                     p(index.pslack),...
-%                                     p(index.pslack2));
                     end
                 case 'IBR'
                     switch LEPunisher
@@ -268,33 +273,56 @@ if strcmp(Compiled,'no')
         model.ub(index.s)=pointsN;
         model.lb(index.s)=0;
         
-        
-        model1.xinitidx = index1.sb:index1.nv;
+        model1.xinitidx = index.sb:index.nv;
 
         % initialization
-        model1.ub = ones(1,index1.nv)*inf;
-        model1.lb = -ones(1,index1.nv)*inf;
+        model1.ub = ones(1,index.nv)*inf;
+        model1.lb = -ones(1,index.nv)*inf;
 
         % Delta path progress
-        model1.ub(index1.ds)=ds_max;
-        model1.lb(index1.ds)=ds_min;
+        model1.ub(index.ds)=ds_max;
+        model1.lb(index.ds)=ds_min;
 
         % Acceleration
-        model1.lb(index1.ab)=-inf;
+        model1.lb(index.ab)=-inf;
 
         % Slack
         %model.lb(index.slack)=0;
 
         % Velocity
-        model1.lb(index1.v)=0;
-        model1.ub(index1.v)=maxSpeed_1;
+        model1.lb(index.v)=0;
+        model1.ub(index.v)=maxSpeed_1;
         % Steering Angle
-        model1.ub(index1.beta)=beta_max;
-        model1.lb(index1.beta)=beta_min;
+        model1.ub(index.beta)=beta_max;
+        model1.lb(index.beta)=beta_min;
 
         %Path Progress
-        model1.ub(index1.s)=pointsN;
-        model1.lb(index1.s)=0;
+        model1.ub(index.s)=pointsN;
+        model1.lb(index.s)=0;
+        
+        model2.xinitidx = index1.sb:index1.nv;
+
+        % initialization
+        model2.ub = ones(1,index1.nv)*inf;
+        model2.lb = -ones(1,index1.nv)*inf;
+
+        % Delta path progress
+        model2.ub(index1.ds)=ds_max;
+        model2.lb(index1.ds)=ds_min;
+
+        % Acceleration
+        model2.lb(index1.ab)=-inf;
+
+        % Velocity
+        model2.lb(index1.v)=0;
+        model2.ub(index1.v)=maxSpeed_1;
+        % Steering Angle
+        model2.ub(index1.beta)=beta_max;
+        model2.lb(index1.beta)=beta_min;
+
+        %Path Progress
+        model2.ub(index1.s)=pointsN;
+        model2.lb(index1.s)=0;
     end
     switch NUM_Vehicles
        case 3
@@ -367,51 +395,52 @@ if strcmp(Compiled,'no')
                                  -inf;70;-inf;-inf;...
                                  -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf;-inf];%
+                             
                     %%Controller 2
-                    model1.ub(index1.ds_k2)=ds_max;
-                    model1.lb(index1.ds_k2)=ds_min;
+                    model1.ub(index.ds_k2)=ds_max;
+                    model1.lb(index.ds_k2)=ds_min;
 
                     % Acceleration Constraint (input)
-                    model1.lb(index1.ab_k2)=-inf;
+                    model1.lb(index.ab_k2)=-inf;
 
                     % Slack Variables Constraint (input)
                     %model.lb(index.slack_k2)=0;
 
                     % Speed Constraint (state)
-                    model1.lb(index1.v_k2)=0;
-                    model1.ub(index1.v_k2)=maxSpeed_1;
+                    model1.lb(index.v_k2)=0;
+                    model1.ub(index.v_k2)=maxSpeed_1;
                     % Steering Angle Constraint (input)
-                    model1.ub(index1.beta_k2)=beta_max;
-                    model1.lb(index1.beta_k2)=beta_min;
+                    model1.ub(index.beta_k2)=beta_max;
+                    model1.lb(index.beta_k2)=beta_min;
 
                     % Path Progress Constraint (input)
-                    model1.ub(index1.s_k2)=pointsN2;
-                    model1.lb(index1.s_k2)=0;
+                    model1.ub(index.s_k2)=pointsN2;
+                    model1.lb(index.s_k2)=0;
 
                     % Path Progress rate Constraint (input)
-                    model1.ub(index1.ds_k3)=ds_max;
-                    model1.lb(index1.ds_k3)=ds_min;
+                    model1.ub(index.ds_k3)=ds_max;
+                    model1.lb(index.ds_k3)=ds_min;
 
                     % Acceleration Constraint (input)
-                    model1.lb(index1.ab_k3)=-inf;
+                    model1.lb(index.ab_k3)=-inf;
 
                     % Slack Variables Constraint (input)
                     %model.lb(index.slack_k3)=0;
 
                     % Speed Constraint (state)
-                    model1.lb(index1.v_k3)=0;
-                    model1.ub(index1.v_k3)=maxSpeed_1;
+                    model1.lb(index.v_k3)=0;
+                    model1.ub(index.v_k3)=maxSpeed_1;
                     % Steering Angle Constraint (input)
-                    model1.ub(index1.beta_k3)=beta_max;
-                    model1.lb(index1.beta_k3)=beta_min;
+                    model1.ub(index.beta_k3)=beta_max;
+                    model1.lb(index.beta_k3)=beta_min;
 
                     % Path Progress Constraint (input)
-                    model1.ub(index1.s_k3)=pointsN3;
-                    model1.lb(index1.s_k3)=0;
+                    model1.ub(index.s_k3)=pointsN3;
+                    model1.lb(index.s_k3)=0;
 
-                    model1.lb(index1.slack2)=0;
-                    model1.lb(index1.slack3)=0;
-                    model1.lb(index1.slack4)=0;
+                    model1.lb(index.slack2)=0;
+                    model1.lb(index.slack3)=0;
+                    model1.lb(index.slack4)=0;
 
                     %limit lateral acceleration
                     model1.nh = NUM_const+1; 
@@ -434,24 +463,54 @@ if strcmp(Compiled,'no')
                                  -inf;70;-inf;-inf;...
                                  -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf;-inf];%
-                             
-                    %% Third Controller
-                    model2=model1;
-                    for i=1:model2.N
-                        model2.objective{i} = @(z,p)objective_PG3_LE_2(z,...
-                            getPointsFromParameters(p, pointsO, pointsN),...
-                            getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-                            getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-                            p(index1.ps),...
-                            p(index1.plag),...
-                            p(index1.plat),...
-                            p(index1.pprog),...
-                            p(index1.pab),...
-                            p(index1.pdotbeta),...
-                            p(index1.pspeedcost),...
-                            p(index1.pslack),...
-                            p(index1.pslack2));
-                     end
+
+                    %% Controller 3
+                    model2.ub(index1.ds_k2)=ds_max;
+                    model2.lb(index1.ds_k2)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model2.lb(index1.ab_k2)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    %model.lb(index.slack_k2)=0;
+
+                    % Speed Constraint (state)
+                    model2.lb(index1.v_k2)=0;
+                    model2.ub(index1.v_k2)=maxSpeed_1;
+                    % Steering Angle Constraint (input)
+                    model2.ub(index1.beta_k2)=beta_max;
+                    model2.lb(index1.beta_k2)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model2.ub(index1.s_k2)=pointsN2;
+                    model2.lb(index1.s_k2)=0;
+
+                    % Path Progress rate Constraint (input)
+                    model2.ub(index1.ds_k3)=ds_max;
+                    model2.lb(index1.ds_k3)=ds_min;
+
+                    % Acceleration Constraint (input)
+                    model2.lb(index1.ab_k3)=-inf;
+
+                    % Slack Variables Constraint (input)
+                    %model.lb(index.slack_k3)=0;
+
+                    % Speed Constraint (state)
+                    model2.lb(index1.v_k3)=0;
+                    model2.ub(index1.v_k3)=maxSpeed_1;
+                    % Steering Angle Constraint (input)
+                    model2.ub(index1.beta_k3)=beta_max;
+                    model2.lb(index1.beta_k3)=beta_min;
+
+                    % Path Progress Constraint (input)
+                    model2.ub(index1.s_k3)=pointsN3;
+                    model2.lb(index1.s_k3)=0;
+
+                    model2.lb(index1.slack2)=0;
+                    model2.lb(index1.slack3)=0;
+                    model2.lb(index1.slack4)=0;
+                    %% inequalities
+                    
                     model2.nh = NUM_const+1; 
                     model2.ineq = @(z,p) nlconst_PG3_2(z,p);
                     model2.hu = [0.001;0;0;0;...
@@ -472,7 +531,6 @@ if strcmp(Compiled,'no')
                                  -inf;70;-inf;-inf;...
                                  -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf;-inf];%
-                             
             end
     end
 
@@ -512,7 +570,7 @@ if strcmp(Compiled,'no')
     codeoptions2.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
     codeoptions2.cleanup = false;
     codeoptions2.timing = 1;
-    output2 = newOutput('alldata', 1:model1.N, 1:model1.nvar);
+    output2 = newOutput('alldata', 1:model2.N, 1:model2.nvar);
     if ok2==1
     FORCES_NLP(model2, codeoptions2,output2);
     end

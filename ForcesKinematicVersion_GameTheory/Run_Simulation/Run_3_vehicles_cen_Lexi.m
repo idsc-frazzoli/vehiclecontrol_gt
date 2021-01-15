@@ -75,8 +75,7 @@ tstart = 1;
 %load InitializationPG.mat
 load IBR_init.mat
 x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
-x01=x0;
-x01(34,:)=ones(1,60);
+%x01=x0;
 %x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 optA = 0;
 optB = 0;
@@ -138,8 +137,8 @@ for i =1:tend
     xs(index.ab_k3-index.nu)=min(casadiGetMaxAcc(xs(index.v_k3-index.nu))-0.0001,xs(index.ab_k3-index.nu));
     problem.xinit = xs';
     xs1=xs;
-    xs1(index1.laterror_k2-index.nu)=1;
-    problem1.xinit = xs1';
+    %xs1(index1.laterror_k2-index.nu)=0;
+    problem1.xinit = xs';
     problem2.xinit = xs1';
     ip = splinestart;
     ip2 = splinestart2;
@@ -228,7 +227,7 @@ for i =1:tend
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog,pab,pdotbeta,...
         pspeedcost,pslack,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
-    problem1.x0 = x01(:);       
+    problem1.x0 = x0(:);       
     % solve mpc
     [output1,exitflag1,info1] = MPCPathFollowing_3v_1(problem1);
     solvetimes(end+1)=info1.solvetime;
@@ -238,6 +237,7 @@ for i =1:tend
     
     outputM1 = reshape(output1.alldata,[model1.nvar,model1.N])';
     x01 = outputM1';
+    %x01(34,:)=ones(1,60);
     u1 = repmat(outputM1(1,1:index1.nu),eulersteps,1);
 %     [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
 %     xs1 = xhist1(end,:);
@@ -255,8 +255,8 @@ for i =1:tend
        a = a + 1; 
     end
     
-    outputM2 = reshape(output2.alldata,[model1.nvar,model1.N])';
-    x01 = outputM2';
+    outputM2 = reshape(output2.alldata,[model2.nvar,model2.N])';
+    %x01 = outputM2';
     u2 = repmat(outputM2(1,1:index1.nu),eulersteps,1);
 %     [xhist2,time2] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u2,integrator_stepsize/eulersteps);
 %     xs2 = xhist2(end,:);

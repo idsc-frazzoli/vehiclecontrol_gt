@@ -89,3 +89,9 @@ model.N = P_H_length;
 model.nvar = index.nv;
 model.neq = index.ns;
 model.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;
+
+%% model initialization
+model1.N = P_H_length;
+model1.nvar = index.nv;
+model1.neq = index.ns;
+model1.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;

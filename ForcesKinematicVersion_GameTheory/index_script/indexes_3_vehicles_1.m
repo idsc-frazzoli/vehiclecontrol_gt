@@ -48,9 +48,9 @@ index1.v_k3 = 30;
 index1.ab_k3 = 31;
 index1.beta_k3 = 32;
 index1.s_k3 = 33;
-index1.laterror_k2=34;
+%index1.laterror_k2=34;
 % Number of States
-index1.ns = 22;%22
+index1.ns = 21;%22
 
 % Number of Inputs
 index1.nu = 12;
@@ -86,7 +86,7 @@ index1.pointsN2=pointsN2;
 index1.pointsN3=pointsN3;
 
 %% model initialization
-model1.N = P_H_length;
-model1.nvar = index1.nv;
-model1.neq = index1.ns;
-model1.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;
+model2.N = P_H_length;
+model2.nvar = index1.nv;
+model2.neq = index1.ns;
+model2.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;
