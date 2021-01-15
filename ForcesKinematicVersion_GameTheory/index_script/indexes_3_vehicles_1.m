@@ -50,7 +50,7 @@ index1.beta_k3 = 32;
 index1.s_k3 = 33;
 index1.laterror_k2=34;
 % Number of States
-index1.ns = 21;%22
+index1.ns = 22;%22
 
 % Number of Inputs
 index1.nu = 12;

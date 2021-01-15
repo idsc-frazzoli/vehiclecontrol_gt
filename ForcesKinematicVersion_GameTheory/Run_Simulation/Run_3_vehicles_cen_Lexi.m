@@ -75,6 +75,8 @@ tstart = 1;
 %load InitializationPG.mat
 load IBR_init.mat
 x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
+x01=x0;
+x01(34,:)=ones(1,60);
 %x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 optA = 0;
 optB = 0;
@@ -135,8 +137,10 @@ for i =1:tend
     % go kart 3
     xs(index.ab_k3-index.nu)=min(casadiGetMaxAcc(xs(index.v_k3-index.nu))-0.0001,xs(index.ab_k3-index.nu));
     problem.xinit = xs';
-    problem1.xinit = xs';
-    problem2.xinit = xs';
+    xs1=xs;
+    xs1(index1.laterror_k2-index.nu)=1;
+    problem1.xinit = xs1';
+    problem2.xinit = xs1';
     ip = splinestart;
     ip2 = splinestart2;
     ip3 = splinestart3;
@@ -224,7 +228,7 @@ for i =1:tend
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog,pab,pdotbeta,...
         pspeedcost,pslack,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
-    problem1.x0 = x0(:);       
+    problem1.x0 = x01(:);       
     % solve mpc
     [output1,exitflag1,info1] = MPCPathFollowing_3v_1(problem1);
     solvetimes(end+1)=info1.solvetime;
@@ -232,18 +236,18 @@ for i =1:tend
        a = a + 1; 
     end
     
-    outputM1 = reshape(output1.alldata,[model.nvar,model.N])';
-    x0 = outputM1';
+    outputM1 = reshape(output1.alldata,[model1.nvar,model1.N])';
+    x01 = outputM1';
     u1 = repmat(outputM1(1,1:index1.nu),eulersteps,1);
-    [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
-    xs1 = xhist1(end,:);
+%     [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
+%     xs1 = xhist1(end,:);
     
     % parameters
     problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
         info1.pobj,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
         pspeedcost_1,pslack_1,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
-    problem2.x0 = x0(:);       
+    problem2.x0 = x01(:);       
     % solve mpc
     [output2,exitflag2,info2] = MPCPathFollowing_3v_2(problem2);
     solvetimes(end+1)=info2.solvetime;
@@ -252,69 +256,69 @@ for i =1:tend
     end
     
     outputM2 = reshape(output2.alldata,[model1.nvar,model1.N])';
-    x0 = outputM2';
+    x01 = outputM2';
     u2 = repmat(outputM2(1,1:index1.nu),eulersteps,1);
-    [xhist2,time2] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u2,integrator_stepsize/eulersteps);
-    xs2 = xhist2(end,:);
+%     [xhist2,time2] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u2,integrator_stepsize/eulersteps);
+%     xs2 = xhist2(end,:);
     
     % xs
-    history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=[time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
-    planc = planc + 1;
-    if(planc>planintervall)
-        planc = 1;
-        plansx = [plansx; outputM(:,index.x)'];
-        plansy = [plansy; outputM(:,index.y)'];
-        planss = [planss; outputM(:,index.s)'];
-        plansx2 = [plansx2; outputM(:,index.x_k2)'];
-        plansy2 = [plansy2; outputM(:,index.y_k2)'];
-        planss2 = [planss2; outputM(:,index.s_k2)'];
-        plansx3 = [plansx3; outputM(:,index.x_k3)'];
-        plansy3 = [plansy3; outputM(:,index.y_k3)'];
-        planss3 = [planss3; outputM(:,index.s_k3)'];
-        [tx,ty]=casadiDynamicBSPLINE(outputM(end,index.s),nextSplinePoints);
-        targets = [targets;tx,ty];
-        [tx2,ty2]=casadiDynamicBSPLINE(outputM(end,index.s_k2),nextSplinePoints_k2);
-        targets2 = [targets2;tx2,ty2];
-        [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
-        targets3 = [targets3;tx3,ty3];
-    end      
-   if tend==1
-    %% Evaluation cost function
-    for jj=1:length(outputM)
-        [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
-        latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
-        latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
-        objective_PG_Test3(outputM2(jj,:),points,points2,points3,targetSpeed,plagerror,...
-        platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-      
-        regABA=regABA+regAB;
-        regABB=regABB+regAB_k2;
-        regABC=regABC+regAB_k3;
-        regBetaA=regBetaA+regBeta;
-        regBetaB=regBetaB+regBeta_k2;
-        regBetaC=regBetaC+regBeta_k3;
-        latcostA=latcostA+latcost;
-        latcostB=latcostB+latcost_k2;
-        latcostC=latcostC+latcost_k3;
-        lagcostA=lagcostA+lagcost;
-        lagcostB=lagcostB+lagcost_k2;
-        lagcostC=lagcostC+lagcost_k3;
-        speedcostA=speedcostA+speedcost;
-        speedcostB=speedcostB+speedcost_k2;
-        speedcostC=speedcostC+speedcost_k3;
-        speedcostA1=speedcostA1+speedcost1;
-        speedcostB1=speedcostB1+speedcost1_k2;
-        speedcostC1=speedcostC1+speedcost1_k3;
-        optA = optA+ f1;
-        optB = optB+ f2;
-        optC = optC+ f3;
-        opt  = opt+ f;
-    end
-%     save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
-%         'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
-%         'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
-%         'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1')
-     end
+%     history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=[time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
+%     planc = planc + 1;
+%     if(planc>planintervall)
+%         planc = 1;
+%         plansx = [plansx; outputM(:,index.x)'];
+%         plansy = [plansy; outputM(:,index.y)'];
+%         planss = [planss; outputM(:,index.s)'];
+%         plansx2 = [plansx2; outputM(:,index.x_k2)'];
+%         plansy2 = [plansy2; outputM(:,index.y_k2)'];
+%         planss2 = [planss2; outputM(:,index.s_k2)'];
+%         plansx3 = [plansx3; outputM(:,index.x_k3)'];
+%         plansy3 = [plansy3; outputM(:,index.y_k3)'];
+%         planss3 = [planss3; outputM(:,index.s_k3)'];
+%         [tx,ty]=casadiDynamicBSPLINE(outputM(end,index.s),nextSplinePoints);
+%         targets = [targets;tx,ty];
+%         [tx2,ty2]=casadiDynamicBSPLINE(outputM(end,index.s_k2),nextSplinePoints_k2);
+%         targets2 = [targets2;tx2,ty2];
+%         [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
+%         targets3 = [targets3;tx3,ty3];
+%     end      
+%    if tend==1
+%     %% Evaluation cost function
+%     for jj=1:length(outputM)
+%         [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
+%         latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
+%         latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
+%         objective_PG_Test3(outputM2(jj,:),points,points2,points3,targetSpeed,plagerror,...
+%         platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
+%       
+%         regABA=regABA+regAB;
+%         regABB=regABB+regAB_k2;
+%         regABC=regABC+regAB_k3;
+%         regBetaA=regBetaA+regBeta;
+%         regBetaB=regBetaB+regBeta_k2;
+%         regBetaC=regBetaC+regBeta_k3;
+%         latcostA=latcostA+latcost;
+%         latcostB=latcostB+latcost_k2;
+%         latcostC=latcostC+latcost_k3;
+%         lagcostA=lagcostA+lagcost;
+%         lagcostB=lagcostB+lagcost_k2;
+%         lagcostC=lagcostC+lagcost_k3;
+%         speedcostA=speedcostA+speedcost;
+%         speedcostB=speedcostB+speedcost_k2;
+%         speedcostC=speedcostC+speedcost_k3;
+%         speedcostA1=speedcostA1+speedcost1;
+%         speedcostB1=speedcostB1+speedcost1_k2;
+%         speedcostC1=speedcostC1+speedcost1_k3;
+%         optA = optA+ f1;
+%         optB = optB+ f2;
+%         optC = optC+ f3;
+%         opt  = opt+ f;
+%     end
+% %     save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
+% %         'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
+% %         'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
+% %         'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1')
+%      end
 %     MetricPG.MaxACC(1)=max(outputM(:,index.ab));
 %     MetricPG.MinACC(1)=min(outputM(:,index.ab));
 %     SteerEFF=cumsum(abs(outputM(:,index.dotbeta)));
