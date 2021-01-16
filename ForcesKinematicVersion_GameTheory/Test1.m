@@ -3,7 +3,7 @@ points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50
           3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5]';  %,5,5,5,5,5
  idx=38;
  AA=0;
- for idx=1:length(outputM1)
+%  for idx=1:length(outputM1)
     [splx_k2,sply_k2] = casadiDynamicBSPLINE(outputM1(idx,index1.s_k2),points2);
     %[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(x(index1.s_k2-index1.nu),points2);
     [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(outputM1(idx,index1.s_k2),points2);
@@ -18,7 +18,7 @@ points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50
     error_k2 = centerPos_k2-wantedpos_k2;
     laterror_k2 = sidewards_k2'*error_k2;
     AA=AA+0.1*(min(0,laterror_k2))^2;
- end
+%  end
     for jj=1:length(outputM2)
         [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
         latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
