@@ -695,6 +695,7 @@ if tend==1 && Plotta==1
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed_C')
     saveas(gcf,'figures/3v_PG_speed_C','epsc')
+    %saveas(gcf,'figures/3v_PG_speed_C','epsc')
         % drawAnimation_P3_PH
 %         figure(1)
 %         hold on
