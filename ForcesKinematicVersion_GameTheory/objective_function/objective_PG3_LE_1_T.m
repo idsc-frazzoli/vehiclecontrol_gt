@@ -93,8 +93,8 @@ function f = objective_PG3_LE_1_T(z,points,points2,points3,vmax,plagerror, plate
     regBeta_k3= z(index.dotbeta_k3).^2*pdotbeta;
     %prog_k3 = -pprog*z(index.ds_k3);
 
-     f = (lagcost   +latcost)+...prog+pslack*slack+
-         (lagcost_k2+latcost_k2)+...+prog_k2+pslack*slack_k2+
-         (lagcost_k3+latcost_k3);%+...+prog_k3+pslack*slack_k3+
+     f = (lagcost   +latcost+0.01*(latcost1+speedcost+speedcost1))+...prog+pslack*slack+
+         (lagcost_k2+latcost_k2+0.01*(latcost1_k2+speedcost_k2+speedcost1_k2))+...+prog_k2+pslack*slack_k2+
+         (lagcost_k3+latcost_k3+0.01*(latcost1_k3+speedcost_k3+speedcost1_k3));%+...+prog_k3+pslack*slack_k3+
                            
 end
