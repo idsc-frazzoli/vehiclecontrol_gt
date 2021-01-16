@@ -17,10 +17,10 @@ index_IBR.v = 8;
 index_IBR.ab = 9;
 index_IBR.beta = 10;
 index_IBR.s = 11;
-%index_IBR.laterror=12;
+index_IBR.laterror=12;
 
 % Number of States
-index_IBR.ns = 7;
+index_IBR.ns = 8;
 
 % Number of Inputs
 index_IBR.nu = 4;
