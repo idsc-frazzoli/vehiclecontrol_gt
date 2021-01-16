@@ -29,8 +29,8 @@ clear all
 NUM_Vehicles = 3; %1,2,3,5
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 ok=0;
-ok1=0;
-ok2=1;
+ok1=1;
+ok2=0;
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and

@@ -225,7 +225,7 @@ for i =1:tend
     % parameters
     problem1.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
         maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
-        plagerror_1,platerror_1,pprog,pab,pdotbeta,...
+        plagerror_1,platerror_1*0.001,pprog,pab,pdotbeta,...
         pspeedcost,pslack,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem1.x0 = x0(:);       
     % solve mpc
@@ -381,8 +381,11 @@ if tend==1 && Plotta==1
     g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
     R=imread('carr.png');
     r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-
-    %set(gca,'visible','off')
+    K=imread('cargray.png');
+    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K);
+    W=imread('warning.png');
+    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W);
+    set(gca,'visible','off')
     axis equal
     CP=0:0.01:2*pi;
     gklx = 1.5*cos(CP);
@@ -496,8 +499,12 @@ if tend==1 && Plotta==1
     g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
     R=imread('carr.png');
     r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-
-    %set(gca,'visible','off')
+    K=imread('cargray.png');
+    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K);
+    W=imread('warning.png');
+    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W);
+    
+    set(gca,'visible','off')
     axis equal
     CP=0:0.01:2*pi;
     gklx = 1.5*cos(CP);
@@ -549,8 +556,8 @@ if tend==1 && Plotta==1
 %     rgklp = [outputM1(iff+1,index1.x_k3);outputM1(iff+1,index1.y_k3)]+R*gklp;
 %     CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     axis equal
-    savefig('figures/3v_PG_intersection')
-    saveas(gcf,'figures/3v_PG_intersection','epsc')
+    savefig('figures/3v_PG_intersection_B')
+    saveas(gcf,'figures/3v_PG_intersection_B','epsc')
     int=integrator_stepsize;
 %         figure(2)
 %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
@@ -566,8 +573,8 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM1(:,1))*int,outputM1(1:3:end,index1.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
-    savefig('figures/3v_PG_speed')
-    saveas(gcf,'figures/3v_PG_speed','epsc')
+    savefig('figures/3v_PG_speed_B')
+    saveas(gcf,'figures/3v_PG_speed_B','epsc')
     
     
     figure(6)
@@ -615,8 +622,12 @@ if tend==1 && Plotta==1
     g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
     R=imread('carr.png');
     r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-
-    %set(gca,'visible','off')
+    K=imread('cargray.png');
+    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K);
+    W=imread('warning.png');
+    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W);
+    
+    set(gca,'visible','off')
     axis equal
     CP=0:0.01:2*pi;
     gklx = 1.5*cos(CP);
@@ -664,8 +675,8 @@ if tend==1 && Plotta==1
     yunit = dist * sin(th) + 58;
     plot(xunit, yunit,'k');
     axis equal
-    savefig('figures/3v_PG_intersection')
-    saveas(gcf,'figures/3v_PG_intersection','epsc')
+    savefig('figures/3v_PG_intersection_C')
+    saveas(gcf,'figures/3v_PG_intersection_C','epsc')
     int=integrator_stepsize;
 %         figure(2)
 %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
@@ -681,8 +692,8 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index1.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
-    savefig('figures/3v_PG_speed')
-    saveas(gcf,'figures/3v_PG_speed','epsc')
+    savefig('figures/3v_PG_speed_C')
+    saveas(gcf,'figures/3v_PG_speed_C','epsc')
         % drawAnimation_P3_PH
 %         figure(1)
 %         hold on
