@@ -2,7 +2,7 @@
 global index_IBR
 Plotta=1;
 Plotta1=0;
-dis=0;
+dis=1.75;
 
 %% Simulation
 history = zeros(tend*eulersteps,model.nvar+1);
@@ -69,7 +69,7 @@ for jj=1:length(config(:,1))
     pstart = [pstartx,pstarty];
     pangle = atan2(pdir(2),pdir(1));
     xs(index_IBR.x-index_IBR.nu)=pstart(1);
-    xs(index_IBR.y-index_IBR.nu)=pstart(2)-dis;
+    xs(index_IBR.y-index_IBR.nu)=pstart(2)+dis;
     xs(index_IBR.theta-index_IBR.nu)=pangle;
     xs(index_IBR.v-index_IBR.nu)=targetSpeed;
     xs(index_IBR.ab-index_IBR.nu)=0;
@@ -247,7 +247,7 @@ for jj=1:length(config(:,1))
                                                              Pos2(end,2)*0];
         problem3.x0 = x03(:);
         %go kart 1
-        [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
+        [output,exitflag,info] = MPCPathFollowing_3v_IBR_ORIG(problem);
         solvetimes(end+1)=info.solvetime;
         if(exitflag==0)
             a =a+ 1;
@@ -260,7 +260,7 @@ for jj=1:length(config(:,1))
         x0 = outputMA';
 
         %go kart 2
-        [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
+        [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR_ORIG(problem2);
         solvetimes2(end+1)=info2.solvetime;
         if(exitflag2==0)
             a2 =a2+ 1;
@@ -274,7 +274,7 @@ for jj=1:length(config(:,1))
         x02=outputMB';
         %go kart 3
 
-        [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
+        [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR_ORIG(problem3);
         solvetimes3(end+1)=info3.solvetime;
         if(exitflag3==0)
             a3 =a3+ 1;
@@ -356,12 +356,20 @@ for jj=1:length(config(:,1))
             Metric1.SteerEff(3,jj)=SteerEFF31(end);
             axis equal
             B=imread('carb.png');
-            b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+            b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)+dis-1.5,pstart(2)+dis+1.5],B);
             G=imread('carg.png');
-            g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+            g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
             R=imread('carr.png');
-            r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-            
+            r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+            [K, map, alphachannel]=imread('cargray_1.png');
+            k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
+            [W, map1, alphachannel1]=imread('warning_1.png');
+            w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
+            th = 0:pi/50:2*pi;
+            xunit = dist * cos(th) + 53;
+            yunit = dist * sin(th) + 58;
+            plot(xunit, yunit,'k--');
+
             CP=0:0.01:2*pi;
             gklx = 1.5*cos(CP);
             gkly = 1.5*sin(CP);
@@ -773,11 +781,19 @@ for jj=1:length(config(:,1))
     
 
             B=imread('carb.png');
-            b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
+            b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)+dis-1.5,pstart(2)+dis+1.5],B);
             G=imread('carg.png');
-            g=image([pstart3(1)-1.5,pstart3(1)+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
+            g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
             R=imread('carr.png');
-            r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+            r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
+            [K, map, alphachannel]=imread('cargray_1.png');
+            k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
+            [W, map1, alphachannel1]=imread('warning_1.png');
+            w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
+            th = 0:pi/50:2*pi;
+            xunit = dist * cos(th) + 53;
+            yunit = dist * sin(th) + 58;
+            plot(xunit, yunit,'k--');
             axis equal
             CP=0:0.01:2*pi;
             gklx = 1.5*cos(CP);
@@ -871,23 +887,23 @@ for jj=1:length(config(:,1))
             end
             pause(0.2)  
         end
-        
-        figure (1000)
-        if jj==1
-            
-            hold on
-            I=imread('road06.png');
-            h=image([20 80],[80 20],I);
-            set(gca,'visible','off')
-            axis equal
-        end
-        P1=plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'Color',[0,0,0],'Linewidth',0.5);
-        P2=plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'Color',[0,0,0],'Linewidth',0.5);
-        P3=plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'Color',[0,0,0],'Linewidth',0.5);
-        P1.Color(4)=0.6;
-        P2.Color(4)=0.6;
-        P3.Color(4)=0.6;
-        if jj==6
+%         
+%         figure(1000)
+%         if jj==1
+%             
+%             hold on
+%             I=imread('road06.png');
+%             h=image([20 80],[80 20],I);
+%             set(gca,'visible','off')
+%             axis equal
+%         end
+%         P1=plot(outputM(:,index_IBR.x),outputM(:,index_IBR.y),'Color',[0,0,0],'Linewidth',0.5);
+%         P2=plot(outputM2(:,index_IBR.x),outputM2(:,index_IBR.y),'Color',[0,0,0],'Linewidth',0.5);
+%         P3=plot(outputM3(:,index_IBR.x),outputM3(:,index_IBR.y),'Color',[0,0,0],'Linewidth',0.5);
+%         P1.Color(4)=0.6;
+%         P2.Color(4)=0.6;
+%         P3.Color(4)=0.6;
+%         if jj==6
 %             B=imread('carb.png');
 %             b=image([pstart(1)-2.5,pstart(1)+2.5],[pstart(2)-1.5,pstart(2)+1.5],B);
 %             G=imread('carg.png');
@@ -896,7 +912,7 @@ for jj=1:length(config(:,1))
 %             r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
 %             savefig('figures/3v_IBR_intall_v1')
 %             saveas(gcf,'figures/3v_IBR_intall_v1','epsc')
-        end
+%         end
         %drawAnimation_P3_PH_IBR
     else
         drawIBR3

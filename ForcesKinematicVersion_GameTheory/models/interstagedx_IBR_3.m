@@ -1,5 +1,20 @@
-function dx = interstagedx_IBR(x,u,p)
+function dx = interstagedx_IBR_3(x,u)
     global index_IBR
+    points3 = [50,50,50,50,50,50,52,55,60,65,70,75,80,85;...          %x,50,50,50,50,50,50,65,65,50
+           75,70,65,60,55,52,50,50,50,50,50,50,50,50; ...    %y,25,20,15,10,5,0,5,92,95
+           3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5]';%,5,5,5,5,4,3,2,2,3
+
+    %get the fancy spline
+    [splx,sply] = casadiDynamicBSPLINE(x(index_IBR.s-index_IBR.nu),points3);
+    [splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index_IBR.s-index_IBR.nu),points3);
+        
+    sidewards = [splsx;splsy];
+    realPos = x([index_IBR.x-index_IBR.nu,index_IBR.y-index_IBR.nu]);
+    centerOffset = 0.4*gokartforward(z(index_IBR.theta))';
+    centerPos = realPos+centerOffset;%+0.4*forward;
+    wantedpos = [splx;sply];
+    error = centerPos-wantedpos;
+    laterror = sidewards'*error;
     
     % Inputs 
     dotab = u(index_IBR.dotab);
@@ -30,7 +45,7 @@ function dx = interstagedx_IBR(x,u,p)
     dx(index_IBR.ab-index_IBR.nu)=dotab;
     dx(index_IBR.beta-index_IBR.nu)=dotbeta;
     dx(index_IBR.s-index_IBR.nu)=ds;
-    
+    dx(index_IBR.laterror-index_IBR.nu)=laterror;
     
     %dx = [v*cos(theta);
     %v*sin(theta);

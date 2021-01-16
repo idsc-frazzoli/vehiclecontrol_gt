@@ -23,13 +23,13 @@ addpath('ReadSVG');
 clear model
 clear problem
 clear all
-%close all
+close all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
-ok=0;
-ok1=1;
+Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
+ok=1;
+ok1=0;
 ok2=0;
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
@@ -38,7 +38,7 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'PG'; % 'PG'; 'IBR';
+Game        = 'IBR'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 Stack       = 0;
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
@@ -66,7 +66,7 @@ switch NUM_Vehicles
             case 'IBR'
                 parameters_3_vehicles
                 pointsO = 20; 
-                NUM_const=5; % number of nonlinear constraint
+                NUM_const=6; % number of nonlinear constraint
                 MAX_IT= 500; % N of max iterations
                 plagerror=1;       % proj error param cost
         end
@@ -107,8 +107,8 @@ if strcmp(Compiled,'no')
                     model2.eq = @(z,p) RK4(z(index1.sb:end), z(1:index1.nu),...
                                @(x,u,p)interstagedx_PG3_2(x,u),integrator_stepsize,p);
                 case 'IBR'
-                    model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                               @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
+                    model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu), ...
+                               @(x,u,p)interstagedx_IBR(x,u,p),integrator_stepsize,p);
                     model1.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
                     model2.eq = @(z,p) RK4(z(index_IBR_1.sb:end), z(1:index_IBR_1.nu),...
@@ -213,7 +213,7 @@ if strcmp(Compiled,'no')
                             end
                         case 'yes'
                             for i=1:model.N
-                                model.objective{i} = @(z,p)objective_IBR_LE(z,...
+                                model.objective{i} = @(z,p)objective_IBR_LE_1(z,...
                                     getPointsFromParameters(p, pointsO, pointsN),...
                                     p(index_IBR.ps),...
                                     p(index_IBR.plag),...
@@ -632,16 +632,30 @@ if strcmp(Compiled,'no')
             case 'IBR'
                     model.nh = NUM_const; 
                     model.ineq = @(z,p) nlconst_IBR_3(z,p);
-                    model.hu = [0;0;0;0;0];
-                    model.hl = [-inf;-inf;-inf;-inf;-inf];
-                    model1.nh = NUM_const; 
-                    model1.ineq = @(z,p) nlconst_IBR_3(z,p);
-                    model1.hu = [0;0;0;0;0];
-                    model1.hl = [-inf;-inf;-inf;-inf;-inf];
-                    model2.nh = NUM_const; 
-                    model2.ineq = @(z,p) nlconst_IBR_3(z,p);
-                    model2.hu = [0;0;0;0;0];
-                    model2.hl = [-inf;-inf;-inf;-inf;-inf];
+                    model.hu = [0;0;0;0;0;0];%
+                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];%
+%                     model.nhN = NUM_const+2; 
+%                     model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
+%                     model.huN = [0;0;0;0;0;0;+inf;+inf];%
+%                     model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                    
+%                     model1.nh = NUM_const; 
+%                     model1.ineq = @(z,p) nlconst_IBR_3(z,p);
+%                     model1.hu = [0;0;0;0;0];
+%                     model1.hl = [-inf;-inf;-inf;-inf;-inf];
+%                     model1.nhN = NUM_const+3; 
+%                     model1.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
+%                     model1.huN = [0;0;0;0;0;0;0;0];%
+%                     model1.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+%                     
+%                     model2.nh = NUM_const; 
+%                     model2.ineq = @(z,p) nlconst_IBR_3(z,p);
+%                     model2.hu = [0;0;0;0;0];
+%                     model2.hl = [-inf;-inf;-inf;-inf;-inf];
+%                     model2.nhN = NUM_const+3; 
+%                     model2.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
+%                     model2.huN = [0;0;0;0;0;0;0;0];%
+%                     model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
             end
     end
 

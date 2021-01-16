@@ -17,6 +17,7 @@ index_IBR.v = 8;
 index_IBR.ab = 9;
 index_IBR.beta = 10;
 index_IBR.s = 11;
+%index_IBR.laterror=12;
 
 % Number of States
 index_IBR.ns = 7;
@@ -59,3 +60,8 @@ model.N = P_H_length;
 model.nvar = index_IBR.nv;
 model.neq = index_IBR.ns;
 model.npar = pointsO + 3*pointsN;
+
+model1.N = P_H_length;
+model1.nvar = index_IBR.nv;
+model1.neq = index_IBR.ns;
+model1.npar = pointsO + 3*pointsN;
