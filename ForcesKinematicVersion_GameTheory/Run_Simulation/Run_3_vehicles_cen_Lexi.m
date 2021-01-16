@@ -16,7 +16,7 @@ Plotta=1;
 global index index1
 %indexes_3_vehicles
 
-dis=1.75;0;0;
+dis=1.75;0;0;0;
 %% Initialization for simulation
 fpoints = points(1:2,1:2);
 pdir = diff(fpoints);
@@ -137,7 +137,7 @@ for i =1:tend
     xs(index.ab_k3-index.nu)=min(casadiGetMaxAcc(xs(index.v_k3-index.nu))-0.0001,xs(index.ab_k3-index.nu));
     problem.xinit = xs';
     xs1=xs;
-    %xs1(index1.laterror_k2-index.nu)=0;
+    xs1(index1.laterror_k2-index.nu)=0;
     problem1.xinit = xs';
     problem2.xinit = xs1';
     ip = splinestart;
@@ -236,15 +236,47 @@ for i =1:tend
     end
     
     outputM1 = reshape(output1.alldata,[model1.nvar,model1.N])';
-    x01 = outputM1';
-    %x01(34,:)=ones(1,60);
+    %x01 = outputM1';
+    x01=x0;
+    x01(34,:)=zeros(1,60);
     u1 = repmat(outputM1(1,1:index1.nu),eulersteps,1);
 %     [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
 %     xs1 = xhist1(end,:);
-    
+        %% Evaluation cost function
+    for jj=1:length(outputM1)
+        [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
+        latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
+        latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
+        objective_PG_Test3(outputM1(jj,:),points,points2,points3,targetSpeed,plagerror_1,...
+        platerror_1, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2_1);
+      
+        regABA=regABA+regAB;
+        regABB=regABB+regAB_k2;
+        regABC=regABC+regAB_k3;
+        regBetaA=regBetaA+regBeta;
+        regBetaB=regBetaB+regBeta_k2;
+        regBetaC=regBetaC+regBeta_k3;
+        latcostA=latcostA+latcost;
+        latcostB=latcostB+latcost_k2;
+        latcostC=latcostC+latcost_k3;
+        lagcostA=lagcostA+lagcost;
+        lagcostB=lagcostB+lagcost_k2;
+        lagcostC=lagcostC+lagcost_k3;
+        speedcostA=speedcostA+speedcost;
+        speedcostB=speedcostB+speedcost_k2;
+        speedcostC=speedcostC+speedcost_k3;
+        speedcostA1=speedcostA1+speedcost1;
+        speedcostB1=speedcostB1+speedcost1_k2;
+        speedcostC1=speedcostC1+speedcost1_k3;
+        optA = optA+ f1;
+        optB = optB+ f2;
+        optC = optC+ f3;
+        opt  = opt+ f;
+    end
+
     % parameters
     problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
-        info1.pobj,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
+        latcostB,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
         pspeedcost_1,pslack_1,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem2.x0 = x01(:);       
@@ -258,8 +290,8 @@ for i =1:tend
     outputM2 = reshape(output2.alldata,[model2.nvar,model2.N])';
     %x01 = outputM2';
     u2 = repmat(outputM2(1,1:index1.nu),eulersteps,1);
-%     [xhist2,time2] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u2,integrator_stepsize/eulersteps);
-%     xs2 = xhist2(end,:);
+    [xhist2,time2] = euler(@(x,u)interstagedx_PG3_2(x,u),xs1,u2,integrator_stepsize/eulersteps);
+    xs2 = xhist2(end,:);
     
     % xs
 %     history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=[time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
@@ -283,37 +315,6 @@ for i =1:tend
 %         targets3 = [targets3;tx3,ty3];
 %     end      
 %    if tend==1
-%     %% Evaluation cost function
-%     for jj=1:length(outputM)
-%         [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
-%         latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
-%         latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
-%         objective_PG_Test3(outputM2(jj,:),points,points2,points3,targetSpeed,plagerror,...
-%         platerror, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-%       
-%         regABA=regABA+regAB;
-%         regABB=regABB+regAB_k2;
-%         regABC=regABC+regAB_k3;
-%         regBetaA=regBetaA+regBeta;
-%         regBetaB=regBetaB+regBeta_k2;
-%         regBetaC=regBetaC+regBeta_k3;
-%         latcostA=latcostA+latcost;
-%         latcostB=latcostB+latcost_k2;
-%         latcostC=latcostC+latcost_k3;
-%         lagcostA=lagcostA+lagcost;
-%         lagcostB=lagcostB+lagcost_k2;
-%         lagcostC=lagcostC+lagcost_k3;
-%         speedcostA=speedcostA+speedcost;
-%         speedcostB=speedcostB+speedcost_k2;
-%         speedcostC=speedcostC+speedcost_k3;
-%         speedcostA1=speedcostA1+speedcost1;
-%         speedcostB1=speedcostB1+speedcost1_k2;
-%         speedcostC1=speedcostC1+speedcost1_k3;
-%         optA = optA+ f1;
-%         optB = optB+ f2;
-%         optC = optC+ f3;
-%         opt  = opt+ f;
-%     end
 % %     save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
 % %         'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
 % %         'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...

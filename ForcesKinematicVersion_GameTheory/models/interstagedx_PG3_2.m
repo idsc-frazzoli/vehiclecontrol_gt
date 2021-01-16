@@ -1,23 +1,23 @@
 function dx = interstagedx_PG3_2(x,u)
     global index1
     
-%     points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50
-%           25,30,35,40,45,50,55,60,65,70,75,80,85,90; ...    %y,75,80,85,90,95
-%           3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5]';  %,5,5,5,5,5
-% 
-%     [splx_k2,sply_k2] = casadiDynamicBSPLINE(x(index1.s_k2-index1.nu),points2);
-%     %[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(x(index1.s_k2-index1.nu),points2);
-%     [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(x(index1.s_k2-index1.nu),points2);
-%     
-%     %forward_k2 = [spldx_k2;spldy_k2];
-%     sidewards_k2 = [splsx_k2;splsy_k2];
-%     
-%     realPos_k2 = x([index1.x_k2,index1.y_k2]);
-%     centerOffset_k2 = 0.4*gokartforward(x(index1.theta_k2))';
-%     centerPos_k2 = realPos_k2+centerOffset_k2;
-%     wantedpos_k2 = [splx_k2;sply_k2];
-%     error_k2 = centerPos_k2-wantedpos_k2;
-%     laterror_k2 = sidewards_k2'*error_k2;
+    points2 = [50,50,50,50,50,50,50,50,50,50,50,50,50,50;...          %x,50,50,50,50,50
+          25,30,35,40,45,50,55,60,65,70,75,80,85,90; ...    %y,75,80,85,90,95
+          3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5]';  %,5,5,5,5,5
+
+    [splx_k2,sply_k2] = casadiDynamicBSPLINE(x(index1.s_k2-index1.nu),points2);
+    %[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(x(index1.s_k2-index1.nu),points2);
+    [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(x(index1.s_k2-index1.nu),points2);
+    
+    %forward_k2 = [spldx_k2;spldy_k2];
+    sidewards_k2 = [splsx_k2;splsy_k2];
+    
+    realPos_k2 = [x(index1.x_k2-index1.nu),x(index1.y_k2-index1.nu)]';
+    centerOffset_k2 = 0.4*gokartforward(x(index1.theta_k2-index1.nu))';
+    centerPos_k2 = realPos_k2+centerOffset_k2;
+    wantedpos_k2 = [splx_k2;sply_k2];
+    error_k2 = centerPos_k2-wantedpos_k2;
+    laterror_k2 = sidewards_k2'*error_k2;
     
     % Inputs 
     dotab = u(index1.dotab);
@@ -76,7 +76,7 @@ function dx = interstagedx_PG3_2(x,u)
     dx(index1.beta_k2-index1.nu)=dotbeta_k2;
     dx(index1.s_k2-index1.nu)=ds_k2;
     dx(index1.ab_k2-index1.nu)=dotab_k2;
-    %dx(index1.laterror_k2-index1.nu)=(min(0,laterror_k2))^2*0.1;
+    dx(index1.laterror_k2-index1.nu)=10*(min(0,laterror_k2))^2;%();
     
     dx(index1.x_k3-index1.nu)=v_k3*cos(theta_k3);
     dx(index1.y_k3-index1.nu)=v_k3*sin(theta_k3);
