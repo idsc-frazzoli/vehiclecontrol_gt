@@ -276,7 +276,7 @@ for i =1:tend
 
     % parameters
     problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
-        latcostB+0.007,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
+        latcostB+0.02,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
         plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
         pspeedcost_1,pslack_1,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem2.x0 = x01(:);       
@@ -381,10 +381,11 @@ if tend==1 && Plotta==1
     g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
     R=imread('carr.png');
     r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-    K=imread('cargray.png');
-    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K);
-    W=imread('warning.png');
-    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W);
+    [K, map, alphachannel]=imread('cargray_1.png');
+    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
+    [W, map1, alphachannel1]=imread('warning_1.png');
+    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
+    
     set(gca,'visible','off')
     axis equal
     CP=0:0.01:2*pi;
@@ -431,7 +432,7 @@ if tend==1 && Plotta==1
     th = 0:pi/50:2*pi;
     xunit = dist * cos(th) + 53;
     yunit = dist * sin(th) + 58;
-    plot(xunit, yunit,'k');
+    plot(xunit, yunit,'k--');
     axis equal
     savefig('figures/3v_PG_intersection')
     saveas(gcf,'figures/3v_PG_intersection','epsc')
@@ -499,10 +500,10 @@ if tend==1 && Plotta==1
     g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
     R=imread('carr.png');
     r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-    K=imread('cargray.png');
-    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K);
-    W=imread('warning.png');
-    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W);
+    [K, map, alphachannel]=imread('cargray_1.png');
+    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
+    [W, map1, alphachannel1]=imread('warning_1.png');
+    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
     
     set(gca,'visible','off')
     axis equal
@@ -550,7 +551,7 @@ if tend==1 && Plotta==1
     th = 0:pi/50:2*pi;
     xunit = dist * cos(th) + 53;
     yunit = dist * sin(th) + 58;
-    plot(xunit, yunit,'k');
+    plot(xunit, yunit,'k--');
 %     theta4 = atan2(58-outputM1(iff,index1.y_k3),outputM1(iff+1,index1.x_k3)-outputM1(iff,index1.x_k3)); % to rotate 90 counterclockwise
 %     R = [cos(theta4) -sin(theta4); sin(theta4) cos(theta4)];
 %     rgklp = [outputM1(iff+1,index1.x_k3);outputM1(iff+1,index1.y_k3)]+R*gklp;
@@ -622,10 +623,10 @@ if tend==1 && Plotta==1
     g=image([pstart3(1)-dis-1.5,pstart3(1)-dis+1.5],[pstart3(2)+2.5,pstart3(2)-2.5],G);
     R=imread('carr.png');
     r=image([pstart2(1)+dis-1.5,pstart2(1)+dis+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
-    K=imread('cargray.png');
-    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K);
-    W=imread('warning.png');
-    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W);
+    [K, map, alphachannel]=imread('cargray_1.png');
+    k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
+    [W, map1, alphachannel1]=imread('warning_1.png');
+    w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
     
     set(gca,'visible','off')
     axis equal
@@ -673,7 +674,7 @@ if tend==1 && Plotta==1
     th = 0:pi/50:2*pi;
     xunit = dist * cos(th) + 53;
     yunit = dist * sin(th) + 58;
-    plot(xunit, yunit,'k');
+    plot(xunit, yunit,'k--');
     axis equal
     savefig('figures/3v_PG_intersection_C')
     saveas(gcf,'figures/3v_PG_intersection_C','epsc')
