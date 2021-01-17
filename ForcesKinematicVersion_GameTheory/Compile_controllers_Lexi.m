@@ -29,8 +29,8 @@ close all
 NUM_Vehicles = 3; %1,2,3,5
 Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
 ok=1;
-ok1=0;
-ok2=0;
+ok1=1;
+ok2=1;
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -75,7 +75,7 @@ switch NUM_Vehicles
 end
 
 %% State and Input Definitions 
-global index index1 index_IBR index_IBR_1
+global index index1 index_IBR 
 if strcmp(TestAlpha1shot,'no')
     switch NUM_Vehicles
         case 3
@@ -85,7 +85,7 @@ if strcmp(TestAlpha1shot,'no')
                     indexes_3_vehicles_1
                 case 'IBR'
                     indexes_3_vehicles_IBR 
-                    indexes_3_vehicles_IBR_1
+                    %indexes_3_vehicles_IBR_1
             end
     end
 else
@@ -630,15 +630,16 @@ if strcmp(Compiled,'no')
                                  -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf;-inf];%
             case 'IBR'
-                
+                model3=model;
+                model6=model;
+                %% First                              
                 model.nh = NUM_const; 
                 model.ineq = @(z,p) nlconst_IBR_3(z,p);
                 model.hu = [0;0;0;0;0;0];%
                 model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];%
-                
                 model1=model;
                 model2=model;
-                
+
                 model.nhN = NUM_const+2; 
                 model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
                 model.huN = [0;0;0;0;0;0;+30;+inf];%
@@ -653,23 +654,52 @@ if strcmp(Compiled,'no')
                 model2.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
                 model2.huN = [0;0;0;0;0;0;+inf;+inf];%
                 model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf];%  
-%                     model1.nh = NUM_const; 
-%                     model1.ineq = @(z,p) nlconst_IBR_3(z,p);
-%                     model1.hu = [0;0;0;0;0];
-%                     model1.hl = [-inf;-inf;-inf;-inf;-inf];
-%                     model1.nhN = NUM_const+3; 
-%                     model1.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
-%                     model1.huN = [0;0;0;0;0;0;0;0];%
-%                     model1.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
-%                     
-%                     model2.nh = NUM_const; 
-%                     model2.ineq = @(z,p) nlconst_IBR_3(z,p);
-%                     model2.hu = [0;0;0;0;0];
-%                     model2.hl = [-inf;-inf;-inf;-inf;-inf];
-%                     model2.nhN = NUM_const+3; 
-%                     model2.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
-%                     model2.huN = [0;0;0;0;0;0;0;0];%
-%                     model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                %% Second
+                model3.nh = NUM_const+1; 
+                model3.ineq = @(z,p) nlconst_IBR_3_1(z,p);
+                model3.hu = [0;0;0;0;0;0;0.0001];%
+                model3.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                model4=model3;
+                model5=model3;
+                
+                model3.nhN = NUM_const+3; 
+                model3.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
+                model3.huN = [0;0;0;0;0;0;+30;+inf;0.0001];%
+                model3.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                
+                model4.nhN = NUM_const+3; 
+                model4.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
+                model4.huN = [0;0;0;0;0;0;+inf;+inf;0.0001];%
+                model4.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;70;-inf];% 
+                
+                model5.nhN = NUM_const+3; 
+                model5.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
+                model5.huN = [0;0;0;0;0;0;+inf;+inf;0.0001];%
+                model5.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf;-inf];% 
+                %% Third
+
+                model6.nh = NUM_const+2; 
+                model6.ineq = @(z,p) nlconst_IBR_3_2(z,p);
+                model6.hu = [0;0;0;0;0;0;0.0001;0];%
+                model6.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                model7=model6;
+                model8=model6;
+                
+                model6.nhN = NUM_const+4; 
+                model6.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
+                model6.huN = [0;0;0;0;0;0;+30;+inf;0.0001;0];%
+                model6.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                
+                model7.nhN = NUM_const+4; 
+                model7.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
+                model7.huN = [0;0;0;0;0;0;+inf;+inf;0.0001;0];%
+                model7.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;70;-inf;-inf];% 
+                
+                model8.nhN = NUM_const+4; 
+                model8.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
+                model8.huN = [0;0;0;0;0;0;+inf;+inf;0.0001;0];%
+                model8.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf;-inf;-inf];% 
+
             end
     end
 
@@ -713,6 +743,12 @@ if strcmp(Compiled,'no')
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
                     codeoptions1 = getOptions('MPCPathFollowing_3v_IBR_1');
                     codeoptions2 = getOptions('MPCPathFollowing_3v_IBR_2');
+                    codeoptions3 = getOptions('MPCPathFollowing_3v_IBR_3');
+                    codeoptions4 = getOptions('MPCPathFollowing_3v_IBR_4');
+                    codeoptions5 = getOptions('MPCPathFollowing_3v_IBR_5');
+                    codeoptions6 = getOptions('MPCPathFollowing_3v_IBR_6');
+                    codeoptions7 = getOptions('MPCPathFollowing_3v_IBR_7');
+                    codeoptions8 = getOptions('MPCPathFollowing_3v_IBR_8');
                     codeoptions.maxit = MAX_IT; % Maximum number of iterations
                     codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
                     codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
@@ -740,7 +776,62 @@ if strcmp(Compiled,'no')
                     if ok2==1
                     FORCES_NLP(model2, codeoptions2,output2);
                     end
-                    
+                    %% Second
+                    codeoptions3.maxit = MAX_IT; % Maximum number of iterations
+                    codeoptions3.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+                    codeoptions3.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+                    codeoptions3.cleanup = false;
+                    codeoptions3.timing = 1;
+                    output3 = newOutput('alldata', 1:model3.N, 1:model3.nvar);
+                    if ok==1
+                    FORCES_NLP(model3, codeoptions3,output3);
+                    end
+                    codeoptions4.maxit = MAX_IT; % Maximum number of iterations
+                    codeoptions4.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+                    codeoptions4.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+                    codeoptions4.cleanup = false;
+                    codeoptions4.timing = 1;
+                    output4 = newOutput('alldata', 1:model4.N, 1:model4.nvar);
+                    if ok1==1
+                    FORCES_NLP(model4, codeoptions4,output4);
+                    end
+                    codeoptions5.maxit = MAX_IT; % Maximum number of iterations
+                    codeoptions5.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+                    codeoptions5.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+                    codeoptions5.cleanup = false;
+                    codeoptions5.timing = 1;
+                    output5 = newOutput('alldata', 1:model5.N, 1:model5.nvar);
+                    if ok2==1
+                    FORCES_NLP(model5, codeoptions5,output5);
+                    end
+                    %% Third
+                    codeoptions6.maxit = MAX_IT; % Maximum number of iterations
+                    codeoptions6.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+                    codeoptions6.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+                    codeoptions6.cleanup = false;
+                    codeoptions6.timing = 1;
+                    output6 = newOutput('alldata', 1:model6.N, 1:model6.nvar);
+                    if ok==1
+                    FORCES_NLP(model6, codeoptions6,output6);
+                    end
+                    codeoptions7.maxit = MAX_IT; % Maximum number of iterations
+                    codeoptions7.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+                    codeoptions7.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+                    codeoptions7.cleanup = false;
+                    codeoptions7.timing = 1;
+                    output7 = newOutput('alldata', 1:model7.N, 1:model7.nvar);
+                    if ok1==1
+                    FORCES_NLP(model7, codeoptions7,output7);
+                    end
+                    codeoptions8.maxit = MAX_IT; % Maximum number of iterations
+                    codeoptions8.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
+                    codeoptions8.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
+                    codeoptions8.cleanup = false;
+                    codeoptions8.timing = 1;
+                    output8 = newOutput('alldata', 1:model8.N, 1:model8.nvar);
+                    if ok2==1
+                    FORCES_NLP(model8, codeoptions8,output8);
+                    end
             end
     end
     
@@ -759,7 +850,8 @@ switch NUM_Vehicles
                 if Stack==1
                     Run_3_vehicles_IBR_st
                 else
-                    Run_3_vehicles_IBR
+                    %Run_3_vehicles_IBR
+                    Run_3_vehicles_IBR_LEXI
                 end
         end
 end

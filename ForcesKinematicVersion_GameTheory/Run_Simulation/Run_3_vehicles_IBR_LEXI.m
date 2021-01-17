@@ -41,7 +41,7 @@ a3=0;
 IND=[];
 IND2=[];
 IND3=[];
-config=[1,2,3;1,3,2;2,1,3;2,3,1;3,1,2;3,2,1];
+config=[1,2,3;1,3,2;];%2,1,3;2,3,1;3,1,2;3,2,1
 cost1 = zeros(length(config(:,1)),tend);
 cost2 = zeros(length(config(:,1)),tend);
 cost3 = zeros(length(config(:,1)),tend);
@@ -323,18 +323,6 @@ for jj=1:length(config(:,1))
         problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
             outputMC(:,index_IBR.y);
         %% initialization
-%         xs(index_IBR.laterror-index_IBR.nu)=0;
-%         xs2(index_IBR.laterror-index_IBR.nu)=0;
-%         xs3(index_IBR.laterror-index_IBR.nu)=0;
-        problem.xinit = xs';
-        problem2.xinit = xs2';
-        problem3.xinit = xs3';
-%         problem.x0= x0(:);
-%         problem2.x0 = x02(:);
-%         problem3.x2 = x03(:);
-        x0(12,:)=zeros(1,60);
-        x02(12,:)=zeros(1,60);
-        x03(12,:)=zeros(1,60);
         if jj==1 && Plotta==1
             figure(400)
             hold on
@@ -453,6 +441,12 @@ for jj=1:length(config(:,1))
             saveas(gcf,'figures/3v_IBR_speed_NC','epsc')
         end
         %% IBR
+        problem.xinit = xs';
+        problem2.xinit = xs2';
+        problem3.xinit = xs3';
+        x0(12,:)=zeros(1,60);
+        x02(12,:)=zeros(1,60);
+        x03(12,:)=zeros(1,60);
         problem.x0=x0(:);
         problem2.x0 = x02(:);
         problem3.x0 = x03(:);

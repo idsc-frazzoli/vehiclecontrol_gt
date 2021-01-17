@@ -44,6 +44,8 @@ static const int CASADI_PREFIX(s7)[] = {6, 1, 0, 6, 0, 1, 2, 3, 4, 5};
 #define s7 CASADI_PREFIX(s7)
 static const int CASADI_PREFIX(s8)[] = {6, 12, 0, 0, 0, 0, 3, 8, 13, 13, 14, 15, 15, 17, 17, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 0, 0, 1, 2};
 #define s8 CASADI_PREFIX(s8)
+static const int CASADI_PREFIX(s9)[] = {8, 12, 0, 0, 0, 0, 3, 9, 15, 15, 16, 17, 17, 19, 19, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 7, 0, 0, 1, 2};
+#define s9 CASADI_PREFIX(s9)
 /* MPCPathFollowing_3v_IBR_objective_1 */
 int MPCPathFollowing_3v_IBR_objective_1(const real_t** arg, real_t** res, int* iw, real_t* w) {
   real_t a0=arg[0] ? arg[0][10] : 0;
@@ -15241,46 +15243,50 @@ int MPCPathFollowing_3v_IBR_inequalities_60(const real_t** arg, real_t** res, in
   a394=(a394-a391);
   if (res[0]!=0) res[0][4]=a394;
   a394=53.;
-  a280=(a280-a394);
-  a394=sq(a280);
-  real_t a395=58.;
-  a274=(a274-a395);
-  a395=sq(a274);
-  a394=(a394+a395);
-  a394=sqrt(a394);
-  a389=(a389-a394);
+  a394=(a280-a394);
+  real_t a395=sq(a394);
+  real_t a396=58.;
+  a396=(a274-a396);
+  real_t a397=sq(a396);
+  a395=(a395+a397);
+  a395=sqrt(a395);
+  a389=(a389-a395);
   a389=(a389-a391);
   if (res[0]!=0) res[0][5]=a389;
-  a389=-1.;
-  if (res[1]!=0) res[1][0]=a389;
-  if (res[1]!=0) res[1][1]=a389;
-  if (res[1]!=0) res[1][2]=a389;
+  if (res[0]!=0) res[0][6]=a280;
+  if (res[0]!=0) res[0][7]=a274;
+  a274=-1.;
+  if (res[1]!=0) res[1][0]=a274;
+  if (res[1]!=0) res[1][1]=a274;
+  if (res[1]!=0) res[1][2]=a274;
   if (res[1]!=0) res[1][3]=a151;
-  a389=(-a151);
-  if (res[1]!=0) res[1][4]=a389;
+  a274=(-a151);
+  if (res[1]!=0) res[1][4]=a274;
   a281=(a281/a220);
   a281=(-a281);
   if (res[1]!=0) res[1][5]=a281;
   a390=(a390/a392);
   a390=(-a390);
   if (res[1]!=0) res[1][6]=a390;
-  a280=(a280/a394);
-  a280=(-a280);
-  if (res[1]!=0) res[1][7]=a280;
-  a280=(-a282);
-  if (res[1]!=0) res[1][8]=a280;
-  if (res[1]!=0) res[1][9]=a282;
+  a394=(a394/a395);
+  a394=(-a394);
+  if (res[1]!=0) res[1][7]=a394;
+  if (res[1]!=0) res[1][8]=a12;
+  a394=(-a282);
+  if (res[1]!=0) res[1][9]=a394;
+  if (res[1]!=0) res[1][10]=a282;
   a384=(a384/a220);
   a384=(-a384);
-  if (res[1]!=0) res[1][10]=a384;
+  if (res[1]!=0) res[1][11]=a384;
   a393=(a393/a392);
   a393=(-a393);
-  if (res[1]!=0) res[1][11]=a393;
-  a274=(a274/a394);
-  a274=(-a274);
-  if (res[1]!=0) res[1][12]=a274;
-  a274=(a1+a1);
-  a6=(a6*a274);
+  if (res[1]!=0) res[1][12]=a393;
+  a396=(a396/a395);
+  a396=(-a396);
+  if (res[1]!=0) res[1][13]=a396;
+  if (res[1]!=0) res[1][14]=a12;
+  a396=(a1+a1);
+  a6=(a6*a396);
   a3=(a3+a6);
   a6=(a1+a1);
   a6=(a1*a6);
@@ -15316,8 +15322,8 @@ int MPCPathFollowing_3v_IBR_inequalities_60(const real_t** arg, real_t** res, in
   a19=(a19*a7);
   a2=(a2+a19);
   a2=(-a2);
-  if (res[1]!=0) res[1][13]=a2;
-  if (res[1]!=0) res[1][14]=a12;
+  if (res[1]!=0) res[1][15]=a2;
+  if (res[1]!=0) res[1][16]=a12;
   a21=(a21<=a23);
   a12=(a5<=a10);
   a21=(a21*a12);
@@ -16171,10 +16177,10 @@ int MPCPathFollowing_3v_IBR_inequalities_60(const real_t** arg, real_t** res, in
   a388=(a388*a32);
   a167=(a167+a388);
   a388=(a163-a167);
-  if (res[1]!=0) res[1][15]=a388;
+  if (res[1]!=0) res[1][17]=a388;
   a163=(a163+a167);
   a163=(-a163);
-  if (res[1]!=0) res[1][16]=a163;
+  if (res[1]!=0) res[1][18]=a163;
   return 0;
 }
 
@@ -16190,12 +16196,13 @@ int MPCPathFollowing_3v_IBR_inequalities_60_sparsity(int i, int *nrow, int *ncol
       s = s2; break;
       s = s3; break;
       s = s4; break;
+    case 4:
       s = s5; break;
       s = s6; break;
-    case 4:
       s = s7; break;
-    case 5:
       s = s8; break;
+    case 5:
+      s = s9; break;
     default:
       return 1;
   }
