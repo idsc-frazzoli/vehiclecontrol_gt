@@ -40,9 +40,8 @@ v3 = -laterror-r;%-slack
 v4 = -squared_distance_array+dist-slack2;
 v5 = -squared_distance_array_3+dist-slack2;
 v6 = -squared_distance_array_4+dist-slack2;
-v7 = z(index_IBR.x);
-v8 = z(index_IBR.y);
-v9 = pslack2*slack2;
-v = [v1;v2;v3;v4;v5;v6;v7;v8;v9];
+v7 = z(index_IBR.s)-p(index_IBR.pProgMax);
+v8 = z(index_IBR.slack_s)-p(index_IBR.pSlackCost);
+v = [v1;v2;v3;v4;v5;v6;v7;v8];
 end
 

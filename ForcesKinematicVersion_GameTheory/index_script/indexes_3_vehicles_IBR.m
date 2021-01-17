@@ -5,7 +5,6 @@ global index_IBR
 index_IBR.dotab = 1;
 index_IBR.dotbeta = 2;
 index_IBR.ds = 3;
-%index_IBR.slack = 4;
 % shared
 index_IBR.slack2=4;
 
@@ -18,9 +17,9 @@ index_IBR.ab = 9;
 index_IBR.beta = 10;
 index_IBR.s = 11;
 index_IBR.laterror=12;
-
+index_IBR.slack_s=13;
 % Number of States
-index_IBR.ns = 8;
+index_IBR.ns = 9;
 
 % Number of Inputs
 index_IBR.nu = 4;
@@ -31,11 +30,11 @@ index_IBR.sb = index_IBR.nu+1;
 
 % Parameters
 index_IBR.ps = 1;
-index_IBR.pax = 2;
-index_IBR.pay = 3;
-index_IBR.pll = 4;
-index_IBR.prae = 5;
-index_IBR.ptve = 6;
+index_IBR.pSlackCost = 2;
+index_IBR.pLaterrorCost = 3;
+index_IBR.SpeedMax = 4;
+index_IBR.pProgMax = 5;
+index_IBR.pSpeedMax = 6;
 index_IBR.pbre = 7;
 
 %% ADDED

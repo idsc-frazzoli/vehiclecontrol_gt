@@ -1,5 +1,6 @@
 % go kart parameters
 maxSpeed = 9;%10;
+maxSpeed_1 = 20;
 targetSpeed=8.3;
 maxxacc = 4;
 maxyacc = 8;
@@ -15,6 +16,8 @@ pprog=0.8;         % progress parameter cost
 pab=0.006;        % acc parameter cost
 pdotbeta=4;      % steering velocity parameter cost
 pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
+pSpeedMax=1;
+PprogMax=9;
 pslack=2;          % slack variable 
 pslack2=10000;        % collision cost
 dist=4;   

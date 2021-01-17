@@ -27,10 +27,11 @@ close all
 
 % configuration
 NUM_Vehicles = 3; %1,2,3,5
-Compiled    = 'no'; % 'yes' or 'no', yes if code has already been compiled
-ok=1;
-ok1=1;
+Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
+ok=0;
+ok1=0;
 ok2=1;
+
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
 TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha. 
                     % Simulation must be no, it requires compiled IBR and
@@ -68,7 +69,7 @@ switch NUM_Vehicles
                 pointsO = 20; 
                 NUM_const=6; % number of nonlinear constraint
                 MAX_IT= 500; % N of max iterations
-                plagerror=1;       % proj error param cost
+                %plagerror=1;       % proj error param cost
         end
     otherwise
         error('Change NUM_Vehicle')
@@ -215,6 +216,7 @@ if strcmp(Compiled,'no')
                             for i=1:model.N
                                 model.objective{i} = @(z,p)objective_IBR_LE_1(z,...
                                     getPointsFromParameters(p, pointsO, pointsN),...
+                                    p(index_IBR.SpeedMax),...
                                     p(index_IBR.ps),...
                                     p(index_IBR.plag),...
                                     p(index_IBR.plat),...
@@ -222,35 +224,11 @@ if strcmp(Compiled,'no')
                                     p(index_IBR.pab),...
                                     p(index_IBR.pdotbeta),...
                                     p(index_IBR.pspeedcost),...
+                                    p(index_IBR.pSpeedMax),...
                                     p(index_IBR.pslack),...
                                     p(index_IBR.pslack2));
                             end
-%                             for i=1:model1.N
-%                                 model1.objective{i} = @(z,p)objective_IBR_LE(z,...
-%                                     getPointsFromParameters(p, pointsO, pointsN),...
-%                                     p(index_IBR.ps),...
-%                                     p(index_IBR.plag),...
-%                                     p(index_IBR.plat),...
-%                                     p(index_IBR.pprog),...
-%                                     p(index_IBR.pab),...
-%                                     p(index_IBR.pdotbeta),...
-%                                     p(index_IBR.pspeedcost),...
-%                                     p(index_IBR.pslack),...
-%                                     p(index_IBR.pslack2));
-%                             end
-%                             for i=1:model2.N
-%                                 model2.objective{i} = @(z,p)objective_IBR_LE(z,...
-%                                     getPointsFromParameters(p, pointsO, pointsN),...
-%                                     p(index_IBR_1.ps),...
-%                                     p(index_IBR_1.plag),...
-%                                     p(index_IBR_1.plat),...
-%                                     p(index_IBR_1.pprog),...
-%                                     p(index_IBR_1.pab),...
-%                                     p(index_IBR_1.pdotbeta),...
-%                                     p(index_IBR_1.pspeedcost),...
-%                                     p(index_IBR_1.pslack),...
-%                                     p(index_IBR_1.pslack2));
-%                             end
+%                             
                     end
             end
     end
@@ -266,7 +244,8 @@ if strcmp(Compiled,'no')
         %Delta path progress
         model.ub(index_IBR.ds)=ds_max;
         model.lb(index_IBR.ds)=ds_min;
-
+        model.ub(index_IBR.dotab)=0.2;
+        model.lb(index_IBR.dotab)=-1;
         % Acceleration
         model.lb(index_IBR.ab)=-inf;
 
@@ -275,7 +254,7 @@ if strcmp(Compiled,'no')
 
         % Velocity
         model.lb(index_IBR.v)=0;
-        model.ub(index_IBR.v)=maxSpeed;%maxSpeed
+        model.ub(index_IBR.v)=maxSpeed_1;%maxSpeed
         % Steering Angle
         model.ub(index_IBR.beta)=beta_max;
         model.lb(index_IBR.beta)=beta_min;
@@ -286,63 +265,6 @@ if strcmp(Compiled,'no')
         % Slack
         model.lb(index_IBR.slack2)=0;
         
-%         model1.xinitidx = index_IBR.sb:index_IBR.nv;
-% 
-%         % initialization
-%         model1.ub = ones(1,index_IBR.nv)*inf;
-%         model1.lb = -ones(1,index_IBR.nv)*inf;
-% 
-%         %Delta path progress
-%         model1.ub(index_IBR.ds)=ds_max;
-%         model1.lb(index_IBR.ds)=ds_min;
-% 
-%         % Acceleration
-%         model1.lb(index_IBR.ab)=-inf;
-% 
-%         % Slack
-%         %model.lb(index_IBR.slack)=0;
-% 
-%         % Velocity
-%         model1.lb(index_IBR.v)=0;
-%         model1.ub(index_IBR.v)=maxSpeed;%maxSpeed_1
-%         % Steering Angle
-%         model1.ub(index_IBR.beta)=beta_max;
-%         model1.lb(index_IBR.beta)=beta_min;
-% 
-%         %Path Progress
-%         model1.ub(index_IBR.s)=pointsN;
-%         model1.lb(index_IBR.s)=0;
-%         % Slack
-%         model1.lb(index_IBR.slack2)=0;
-%         
-%         model2.xinitidx = index_IBR.sb:index_IBR.nv;
-% 
-%         % initialization
-%         model2.ub = ones(1,index_IBR.nv)*inf;
-%         model2.lb = -ones(1,index_IBR.nv)*inf;
-% 
-%         %Delta path progress
-%         model2.ub(index_IBR.ds)=ds_max;
-%         model2.lb(index_IBR.ds)=ds_min;
-% 
-%         % Acceleration
-%         model2.lb(index_IBR.ab)=-inf;
-% 
-%         % Slack
-%         %model.lb(index_IBR.slack)=0;
-% 
-%         % Velocity
-%         model2.lb(index_IBR_1.v)=0;
-%         model2.ub(index_IBR_1.v)=maxSpeed;%maxSpeed_1
-%         % Steering Angle
-%         model2.ub(index_IBR_1.beta)=beta_max;
-%         model2.lb(index_IBR_1.beta)=beta_min;
-% 
-%         %Path Progress
-%         model2.ub(index_IBR_1.s)=pointsN;
-%         model2.lb(index_IBR_1.s)=0;
-%         % Slack
-%         model2.lb(index_IBR_1.slack2)=0;
     else
         model.xinitidx = index.sb:index.nv;
 
@@ -630,76 +552,32 @@ if strcmp(Compiled,'no')
                                  -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf;-inf];%
             case 'IBR'
-                model3=model;
-                model6=model;
+                
+                
                 %% First                              
                 model.nh = NUM_const; 
                 model.ineq = @(z,p) nlconst_IBR_3(z,p);
                 model.hu = [0;0;0;0;0;0];%
                 model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];%
-                model1=model;
-                model2=model;
-
-                model.nhN = NUM_const+2; 
-                model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
-                model.huN = [0;0;0;0;0;0;+30;+inf];%
-                model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
                 
-                model1.nhN = NUM_const+2; 
-                model1.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
-                model1.huN = [0;0;0;0;0;0;+inf;+inf];%
-                model1.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;70];% 
+                model2=model;
+                model3=model;
+
+                model.nhN = NUM_const+1; 
+                model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
+                model.huN = [0;0;0;0;0;0;0];%
+                model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;];%
                 
                 model2.nhN = NUM_const+2; 
-                model2.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
-                model2.huN = [0;0;0;0;0;0;+inf;+inf];%
-                model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf];%  
-                %% Second
-                model3.nh = NUM_const+1; 
-                model3.ineq = @(z,p) nlconst_IBR_3_1(z,p);
-                model3.hu = [0;0;0;0;0;0;0.0001];%
-                model3.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
-                model4=model3;
-                model5=model3;
-                
+                model2.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
+                model2.huN = [0;0;0;0;0;0;0;0];%
+                model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;];%
+               
                 model3.nhN = NUM_const+3; 
-                model3.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
-                model3.huN = [0;0;0;0;0;0;+30;+inf;0.0001];%
-                model3.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                model3.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
+                model3.huN = [0;0;0;0;0;0;0;0;0];%
+                model3.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];% 
                 
-                model4.nhN = NUM_const+3; 
-                model4.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
-                model4.huN = [0;0;0;0;0;0;+inf;+inf;0.0001];%
-                model4.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;70;-inf];% 
-                
-                model5.nhN = NUM_const+3; 
-                model5.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
-                model5.huN = [0;0;0;0;0;0;+inf;+inf;0.0001];%
-                model5.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf;-inf];% 
-                %% Third
-
-                model6.nh = NUM_const+2; 
-                model6.ineq = @(z,p) nlconst_IBR_3_2(z,p);
-                model6.hu = [0;0;0;0;0;0;0.0001;0];%
-                model6.hl = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
-                model7=model6;
-                model8=model6;
-                
-                model6.nhN = NUM_const+4; 
-                model6.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
-                model6.huN = [0;0;0;0;0;0;+30;+inf;0.0001;0];%
-                model6.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
-                
-                model7.nhN = NUM_const+4; 
-                model7.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
-                model7.huN = [0;0;0;0;0;0;+inf;+inf;0.0001;0];%
-                model7.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;70;-inf;-inf];% 
-                
-                model8.nhN = NUM_const+4; 
-                model8.ineqN= @(z,p) nlconst_IBR_3_N_2(z,p);
-                model8.huN = [0;0;0;0;0;0;+inf;+inf;0.0001;0];%
-                model8.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf;-inf;-inf];% 
-
             end
     end
 
@@ -741,96 +619,41 @@ if strcmp(Compiled,'no')
                     
                 case 'IBR'
                     codeoptions = getOptions('MPCPathFollowing_3v_IBR');
-                    codeoptions1 = getOptions('MPCPathFollowing_3v_IBR_1');
                     codeoptions2 = getOptions('MPCPathFollowing_3v_IBR_2');
                     codeoptions3 = getOptions('MPCPathFollowing_3v_IBR_3');
-                    codeoptions4 = getOptions('MPCPathFollowing_3v_IBR_4');
-                    codeoptions5 = getOptions('MPCPathFollowing_3v_IBR_5');
-                    codeoptions6 = getOptions('MPCPathFollowing_3v_IBR_6');
-                    codeoptions7 = getOptions('MPCPathFollowing_3v_IBR_7');
-                    codeoptions8 = getOptions('MPCPathFollowing_3v_IBR_8');
+
                     codeoptions.maxit = MAX_IT; % Maximum number of iterations
                     codeoptions.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
                     codeoptions.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
                     codeoptions.cleanup = false;
                     codeoptions.timing = 1;
+                    codeoptions.BuildSimulinkBlock = 0;
+                    codeoptions.overwrite = 1;
                     output = newOutput('alldata', 1:model.N, 1:model.nvar);
                     if ok==1
                     FORCES_NLP(model, codeoptions,output);
-                    end
-                    codeoptions1.maxit = MAX_IT; % Maximum number of iterations
-                    codeoptions1.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-                    codeoptions1.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-                    codeoptions1.cleanup = false;
-                    codeoptions1.timing = 1;
-                    output1 = newOutput('alldata', 1:model1.N, 1:model1.nvar);
-                    if ok1==1
-                    FORCES_NLP(model1, codeoptions1,output1);
                     end
                     codeoptions2.maxit = MAX_IT; % Maximum number of iterations
                     codeoptions2.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
                     codeoptions2.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
                     codeoptions2.cleanup = false;
-                    codeoptions2.timing = 1;
+                    codeoptions2.timing = 1; 
+                    codeoptions2.BuildSimulinkBlock = 0;
+                    codeoptions2.overwrite = 1;
                     output2 = newOutput('alldata', 1:model2.N, 1:model2.nvar);
-                    if ok2==1
+                    if ok1==1
                     FORCES_NLP(model2, codeoptions2,output2);
                     end
-                    %% Second
                     codeoptions3.maxit = MAX_IT; % Maximum number of iterations
                     codeoptions3.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
                     codeoptions3.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
                     codeoptions3.cleanup = false;
                     codeoptions3.timing = 1;
+                    codeoptions3.BuildSimulinkBlock = 0;
+                    codeoptions3.overwrite = 1;
                     output3 = newOutput('alldata', 1:model3.N, 1:model3.nvar);
-                    if ok==1
+                    if ok2==1
                     FORCES_NLP(model3, codeoptions3,output3);
-                    end
-                    codeoptions4.maxit = MAX_IT; % Maximum number of iterations
-                    codeoptions4.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-                    codeoptions4.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-                    codeoptions4.cleanup = false;
-                    codeoptions4.timing = 1;
-                    output4 = newOutput('alldata', 1:model4.N, 1:model4.nvar);
-                    if ok1==1
-                    FORCES_NLP(model4, codeoptions4,output4);
-                    end
-                    codeoptions5.maxit = MAX_IT; % Maximum number of iterations
-                    codeoptions5.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-                    codeoptions5.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-                    codeoptions5.cleanup = false;
-                    codeoptions5.timing = 1;
-                    output5 = newOutput('alldata', 1:model5.N, 1:model5.nvar);
-                    if ok2==1
-                    FORCES_NLP(model5, codeoptions5,output5);
-                    end
-                    %% Third
-                    codeoptions6.maxit = MAX_IT; % Maximum number of iterations
-                    codeoptions6.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-                    codeoptions6.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-                    codeoptions6.cleanup = false;
-                    codeoptions6.timing = 1;
-                    output6 = newOutput('alldata', 1:model6.N, 1:model6.nvar);
-                    if ok==1
-                    FORCES_NLP(model6, codeoptions6,output6);
-                    end
-                    codeoptions7.maxit = MAX_IT; % Maximum number of iterations
-                    codeoptions7.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-                    codeoptions7.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-                    codeoptions7.cleanup = false;
-                    codeoptions7.timing = 1;
-                    output7 = newOutput('alldata', 1:model7.N, 1:model7.nvar);
-                    if ok1==1
-                    FORCES_NLP(model7, codeoptions7,output7);
-                    end
-                    codeoptions8.maxit = MAX_IT; % Maximum number of iterations
-                    codeoptions8.printlevel = 1; % Use printlevel = 2 to print progress (but not for timings)
-                    codeoptions8.optlevel = 2;   % 0: no optimization, 1: optimize for size, 2: optimize for speed, 3: optimize for size & speed
-                    codeoptions8.cleanup = false;
-                    codeoptions8.timing = 1;
-                    output8 = newOutput('alldata', 1:model8.N, 1:model8.nvar);
-                    if ok2==1
-                    FORCES_NLP(model8, codeoptions8,output8);
                     end
             end
     end
@@ -845,7 +668,7 @@ switch NUM_Vehicles
         switch Game
             case 'PG'
                 %Run_3_vehicles_cen_1
-                Run_3_vehicles_cen_Lexi;%_1 ;%
+                Run_3_vehicles_cen;%_1 ;%
             case 'IBR'
                 if Stack==1
                     Run_3_vehicles_IBR_st

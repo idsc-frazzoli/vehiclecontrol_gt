@@ -25,7 +25,7 @@ function dx = interstagedx_IBR(x,u,p)
     theta = x(index_IBR.theta-index_IBR.nu);
     v = x(index_IBR.v-index_IBR.nu);
     beta = x(index_IBR.beta-index_IBR.nu);
-    
+    slack=u(index_IBR.slack2);
     l = 2.5;
     %ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
    
@@ -44,8 +44,8 @@ function dx = interstagedx_IBR(x,u,p)
     dx(index_IBR.ab-index_IBR.nu)=dotab;
     dx(index_IBR.beta-index_IBR.nu)=dotbeta;
     dx(index_IBR.s-index_IBR.nu)=ds;
-    dx(index_IBR.laterror-index_IBR.nu)=laterror;
-    
+    dx(index_IBR.laterror-index_IBR.nu)=latErrorPunisher(laterror);
+    dx(index_IBR.slack_s-index_IBR.nu)=slack;
     %dx = [v*cos(theta);
     %v*sin(theta);
     %v/l*tan(ackermannAngle);
