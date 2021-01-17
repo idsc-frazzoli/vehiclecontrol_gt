@@ -1,4 +1,4 @@
-function v = nlconst_IBR_3_N_1(z,p)
+function v = nlconst_IBR_3_N_2(z,p)
 global index_IBR
 
 pslack2 = p(index_IBR.pslack2);
@@ -38,6 +38,7 @@ v5 = -squared_distance_array_3+dist-slack2;
 v6 = z(index_IBR.x);
 v7 = z(index_IBR.y);
 v8 = pslack2*slack2-p(index_IBR.pax);
-v = [v1;v2;v3;v4;v5;v6;v7;v8];
+v9 = z(index_IBR.laterror)-p(index_IBR.pay);
+v = [v1;v2;v3;v4;v5;v6;v7;v8;v9];
 end
 

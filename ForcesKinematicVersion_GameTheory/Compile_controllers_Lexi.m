@@ -109,17 +109,17 @@ if strcmp(Compiled,'no')
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu), ...
                                @(x,u,p)interstagedx_IBR(x,u,p),integrator_stepsize,p);
-                    model1.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-                               @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
-                    model2.eq = @(z,p) RK4(z(index_IBR_1.sb:end), z(1:index_IBR_1.nu),...
-                               @(x,u,p)interstagedx_IBR_1(x,u),integrator_stepsize,p);
+%                     model1.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
+%                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
+%                     model2.eq = @(z,p) RK4(z(index_IBR_1.sb:end), z(1:index_IBR_1.nu),...
+%                                @(x,u,p)interstagedx_IBR_1(x,u),integrator_stepsize,p);
             end
     end
     
     if strcmp(Game,'IBR')
         model.E = [zeros(index_IBR.ns,index_IBR.nu), eye(index_IBR.ns)];
-        model1.E = [zeros(index_IBR.ns,index_IBR.nu), eye(index_IBR.ns)];
-        model2.E = [zeros(index_IBR_1.ns,index_IBR_1.nu), eye(index_IBR_1.ns)];
+%         model1.E = [zeros(index_IBR.ns,index_IBR.nu), eye(index_IBR.ns)];
+%         model2.E = [zeros(index_IBR_1.ns,index_IBR_1.nu), eye(index_IBR_1.ns)];
     else
         model.E = [zeros(index.ns,index.nu), eye(index.ns)];
         model1.E = [zeros(index.ns,index.nu), eye(index.ns)];
@@ -225,32 +225,32 @@ if strcmp(Compiled,'no')
                                     p(index_IBR.pslack),...
                                     p(index_IBR.pslack2));
                             end
-                            for i=1:model1.N
-                                model1.objective{i} = @(z,p)objective_IBR_LE(z,...
-                                    getPointsFromParameters(p, pointsO, pointsN),...
-                                    p(index_IBR.ps),...
-                                    p(index_IBR.plag),...
-                                    p(index_IBR.plat),...
-                                    p(index_IBR.pprog),...
-                                    p(index_IBR.pab),...
-                                    p(index_IBR.pdotbeta),...
-                                    p(index_IBR.pspeedcost),...
-                                    p(index_IBR.pslack),...
-                                    p(index_IBR.pslack2));
-                            end
-                            for i=1:model2.N
-                                model2.objective{i} = @(z,p)objective_IBR_LE(z,...
-                                    getPointsFromParameters(p, pointsO, pointsN),...
-                                    p(index_IBR_1.ps),...
-                                    p(index_IBR_1.plag),...
-                                    p(index_IBR_1.plat),...
-                                    p(index_IBR_1.pprog),...
-                                    p(index_IBR_1.pab),...
-                                    p(index_IBR_1.pdotbeta),...
-                                    p(index_IBR_1.pspeedcost),...
-                                    p(index_IBR_1.pslack),...
-                                    p(index_IBR_1.pslack2));
-                            end
+%                             for i=1:model1.N
+%                                 model1.objective{i} = @(z,p)objective_IBR_LE(z,...
+%                                     getPointsFromParameters(p, pointsO, pointsN),...
+%                                     p(index_IBR.ps),...
+%                                     p(index_IBR.plag),...
+%                                     p(index_IBR.plat),...
+%                                     p(index_IBR.pprog),...
+%                                     p(index_IBR.pab),...
+%                                     p(index_IBR.pdotbeta),...
+%                                     p(index_IBR.pspeedcost),...
+%                                     p(index_IBR.pslack),...
+%                                     p(index_IBR.pslack2));
+%                             end
+%                             for i=1:model2.N
+%                                 model2.objective{i} = @(z,p)objective_IBR_LE(z,...
+%                                     getPointsFromParameters(p, pointsO, pointsN),...
+%                                     p(index_IBR_1.ps),...
+%                                     p(index_IBR_1.plag),...
+%                                     p(index_IBR_1.plat),...
+%                                     p(index_IBR_1.pprog),...
+%                                     p(index_IBR_1.pab),...
+%                                     p(index_IBR_1.pdotbeta),...
+%                                     p(index_IBR_1.pspeedcost),...
+%                                     p(index_IBR_1.pslack),...
+%                                     p(index_IBR_1.pslack2));
+%                             end
                     end
             end
     end
@@ -286,63 +286,63 @@ if strcmp(Compiled,'no')
         % Slack
         model.lb(index_IBR.slack2)=0;
         
-        model1.xinitidx = index_IBR.sb:index_IBR.nv;
-
-        % initialization
-        model1.ub = ones(1,index_IBR.nv)*inf;
-        model1.lb = -ones(1,index_IBR.nv)*inf;
-
-        %Delta path progress
-        model1.ub(index_IBR.ds)=ds_max;
-        model1.lb(index_IBR.ds)=ds_min;
-
-        % Acceleration
-        model1.lb(index_IBR.ab)=-inf;
-
-        % Slack
-        %model.lb(index_IBR.slack)=0;
-
-        % Velocity
-        model1.lb(index_IBR.v)=0;
-        model1.ub(index_IBR.v)=maxSpeed;%maxSpeed_1
-        % Steering Angle
-        model1.ub(index_IBR.beta)=beta_max;
-        model1.lb(index_IBR.beta)=beta_min;
-
-        %Path Progress
-        model1.ub(index_IBR.s)=pointsN;
-        model1.lb(index_IBR.s)=0;
-        % Slack
-        model1.lb(index_IBR.slack2)=0;
-        
-        model2.xinitidx = index_IBR.sb:index_IBR.nv;
-
-        % initialization
-        model2.ub = ones(1,index_IBR.nv)*inf;
-        model2.lb = -ones(1,index_IBR.nv)*inf;
-
-        %Delta path progress
-        model2.ub(index_IBR.ds)=ds_max;
-        model2.lb(index_IBR.ds)=ds_min;
-
-        % Acceleration
-        model2.lb(index_IBR.ab)=-inf;
-
-        % Slack
-        %model.lb(index_IBR.slack)=0;
-
-        % Velocity
-        model2.lb(index_IBR_1.v)=0;
-        model2.ub(index_IBR_1.v)=maxSpeed;%maxSpeed_1
-        % Steering Angle
-        model2.ub(index_IBR_1.beta)=beta_max;
-        model2.lb(index_IBR_1.beta)=beta_min;
-
-        %Path Progress
-        model2.ub(index_IBR_1.s)=pointsN;
-        model2.lb(index_IBR_1.s)=0;
-        % Slack
-        model2.lb(index_IBR_1.slack2)=0;
+%         model1.xinitidx = index_IBR.sb:index_IBR.nv;
+% 
+%         % initialization
+%         model1.ub = ones(1,index_IBR.nv)*inf;
+%         model1.lb = -ones(1,index_IBR.nv)*inf;
+% 
+%         %Delta path progress
+%         model1.ub(index_IBR.ds)=ds_max;
+%         model1.lb(index_IBR.ds)=ds_min;
+% 
+%         % Acceleration
+%         model1.lb(index_IBR.ab)=-inf;
+% 
+%         % Slack
+%         %model.lb(index_IBR.slack)=0;
+% 
+%         % Velocity
+%         model1.lb(index_IBR.v)=0;
+%         model1.ub(index_IBR.v)=maxSpeed;%maxSpeed_1
+%         % Steering Angle
+%         model1.ub(index_IBR.beta)=beta_max;
+%         model1.lb(index_IBR.beta)=beta_min;
+% 
+%         %Path Progress
+%         model1.ub(index_IBR.s)=pointsN;
+%         model1.lb(index_IBR.s)=0;
+%         % Slack
+%         model1.lb(index_IBR.slack2)=0;
+%         
+%         model2.xinitidx = index_IBR.sb:index_IBR.nv;
+% 
+%         % initialization
+%         model2.ub = ones(1,index_IBR.nv)*inf;
+%         model2.lb = -ones(1,index_IBR.nv)*inf;
+% 
+%         %Delta path progress
+%         model2.ub(index_IBR.ds)=ds_max;
+%         model2.lb(index_IBR.ds)=ds_min;
+% 
+%         % Acceleration
+%         model2.lb(index_IBR.ab)=-inf;
+% 
+%         % Slack
+%         %model.lb(index_IBR.slack)=0;
+% 
+%         % Velocity
+%         model2.lb(index_IBR_1.v)=0;
+%         model2.ub(index_IBR_1.v)=maxSpeed;%maxSpeed_1
+%         % Steering Angle
+%         model2.ub(index_IBR_1.beta)=beta_max;
+%         model2.lb(index_IBR_1.beta)=beta_min;
+% 
+%         %Path Progress
+%         model2.ub(index_IBR_1.s)=pointsN;
+%         model2.lb(index_IBR_1.s)=0;
+%         % Slack
+%         model2.lb(index_IBR_1.slack2)=0;
     else
         model.xinitidx = index.sb:index.nv;
 
@@ -630,15 +630,29 @@ if strcmp(Compiled,'no')
                                  -inf;70;-inf;-inf;...
                                  -inf;-inf;-inf;-inf];%
             case 'IBR'
-                    model.nh = NUM_const; 
-                    model.ineq = @(z,p) nlconst_IBR_3(z,p);
-                    model.hu = [0;0;0;0;0;0];%
-                    model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];%
-%                     model.nhN = NUM_const+2; 
-%                     model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
-%                     model.huN = [0;0;0;0;0;0;+inf;+inf];%
-%                     model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
-                    
+                
+                model.nh = NUM_const; 
+                model.ineq = @(z,p) nlconst_IBR_3(z,p);
+                model.hu = [0;0;0;0;0;0];%
+                model.hl = [-inf;-inf;-inf;-inf;-inf;-inf];%
+                
+                model1=model;
+                model2=model;
+                
+                model.nhN = NUM_const+2; 
+                model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
+                model.huN = [0;0;0;0;0;0;+30;+inf];%
+                model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+                
+                model1.nhN = NUM_const+2; 
+                model1.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
+                model1.huN = [0;0;0;0;0;0;+inf;+inf];%
+                model1.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;70];% 
+                
+                model2.nhN = NUM_const+2; 
+                model2.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
+                model2.huN = [0;0;0;0;0;0;+inf;+inf];%
+                model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;70;-inf];%  
 %                     model1.nh = NUM_const; 
 %                     model1.ineq = @(z,p) nlconst_IBR_3(z,p);
 %                     model1.hu = [0;0;0;0;0];
