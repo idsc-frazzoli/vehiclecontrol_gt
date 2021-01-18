@@ -295,6 +295,7 @@ if tend==1 && Plotta==1
     %xlabel('Time [s]')
     line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+    set(gcf, 'Position',  [200, 200, 800, 300])
     %title('Speed')
     %set(gca,'yticklabel',[])
     grid on
@@ -419,6 +420,7 @@ if tend==1 && Plotta==1
     line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
     set(gca,'yticklabel',[])
+    set(gcf, 'Position',  [200, 200, 800, 300])
     grid on
     ylim([7.75,9.25])
     
@@ -525,6 +527,7 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index.v_k2),'r*','Linewidth',2)
     scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
+    set(gcf, 'Position',  [200, 200, 800, 300])
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed_B')
     saveas(gcf,'figures/3v_PG_speed_B','epsc')
@@ -542,7 +545,7 @@ if tend==1 && Plotta==1
     %xlabel('Time [s]')
     line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
-    %title('Speed')
+    set(gcf, 'Position',  [200, 200, 800, 300])
     set(gca,'yticklabel',[])
     grid on
     ylim([7.75,9.25])
