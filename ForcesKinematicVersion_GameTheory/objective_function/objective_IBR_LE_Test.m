@@ -22,7 +22,6 @@ function [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,speedcost3,f
     laterror1= sidewards'*error1;
     %% Costs objective function
 
-    %slack = z(index_IBR.slack);
     slack2= z(index_IBR.slack2);
     
     speedcost = max(z(index_IBR.v)-vdes,0)^2*params.pspeedcost;

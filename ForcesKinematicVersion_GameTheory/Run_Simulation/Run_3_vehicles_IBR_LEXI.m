@@ -514,7 +514,7 @@ for jj=1:length(config(:,1))
         
         for uu=1:length(outputM2)
             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,...
-                speedcost3,f] = objective_IBR_LE_Test(outputM2(uu,:),points,params);
+                speedcost3,f] = objective_IBR_LE_Test(outputM2(uu,:),points2,params);
             regAB2=regAB2+regAB;
             regBetaB=regBetaB+regBeta;
             latcostB=latcostB+latcost;
@@ -534,7 +534,7 @@ for jj=1:length(config(:,1))
         LagError2(jj,i)=lagcostB;
         for uu=1:length(outputM3)
             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,...
-                speedcost3,f] = objective_IBR_LE_Test(outputM3(uu,:),points,params);
+                speedcost3,f] = objective_IBR_LE_Test(outputM3(uu,:),points3,params);
             regAB3=regAB3+regAB;
             regBetaC=regBetaC+regBeta;
             latcostC=latcostC+latcost;

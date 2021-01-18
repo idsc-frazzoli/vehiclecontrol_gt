@@ -103,17 +103,9 @@ if strcmp(Compiled,'no')
                 case 'PG'
                     model.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
                                @(x,u,p)interstagedx_PG3(x,u,p),integrator_stepsize,p);
-%                     model1.eq = @(z,p) RK4(z(index.sb:end), z(1:index.nu),...
-%                                @(x,u,p)interstagedx_PG3(x,u),integrator_stepsize,p);
-%                     model2.eq = @(z,p) RK4(z(index1.sb:end), z(1:index1.nu),...
-%                                @(x,u,p)interstagedx_PG3_2(x,u),integrator_stepsize,p);
                 case 'IBR'
                     model.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu), ...
                                @(x,u,p)interstagedx_IBR(x,u,p),integrator_stepsize,p);
-%                     model1.eq = @(z,p) RK4(z(index_IBR.sb:end), z(1:index_IBR.nu),...
-%                                @(x,u,p)interstagedx_IBR(x,u),integrator_stepsize,p);
-%                     model2.eq = @(z,p) RK4(z(index_IBR_1.sb:end), z(1:index_IBR_1.nu),...
-%                                @(x,u,p)interstagedx_IBR_1(x,u),integrator_stepsize,p);
             end
     end
     
@@ -167,36 +159,7 @@ if strcmp(Compiled,'no')
                                     p(index.pslack),...
                                     p(index.pslack2));
                             end
-%                             for i=1:model1.N
-%                                 model1.objective{i} = @(z,p)objective_PG3_LE_1_T(z,...
-%                                     getPointsFromParameters(p, pointsO, pointsN),...
-%                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-%                                     getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-%                                     p(index.ps),...
-%                                     p(index.plag),...
-%                                     p(index.plat),...
-%                                     p(index.pprog),...
-%                                     p(index.pab),...
-%                                     p(index.pdotbeta),...
-%                                     p(index.pspeedcost),...
-%                                     p(index.pslack),...
-%                                     p(index.pslack2));
-%                             end
-%                             for i=1:model2.N
-%                                 model2.objective{i} = @(z,p)objective_PG3_LE_2(z,...
-%                                     getPointsFromParameters(p, pointsO, pointsN),...
-%                                     getPointsFromParameters(p, pointsO + 3*pointsN, pointsN2),...
-%                                     getPointsFromParameters(p, pointsO + 3*pointsN + 3*pointsN2, pointsN3),...
-%                                     p(index1.ps),...
-%                                     p(index1.plag),...
-%                                     p(index1.plat),...
-%                                     p(index1.pprog),...
-%                                     p(index1.pab),...
-%                                     p(index1.pdotbeta),...
-%                                     p(index1.pspeedcost),...
-%                                     p(index1.pslack),...
-%                                     p(index1.pslack2));
-%                             end
+
                     end
                 case 'IBR'
                     switch LEPunisher
@@ -296,56 +259,6 @@ if strcmp(Compiled,'no')
         model.ub(index.s)=pointsN;
         model.lb(index.s)=0;
         
-%         model1.xinitidx = index.sb:index.nv;
-% 
-%         % initialization
-%         model1.ub = ones(1,index.nv)*inf;
-%         model1.lb = -ones(1,index.nv)*inf;
-% 
-%         % Delta path progress
-%         model1.ub(index.ds)=ds_max;
-%         model1.lb(index.ds)=ds_min;
-% 
-%         % Acceleration
-%         model1.lb(index.ab)=-inf;
-% 
-%         % Slack
-%         %model.lb(index.slack)=0;
-% 
-%         % Velocity
-%         model1.lb(index.v)=0;
-%         model1.ub(index.v)=maxSpeed_1;
-%         % Steering Angle
-%         model1.ub(index.beta)=beta_max;
-%         model1.lb(index.beta)=beta_min;
-% 
-%         %Path Progress
-%         model1.ub(index.s)=pointsN;
-%         model1.lb(index.s)=0;
-%         
-%         model2.xinitidx = index1.sb:index1.nv;
-% 
-%         % initialization
-%         model2.ub = ones(1,index1.nv)*inf;
-%         model2.lb = -ones(1,index1.nv)*inf;
-% 
-%         % Delta path progress
-%         model2.ub(index1.ds)=ds_max;
-%         model2.lb(index1.ds)=ds_min;
-% 
-%         % Acceleration
-%         model2.lb(index1.ab)=-inf;
-% 
-%         % Velocity
-%         model2.lb(index1.v)=0;
-%         model2.ub(index1.v)=maxSpeed_1;
-%         % Steering Angle
-%         model2.ub(index1.beta)=beta_max;
-%         model2.lb(index1.beta)=beta_min;
-% 
-%         %Path Progress
-%         model2.ub(index1.s)=pointsN;
-%         model2.lb(index1.s)=0;
     end
     switch NUM_Vehicles
        case 3
@@ -446,142 +359,6 @@ if strcmp(Compiled,'no')
                                 -inf;-inf;-inf;-inf;...
                                 -inf;-inf;-inf;-inf;-inf;-inf];%         
                             
-                             
-%                     %%Controller 2
-%                     model1.ub(index.ds_k2)=ds_max;
-%                     model1.lb(index.ds_k2)=ds_min;
-% 
-%                     % Acceleration Constraint (input)
-%                     model1.lb(index.ab_k2)=-inf;
-% 
-%                     % Slack Variables Constraint (input)
-%                     %model.lb(index.slack_k2)=0;
-% 
-%                     % Speed Constraint (state)
-%                     model1.lb(index.v_k2)=0;
-%                     model1.ub(index.v_k2)=maxSpeed_1;
-%                     % Steering Angle Constraint (input)
-%                     model1.ub(index.beta_k2)=beta_max;
-%                     model1.lb(index.beta_k2)=beta_min;
-% 
-%                     % Path Progress Constraint (input)
-%                     model1.ub(index.s_k2)=pointsN2;
-%                     model1.lb(index.s_k2)=0;
-% 
-%                     % Path Progress rate Constraint (input)
-%                     model1.ub(index.ds_k3)=ds_max;
-%                     model1.lb(index.ds_k3)=ds_min;
-% 
-%                     % Acceleration Constraint (input)
-%                     model1.lb(index.ab_k3)=-inf;
-% 
-%                     % Slack Variables Constraint (input)
-%                     %model.lb(index.slack_k3)=0;
-% 
-%                     % Speed Constraint (state)
-%                     model1.lb(index.v_k3)=0;
-%                     model1.ub(index.v_k3)=maxSpeed_1;
-%                     % Steering Angle Constraint (input)
-%                     model1.ub(index.beta_k3)=beta_max;
-%                     model1.lb(index.beta_k3)=beta_min;
-% 
-%                     % Path Progress Constraint (input)
-%                     model1.ub(index.s_k3)=pointsN3;
-%                     model1.lb(index.s_k3)=0;
-% 
-%                     model1.lb(index.slack2)=0;
-%                     model1.lb(index.slack3)=0;
-%                     model1.lb(index.slack4)=0;
-% 
-%                     %limit lateral acceleration
-%                     model1.nh = NUM_const+1; 
-%                     model1.ineq = @(z,p) nlconst_PG3_1(z,p);
-%                     model1.hu = [0.001;0;0;0;...
-%                                 0;0;0;...
-%                                 0;0;0;...
-%                                 0;0;0;0];%
-%                     model1.hl = [-inf;-inf;-inf;-inf;...
-%                                 -inf;-inf;-inf;...
-%                                 -inf;-inf;-inf;...
-%                                 -inf;-inf;-inf;-inf];%
-%                     model1.nhN = NUM_const+4; 
-%                     model1.ineqN= @(z,p) nlconst_PG3_N_1(z,p);
-%                     model1.huN = [0.001;0;30;0;0;...
-%                                  0;+inf;0;0;...
-%                                  0;+inf;0;0;...;
-%                                  0;0;0;0];%
-%                     model1.hlN = [-inf;-inf;-inf;-inf;-inf;...
-%                                  -inf;70;-inf;-inf;...
-%                                  -inf;70;-inf;-inf;...
-%                                  -inf;-inf;-inf;-inf];%
-% 
-%                     %% Controller 3
-%                     model2.ub(index1.ds_k2)=ds_max;
-%                     model2.lb(index1.ds_k2)=ds_min;
-% 
-%                     % Acceleration Constraint (input)
-%                     model2.lb(index1.ab_k2)=-inf;
-% 
-%                     % Slack Variables Constraint (input)
-%                     %model.lb(index.slack_k2)=0;
-% 
-%                     % Speed Constraint (state)
-%                     model2.lb(index1.v_k2)=0;
-%                     model2.ub(index1.v_k2)=maxSpeed_1;
-%                     % Steering Angle Constraint (input)
-%                     model2.ub(index1.beta_k2)=beta_max;
-%                     model2.lb(index1.beta_k2)=beta_min;
-% 
-%                     % Path Progress Constraint (input)
-%                     model2.ub(index1.s_k2)=pointsN2;
-%                     model2.lb(index1.s_k2)=0;
-% 
-%                     % Path Progress rate Constraint (input)
-%                     model2.ub(index1.ds_k3)=ds_max;
-%                     model2.lb(index1.ds_k3)=ds_min;
-% 
-%                     % Acceleration Constraint (input)
-%                     model2.lb(index1.ab_k3)=-inf;
-% 
-%                     % Slack Variables Constraint (input)
-%                     %model.lb(index.slack_k3)=0;
-% 
-%                     % Speed Constraint (state)
-%                     model2.lb(index1.v_k3)=0;
-%                     model2.ub(index1.v_k3)=maxSpeed_1;
-%                     % Steering Angle Constraint (input)
-%                     model2.ub(index1.beta_k3)=beta_max;
-%                     model2.lb(index1.beta_k3)=beta_min;
-% 
-%                     % Path Progress Constraint (input)
-%                     model2.ub(index1.s_k3)=pointsN3;
-%                     model2.lb(index1.s_k3)=0;
-% 
-%                     model2.lb(index1.slack2)=0;
-%                     model2.lb(index1.slack3)=0;
-%                     model2.lb(index1.slack4)=0;
-%                     %% inequalities
-%                     
-%                     model2.nh = NUM_const+1; 
-%                     model2.ineq = @(z,p) nlconst_PG3_2(z,p);
-%                     model2.hu = [0.001;0;0;0;...
-%                                 0;0;0;...
-%                                 0;0;0;...
-%                                 0;0;0;0];%
-%                     model2.hl = [-inf;-inf;-inf;-inf;...
-%                                 -inf;-inf;-inf;...
-%                                 -inf;-inf;-inf;...
-%                                 -inf;-inf;-inf;-inf];%
-%                     model2.nhN = NUM_const+5; 
-%                     model2.ineqN= @(z,p) nlconst_PG3_N_2(z,p);
-%                     model2.huN = [0.001;0;0;30;0;0;...
-%                                  0;+inf;0;0;...
-%                                  0;+inf;0;0;...;
-%                                  0;0;0;0];%
-%                     model2.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;...
-%                                  -inf;70;-inf;-inf;...
-%                                  -inf;70;-inf;-inf;...
-%                                  -inf;-inf;-inf;-inf];%
             case 'IBR'
                 
                 

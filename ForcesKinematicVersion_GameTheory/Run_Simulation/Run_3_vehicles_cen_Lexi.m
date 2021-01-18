@@ -216,13 +216,6 @@ for i =1:tend
     
     outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
     x02 = outputM2';
-    %     x01=x0;
-    %     x01(34,:)=zeros(1,60);
-    %    u1 = repmat(outputM2(1,1:index.nu),eulersteps,1);
-    %     [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
-    %     xs1 = xhist1(end,:);
-    %         %% Evaluation cost function
-    %
     latcostA=outputM2(60,index.laterror)+outputM2(60,index.laterror_k2)+outputM2(60,index.laterror_k3);
     % parameters
     problem3.all_parameters = repmat(getParameters_PG3(params.targetSpeed,...
@@ -243,7 +236,7 @@ for i =1:tend
         [lagcost,latcost,latcost1,regAB,regBeta,speedcost,speedcost1,speedcost2,lagcost_k2,...
             latcost_k2,latcost1_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,speedcost2_k2,lagcost_k3,...
             latcost_k3,latcost1_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,speedcost2_k3,f,f1,f2,f3] =...
-            objective_PG_Test3(outputM3(jj,:),points,points2,points3,params)
+            objective_PG_Test3(outputM3(jj,:),points,points2,points3,params);
         
         regABA=regABA+regAB;
         regABB=regABB+regAB_k2;
@@ -268,32 +261,7 @@ for i =1:tend
         optC = optC+ f3;
         opt  = opt+ f;
     end
-    %x01 = outputM2';
-    %     u2 = repmat(outputM3(1,1:index.nu),eulersteps,1);
-    %     [xhist2,time2] = euler(@(x,u)interstagedx_PG3(x,u),xs1,u2,integrator_stepsize/eulersteps);
-    %     xs2 = xhist2(end,:);
-    %
-    % xs
-    %     history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=[time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
-    %     planc = planc + 1;
-    %     if(planc>planintervall)
-    %         planc = 1;
-    %         plansx = [plansx; outputM(:,index.x)'];
-    %         plansy = [plansy; outputM(:,index.y)'];
-    %         planss = [planss; outputM(:,index.s)'];
-    %         plansx2 = [plansx2; outputM(:,index.x_k2)'];
-    %         plansy2 = [plansy2; outputM(:,index.y_k2)'];
-    %         planss2 = [planss2; outputM(:,index.s_k2)'];
-    %         plansx3 = [plansx3; outputM(:,index.x_k3)'];
-    %         plansy3 = [plansy3; outputM(:,index.y_k3)'];
-    %         planss3 = [planss3; outputM(:,index.s_k3)'];
-    %         [tx,ty]=casadiDynamicBSPLINE(outputM(end,index.s),nextSplinePoints);
-    %         targets = [targets;tx,ty];
-    %         [tx2,ty2]=casadiDynamicBSPLINE(outputM(end,index.s_k2),nextSplinePoints_k2);
-    %         targets2 = [targets2;tx2,ty2];
-    %         [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
-    %         targets3 = [targets3;tx3,ty3];
-    %     end
+
     if tend==1
         save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
             'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
@@ -414,7 +382,7 @@ if tend==1 && Plotta==1
     yunit = params.dist * sin(th) + 58;
     plot(xunit, yunit,'k--');
     axis equal
-    set(gcf, 'Color', 'None')
+    %set(gcf, 'Color', 'None')
     savefig('figures/3v_PG_intersection')
     saveas(gcf,'figures/3v_PG_intersection','svg')
     int=integrator_stepsize;
@@ -431,6 +399,8 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index.v_k2),'r*','Linewidth',2)
     scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
+    ylabel('Speed [m/s]','interpreter','latex')
+    ylim([7 9.5])
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed')
     saveas(gcf,'figures/3v_PG_speed','svg')
@@ -445,12 +415,12 @@ if tend==1 && Plotta==1
     figure(5)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[params.maxSpeed_1,params.maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
-    %set(gca,'yticklabel',[])
+    set(gca,'yticklabel',[])
     grid on
-    ylim([3,9.2])
+    ylim([7,9.5])
     
     figure(4)
     %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
@@ -564,17 +534,18 @@ if tend==1 && Plotta==1
     hold on
     I=imread('road06.png');
     h=image([20 80],[80 20],I);
+    
     %title('Trajectory')
     
     figure(7)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[params.maxSpeed_1,params.maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
-    %set(gca,'yticklabel',[])
+    set(gca,'yticklabel',[])
     grid on
-    ylim([3,9.2])
+    ylim([7,9.5])
     
     figure(6)
     %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
@@ -609,7 +580,7 @@ if tend==1 && Plotta==1
     k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
     [W, map1, alphachannel1]=imread('warning_1.png');
     w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
-    set(gcf, 'Color', 'None');
+    % set(gcf, 'Color', 'None');
     set(gca,'visible','off')
     axis equal
     CP=0:0.01:2*pi;

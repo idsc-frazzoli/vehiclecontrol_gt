@@ -6,12 +6,12 @@ params.posX4=53;
 
 % cost function parameters
 params.plagerror=1;       % proj error param cost
-params.platerror=2;    % lateral error param cost
+params.platerror=1.2;    % lateral error param cost
 params.pprog=0.8;         % progress parameter cost
 params.pab=0.006;        % acc parameter cost
 params.pdotbeta=4;      % steering velocity parameter cost
 params.pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
-params.pSpeedMax=1;
+params.pSpeedMax=3;
 params.PprogMax=8;
 params.pslack=2;          % slack variable 
 params.pslack2=100;        % collision cost
