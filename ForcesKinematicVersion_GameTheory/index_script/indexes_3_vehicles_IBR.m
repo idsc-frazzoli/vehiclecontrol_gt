@@ -35,7 +35,7 @@ index_IBR.pLaterrorCost = 3;
 index_IBR.SpeedMax = 4;
 index_IBR.pProgMax = 5;
 index_IBR.pSpeedMax = 6;
-index_IBR.pbre = 7;
+index_IBR.ppos4 = 7;
 
 %% ADDED
 index_IBR.plag = 8;

@@ -29,7 +29,7 @@ close all
 NUM_Vehicles = 3; %1,2,3,5
 Compiled    = 'yes'; % 'yes' or 'no', yes if code has already been compiled
 ok=0;
-ok1=0;
+ok1=1;
 ok2=1;
 
 Simulation  = 'yes';% 'yes' or 'no', no if you don't want to run simulation
@@ -244,7 +244,7 @@ if strcmp(Compiled,'no')
         %Delta path progress
         model.ub(index_IBR.ds)=ds_max;
         model.lb(index_IBR.ds)=ds_min;
-        model.ub(index_IBR.dotab)=0.2;
+        model.ub(index_IBR.dotab)=0.5;
         model.lb(index_IBR.dotab)=-1;
         % Acceleration
         model.lb(index_IBR.ab)=-inf;
@@ -254,7 +254,7 @@ if strcmp(Compiled,'no')
 
         % Velocity
         model.lb(index_IBR.v)=0;
-        model.ub(index_IBR.v)=maxSpeed_1;%maxSpeed
+        model.ub(index_IBR.v)=params.maxSpeed_1;%maxSpeed
         % Steering Angle
         model.ub(index_IBR.beta)=beta_max;
         model.lb(index_IBR.beta)=beta_min;
@@ -566,8 +566,8 @@ if strcmp(Compiled,'no')
                 model.nhN = NUM_const+1; 
                 model.ineqN= @(z,p) nlconst_IBR_3_N(z,p);
                 model.huN = [0;0;0;0;0;0;0];%
-                model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf;];%
-                
+                model.hlN = [-inf;-inf;-inf;-inf;-inf;-inf;-inf];%
+%                 
                 model2.nhN = NUM_const+2; 
                 model2.ineqN= @(z,p) nlconst_IBR_3_N_1(z,p);
                 model2.huN = [0;0;0;0;0;0;0;0];%
@@ -629,6 +629,7 @@ if strcmp(Compiled,'no')
                     codeoptions.timing = 1;
                     codeoptions.BuildSimulinkBlock = 0;
                     codeoptions.overwrite = 1;
+                    codeoptions.noVariableElimination = 1; 
                     output = newOutput('alldata', 1:model.N, 1:model.nvar);
                     if ok==1
                     FORCES_NLP(model, codeoptions,output);
@@ -640,6 +641,7 @@ if strcmp(Compiled,'no')
                     codeoptions2.timing = 1; 
                     codeoptions2.BuildSimulinkBlock = 0;
                     codeoptions2.overwrite = 1;
+                    codeoptions2.noVariableElimination = 1; 
                     output2 = newOutput('alldata', 1:model2.N, 1:model2.nvar);
                     if ok1==1
                     FORCES_NLP(model2, codeoptions2,output2);
@@ -651,6 +653,7 @@ if strcmp(Compiled,'no')
                     codeoptions3.timing = 1;
                     codeoptions3.BuildSimulinkBlock = 0;
                     codeoptions3.overwrite = 1;
+                    codeoptions3.noVariableElimination = 1; 
                     output3 = newOutput('alldata', 1:model3.N, 1:model3.nvar);
                     if ok2==1
                     FORCES_NLP(model3, codeoptions3,output3);

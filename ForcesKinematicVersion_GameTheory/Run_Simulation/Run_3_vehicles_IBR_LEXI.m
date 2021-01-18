@@ -41,7 +41,7 @@ a3=0;
 IND=[];
 IND2=[];
 IND3=[];
-config=[1,2,3];%1,3,2;2,1,3;2,3,1;3,1,2;3,2,1
+config=[1,2,3;1,3,2;2,1,3;2,3,1;3,1,2;3,2,1];%
 cost1 = zeros(length(config(:,1)),tend);
 cost2 = zeros(length(config(:,1)),tend);
 cost3 = zeros(length(config(:,1)),tend);
@@ -71,7 +71,7 @@ for jj=1:length(config(:,1))
     xs(index_IBR.x-index_IBR.nu)=pstart(1);
     xs(index_IBR.y-index_IBR.nu)=pstart(2)+dis;
     xs(index_IBR.theta-index_IBR.nu)=pangle;
-    xs(index_IBR.v-index_IBR.nu)=targetSpeed;
+    xs(index_IBR.v-index_IBR.nu)=params.targetSpeed;
     xs(index_IBR.ab-index_IBR.nu)=0;
     xs(index_IBR.beta-index_IBR.nu)=0;
     xs(index_IBR.s-index_IBR.nu)=0.01;
@@ -93,7 +93,7 @@ for jj=1:length(config(:,1))
     xs2(index_IBR.x-index_IBR.nu)=pstart2(1)+dis;
     xs2(index_IBR.y-index_IBR.nu)=pstart2(2);
     xs2(index_IBR.theta-index_IBR.nu)=pangle2;
-    xs2(index_IBR.v-index_IBR.nu)=targetSpeed;
+    xs2(index_IBR.v-index_IBR.nu)=params.targetSpeed;
     xs2(index_IBR.ab-index_IBR.nu)=0;
     xs2(index_IBR.beta-index_IBR.nu)=0;
     xs2(index_IBR.s-index_IBR.nu)=0.01;
@@ -108,7 +108,7 @@ for jj=1:length(config(:,1))
     xs3(index_IBR.x-index_IBR.nu)=pstart3(1)-dis;
     xs3(index_IBR.y-index_IBR.nu)=pstart3(2);
     xs3(index_IBR.theta-index_IBR.nu)=pangle3;
-    xs3(index_IBR.v-index_IBR.nu)=targetSpeed;
+    xs3(index_IBR.v-index_IBR.nu)=params.targetSpeed;
     xs3(index_IBR.ab-index_IBR.nu)=0;
     xs3(index_IBR.beta-index_IBR.nu)=0;
     xs3(index_IBR.s-index_IBR.nu)=0.01;
@@ -153,15 +153,15 @@ for jj=1:length(config(:,1))
 
         xs(index_IBR.ab-index_IBR.nu)=min(casadiGetMaxAcc(xs(index_IBR.v-index_IBR.nu))...
             -0.0001,xs(index_IBR.ab-index_IBR.nu));
-        problem.xinit = xs(1:7)';
+        problem.xinit = xs';
 
         xs2(index_IBR.ab-index_IBR.nu)=min(casadiGetMaxAcc(xs2(index_IBR.v-index_IBR.nu))...
             -0.0001,xs2(index_IBR.ab-index_IBR.nu));
-        problem1.xinit = xs2(1:7)';
+        problem1.xinit = xs2';
 
         xs3(index_IBR.ab-index_IBR.nu)=min(casadiGetMaxAcc(xs3(index_IBR.v-index_IBR.nu))...
             -0.0001,xs3(index_IBR.ab-index_IBR.nu));
-        problem2.xinit = xs3(1:7)';
+        problem2.xinit = xs3';
         %do it every time because we don't care about the performance of this
         %script
 
@@ -204,10 +204,10 @@ for jj=1:length(config(:,1))
         splinepointhist3(i,:)=[xs3(index_IBR.s-index_IBR.nu),nextSplinePoints3(:)'];
 
         % parameters
-        problem.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,xs2(1),xs2(2),xs3(1),xs3(2),...
+        problem.all_parameters = repmat (getParameters_IBR_3(params.targetSpeed,...
+            0,0,params.maxSpeed,params.PprogMax,params.pSpeedMax,...
+            0,params.plagerror,params.platerror,params.pprog,params.pab,params.pdotbeta,...
+            params.pspeedcost,params.pslack,params.pslack2,params.dist,0,0,0,0,...
             nextSplinePoints),model.N ,1);
 
         problem.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos2(:,1)*0;...
@@ -218,14 +218,14 @@ for jj=1:length(config(:,1))
                                                             Pos3(end,1)*0];
         problem.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos3(:,2)*0;...
                                                             Pos3(end,2)*0];
-        x0_1=x0(1:11,:);
-        problem.x0 = x0_1(:);
+%         x0_1=x0(1:11,:);
+        problem.x0 = x0(:);
 
         % parameters
-        problem1.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,xs(1),xs(2),xs3(1),xs3(2),...
+        problem1.all_parameters = repmat (getParameters_IBR_3(params.targetSpeed,...
+            0,0,params.maxSpeed,params.PprogMax,params.pSpeedMax,...
+            0,params.plagerror,params.platerror,params.pprog,params.pab,params.pdotbeta,...
+            params.pspeedcost,params.pslack,params.pslack2,params.dist,0,0,0,0,...
             nextSplinePoints2),model.N ,1);
 
         problem1.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos1(:,1)*0;...
@@ -236,15 +236,15 @@ for jj=1:length(config(:,1))
                                                              Pos3(end,1)*0];
         problem1.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos3(:,2)*0;...
                                                              Pos3(end,2)*0];
-        x02_1=x02(1:11,:);
-        problem1.x0 = x02_1(:);
+        %x02_1=x02(1:11,:);
+        problem1.x0 = x02(:);
 
         % parameters
-        problem2.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-            maxxacc,maxyacc,latacclim,rotacceffect,torqueveceffect,...
-            brakeeffect,plagerror,platerror,pprog,pab,pdotbeta,...
-            pspeedcost,pslack,pslack2,dist,xs(1),xs(2),xs2(1),xs2(2),nextSplinePoints3),...
-            model.N ,1);
+        problem2.all_parameters = repmat (getParameters_IBR_3(params.targetSpeed,...
+            0,0,params.maxSpeed,params.PprogMax,params.pSpeedMax,...
+            0,params.plagerror,params.platerror,params.pprog,params.pab,params.pdotbeta,...
+            params.pspeedcost,params.pslack,params.pslack2,params.dist,0,0,0,0,...
+            nextSplinePoints3),model.N ,1);
 
         problem2.all_parameters(index_IBR.xComp2:model.npar:end)=[Pos1(:,1)*0;...
                                                              Pos1(end,1)*0];
@@ -255,10 +255,10 @@ for jj=1:length(config(:,1))
         problem2.all_parameters(index_IBR.yComp3:model.npar:end)=[Pos2(:,2)*0;...
                                                              Pos2(end,2)*0];
         
-        x03_1=x03(1:11,:);
-        problem2.x0 = x03_1(:);
+        %x03_1=x03(1:11,:);
+        problem2.x0 = x03(:);
         %go kart 1
-        [output,exitflag,info] = MPCPathFollowing_3v_IBR_ORIG(problem);
+        [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
         solvetimes(end+1)=info.solvetime;
         if(exitflag==0)
             a =a+ 1;
@@ -267,11 +267,11 @@ for jj=1:length(config(:,1))
         if(exitflag~=1 && exitflag ~=0)
           % keyboard
         end
-        outputMA = reshape(output.alldata,[model.nvar-2,model.N])';
+        outputMA = reshape(output.alldata,[model.nvar,model.N])';
         x0 = outputMA';
-        x0(index_IBR.dotab,1:20) =-1;
+        %x0(index_IBR.dotab,1:20) =-1;
         %go kart 2
-        [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR_ORIG(problem1);
+        [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem1);
         solvetimes2(end+1)=info2.solvetime;
         if(exitflag2==0)
             a2 =a2+ 1;
@@ -281,11 +281,11 @@ for jj=1:length(config(:,1))
         %    keyboard           
         end
 
-        outputMB = reshape(output2.alldata,[model.nvar-2,model.N])';
+        outputMB = reshape(output2.alldata,[model.nvar,model.N])';
         x02=outputMB';
         %go kart 3
 
-        [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR_ORIG(problem2);
+        [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem2);
         solvetimes3(end+1)=info3.solvetime;
         if(exitflag3==0)
             a3 =a3+ 1;
@@ -295,35 +295,9 @@ for jj=1:length(config(:,1))
         %    keyboard           
         end
 
-        outputMC = reshape(output3.alldata,[model.nvar-2,model.N])';
+        outputMC = reshape(output3.alldata,[model.nvar,model.N])';
         x03 = outputMC';
-% 
-%         problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%             outputMA(:,index_IBR.x);
-%         problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%             outputMA(:,index_IBR.y);
-%         problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%             outputMA(:,index_IBR.x);
-%         problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%             outputMA(:,index_IBR.y);
-% 
-%         problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%             outputMB(:,index_IBR.x);
-%         problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%             outputMB(:,index_IBR.y);
-%         problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
-%             outputMB(:,index_IBR.x);
-%         problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
-%             outputMB(:,index_IBR.y);
-% 
-%         problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-%             outputMC(:,index_IBR.x);
-%         problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-%             outputMC(:,index_IBR.y);
-%         problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-%             outputMC(:,index_IBR.x);
-%         problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-%             outputMC(:,index_IBR.y);
+
         %% initialization
         if jj==1 && Plotta==1
             figure(400)
@@ -378,8 +352,8 @@ for jj=1:length(config(:,1))
             [W, map1, alphachannel1]=imread('warning_1.png');
             w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
             th = 0:pi/50:2*pi;
-            xunit = dist * cos(th) + 53;
-            yunit = dist * sin(th) + 58;
+            xunit = params.dist * cos(th) + 53;
+            yunit = params.dist * sin(th) + 58;
             plot(xunit, yunit,'k--');
 
             CP=0:0.01:2*pi;
@@ -428,8 +402,8 @@ for jj=1:length(config(:,1))
             plot(int:int*3:length(outputMB(:,1))*int,outputMB(1:3:end,index_IBR.v),'r*','Linewidth',2)
             plot(int:int*3:length(outputMC(:,1))*int,outputMC(1:3:end,index_IBR.v),'go','Linewidth',2)
             
-            line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
-            line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+            line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+            line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
 
             hold off
             %legend ('Vehicle 1','V 2','V 3','Location','southeast')
@@ -447,7 +421,9 @@ for jj=1:length(config(:,1))
         problem.xinit = xs';
         problem2.xinit = xs2';
         problem3.xinit = xs3';
-
+        outputMold=outputMA;
+        outputMold2=outputMB;
+        outputMold3=outputMC;
         x0(12,:)=zeros(1,60);
         x02(12,:)=zeros(1,60);
         x03(12,:)=zeros(1,60);
@@ -457,491 +433,128 @@ for jj=1:length(config(:,1))
         problem.x0  = x0(:);
         problem2.x0 = x02(:);
         problem3.x0 = x03(:);
-%         problem3.x0 = x0(:);
-%         problem4.x0 = x02(:);
-%         problem5.x0 = x03(:);
-%         problem6.x0 = x0(:);
-%         problem7.x0 = x02(:);
-%         problem8.x0 = x03(:);
-        iter=1; 
-        outputMold=outputMA;
-        outputMold2=outputMB;
-        outputMold3=outputMC;
-        
-        problem.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-            0,0,maxSpeed,PprogMax,pSpeedMax,...
-            0,plagerror,platerror*0,pprog*0,pab*0,pdotbeta*0,...
-            pspeedcost*0,pslack*0,pslack2,dist,xs2(1),xs2(2),xs3(1),xs3(2),...
-            nextSplinePoints),model.N ,1);
-        problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-            outputMB(:,index_IBR.x);
-        problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-            outputMB(:,index_IBR.y);
-        problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-            outputMC(:,index_IBR.x);
-        problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-            outputMC(:,index_IBR.y);
-        
-        problem2.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-            0,0,maxSpeed,PprogMax,pSpeedMax,...
-            0,plagerror,platerror*0,pprog*0,pab*0,pdotbeta*0,...
-            pspeedcost*0,pslack*0,pslack2,dist,xs(1),xs(2),xs3(1),xs3(2),...
-            nextSplinePoints2),model.N ,1);
-        problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
-            outputMA(:,index_IBR.x);
-        problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
-            outputMA(:,index_IBR.y);
-        problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-            outputMC(:,index_IBR.x);
-        problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-            outputMC(:,index_IBR.y);
-        
-        problem3.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-            0,0,maxSpeed,PprogMax,pSpeedMax,...
-            0,plagerror,platerror*0,pprog*0,pab*0,pdotbeta*0,...
-            pspeedcost*0,pslack*0,pslack2,dist,xs(1),xs(2),xs2(1),xs2(2),...
-            nextSplinePoints3),model.N ,1);
-
-        problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
-            outputMA(:,index_IBR.x);
-        problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
-            outputMA(:,index_IBR.y);
-
-        
-        problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
-            outputMB(:,index_IBR.x);
-        problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
-            outputMB(:,index_IBR.y);
-
-
-
-        
-        while iter<=10
-            iter=iter+1;
-            for ii=1:length(config(1,:))
-                if config(jj,ii)==1
-                    %go kart 1
-                    [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
-                    solvetimes(end+1)=info.solvetime;
-                    if(exitflag==0)
-                        a =a+ 1;
-                        IND=[IND;i];
-                    end
-                    if(exitflag~=1 && exitflag ~=0)
-                       iter
-                       config(jj,ii)
-                       keyboard
-                    end
-                    outputM = reshape(output.alldata,[model.nvar,model.N])';
-                    x0 = outputM';
-                    SlackCost=outputM(60,13);
-                    problem.all_parameters = repmat (getParameters_IBR_3(targetSpeed,...
-                        SlackCost+0.01,0,maxSpeed,PprogMax,pSpeedMax,...
-                        0,plagerror,platerror*0,pprog*0,pab*0,pdotbeta*0,...
-                        pspeedcost*0,pslack,pslack2*0,dist,xs2(1),xs2(2),xs3(1),xs3(2),...
-                        nextSplinePoints),model.N ,1);
-                    problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                        outputMB(:,index_IBR.x);
-                    problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                        outputMB(:,index_IBR.y);
-                    problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                        outputMC(:,index_IBR.x);
-                    problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                        outputMC(:,index_IBR.y);
-                    [output,exitflag,info] = MPCPathFollowing_3v_IBR(problem);
-                    solvetimes(end+1)=info.solvetime;
-                    if(exitflag==0)
-                        a =a+ 1;
-                        IND=[IND;i];
-                    end
-                    if(exitflag~=1 && exitflag ~=0)
-                       iter
-                       config(jj,ii)
-                       keyboard
-                    end
-                    outputM = reshape(output.alldata,[model.nvar,model.N])';
-                    x0 = outputM';
-%                     problem3.x0 = x0(:);
-%                     latcostA=0;
-%                     slackA=outputM(60,index_IBR.slack_s);
-%                     %problem3.all_parameters(index_IBR.pax)=slackA+0.1;
-%                     [output_A,exitflag_A,info_A] = MPCPathFollowing_3v_IBR_3(problem3);
-%                     solvetimes(end+1)=info_A.solvetime;
-%                     if(exitflag_A==0)
-%                         a =a+ 1;
-%                         IND=[IND;i];
-%                     end
-%                     if(exitflag_A~=1 && exitflag_A ~=0)
-%                        iter
-%                        config(jj,ii)
-%                        keyboard
-%                     end
-%                     outputM_A = reshape(output_A.alldata,[model.nvar,model.N])';
-%                     latcostB=outputM_A(60,index_IBR.laterror);
-%                     slackB=outputM_A(60,index_IBR.slack_s);
-%                     x0 = outputM_A';
-%                     problem6.x0 = x0(:);
-%                     problem6.all_parameters(index_IBR.pax)=slackB+0.001;
-%                     problem6.all_parameters(index_IBR.pay)=latcostB+0.001;
-%                     [output_B,exitflag_B,info_B] = MPCPathFollowing_3v_IBR_6(problem6);
-%                     solvetimes(end+1)=info_B.solvetime;
-%                     if(exitflag_B==0)
-%                         a =a+ 1;
-%                         IND=[IND;i];
-%                     end
-%                     if(exitflag_B~=1 && exitflag_B ~=0)
-%                        iter
-%                        config(jj,ii)
-%                        keyboard
-%                     end
-%                     outputM_B = reshape(output_B.alldata,[model.nvar,model.N])';
-                   % outputM=outputM_B; 
-                    problem2.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                        outputM(:,index_IBR.x);
-                    problem2.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                        outputM(:,index_IBR.y);
-                    problem3.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                        outputM(:,index_IBR.x);
-                    problem3.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                        outputM(:,index_IBR.y);
-%                     problem4.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.x);
-%                     problem4.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.y);
-%                     problem5.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.x);
-%                     problem5.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.y);
-%                     problem7.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.x);
-%                     problem7.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.y);
-%                     problem8.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.x);
-%                     problem8.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%                         outputM(:,index_IBR.y);
-
-                elseif  config(jj,ii)==2
-                     %go kart 2
-                    [output2,exitflag2,info2] = MPCPathFollowing_3v_IBR(problem2);
-                    solvetimes2(end+1)=info2.solvetime;
-                    if(exitflag2==0)
-                        a2 =a2+ 1;
-                        IND2=[IND2;i];
-                    end
-                    if(exitflag2~=1 && exitflag2 ~=0)
-                        iter
-                        config(jj,ii)
-                        keyboard           
-                    end
-
-                    outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-
-                    problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-                        outputM2(:,index_IBR.x);
-                    problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-                        outputM2(:,index_IBR.y);
-                    problem3.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                        outputM2(:,index_IBR.x);
-                    problem3.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                        outputM2(:,index_IBR.y);
-%                     problem5.x0 = x02(:);
-%                     [output2_A,exitflag2_A,info2_A] = MPCPathFollowing_3v_IBR_4(problem5);
-%                     solvetimes(end+1)=info2_A.solvetime;
-%                     if(exitflag_2A==0)
-%                         a =a+ 1;
-%                         IND=[IND;i];
-%                     end
-%                     if(exitflag_2A~=1 && exitflag_2A ~=0)
-%                        iter
-%                        config(jj,ii)
-%                        keyboard
-%                     end
-%                     outputM2_A = reshape(output2_A.alldata,[model.nvar,model.N])';
-%                     latcostB=0;
-%                     optB=0;
-%                     for uu=1:length(outputM2_A)
-%                         [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM2_A(uu,:),points2,targetSpeed, plagerror, platerror,...
-%                                            0, 0, 0, 0,pslack,pslack2);
+                      
+        [outputM,outputM2,outputM3] = IteratedBestResponse(jj,config,problem,...
+        problem2,problem3,params,model,nextSplinePoints,nextSplinePoints2,...
+        nextSplinePoints3,outputMold,outputMold2,outputMold3);
+    
+%         x0 = outputM';
+%         Metric.MaxACC(1,jj)=max(outputM(:,index_IBR.ab));
+%         Metric.MinACC(1,jj)=min(outputM(:,index_IBR.ab));
+%         SteerEFF=cumsum(abs(outputM(:,index_IBR.dotbeta)));
+%         Metric.SteerEff(1,jj)=SteerEFF(end);
+%         Metric.MaxACC(2,jj)=max(outputM2(:,index_IBR.ab));
+%         Metric.MinACC(2,jj)=min(outputM2(:,index_IBR.ab));
+%         SteerEFF2=cumsum(abs(outputM2(:,index_IBR.dotbeta)));
+%         Metric.SteerEff(2,jj)=SteerEFF2(end);
+%         Metric.MaxACC(3,jj)=max(outputM3(:,index_IBR.ab));
+%         Metric.MinACC(3,jj)=min(outputM3(:,index_IBR.ab));
+%         SteerEFF3=cumsum(abs(outputM3(:,index_IBR.dotbeta)));
+%         Metric.SteerEff(3,jj)=SteerEFF3(end);
+%         u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
+%         Pos1=[outputM(2:end,index_IBR.x),outputM(2:end,index_IBR.y)];
 % 
-%                         latcostB=latcostB+latcost;
-%                         optB = optB+ f;
-%                     end
-%                     x02 = outputM2_A';
-%                     problem7.x0 = x02(:);
-%                     problem7.all_parameters(index_IBR.pay)=latcostB+0.001;
-%                     [output2_B,exitflag2_B,info2_B] = MPCPathFollowing_3v_IBR_6(problem_7);
-%                     solvetimes(end+1)=info_B.solvetime;
-%                     if(exitflag_B==0)
-%                         a =a+ 1;
-%                         IND=[IND;i];
-%                     end
-%                     if(exitflag_B~=1 && exitflag_B ~=0)
-%                        iter
-%                        config(jj,ii)
-%                        keyboard
-%                     end
-                    %outputM2_B = reshape(output2_B.alldata,[model.nvar,model.N])';
-%                     outputM2 =outputMB;%reshape(output2.alldata,[model.nvar,model.N])';
+%         %outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+%         x02 = outputM2';
+%         u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
+%         Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
+%         x03 = outputM3';
+%         u3 = repmat(outputM3(1,1:index_IBR.nu),eulersteps,1);
+%         cost1(jj,i)=info.pobj;
+%         cost2(jj,i)=info2.pobj;
+%         cost3(jj,i)=info3.pobj;
+%         optA=0;
+%         regAB1=0;
+%         regBetaA=0;
+%         latcostA=0;
+%         lagcostA=0;
+%         optB=0;
+%         regAB2=0;
+%         regBetaB=0;
+%         latcostB=0;
+%         lagcostB=0;
+%         optC=0;
+%         regAB3=0;
+%         regBetaC=0;
+%         latcostC=0;
+%         lagcostC=0;
+%         slackA=0;
+%         slackB=0;
+%         slackC=0;
+%         speedcostA=0;
+%         speedcostA2=0;
+%         speedcostB=0;
+%         speedcostB2=0;
+%         speedcostC=0;
+%         speedcostC2=0;
+%         for uu=1:length(outputM)
+%             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM(uu,:),points,targetSpeed, plagerror, platerror,...
+%                                pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
 % 
-%                     problem.all_parameters(index_IBR.xComp2:model.npar:end)=...
-%                         outputM2(:,index_IBR.x);
-%                     problem.all_parameters(index_IBR.yComp2:model.npar:end)=...
-%                         outputM2(:,index_IBR.y);
-%                     problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-%                         outputM2(:,index_IBR.x);
-%                     problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-%                         outputM2(:,index_IBR.y);
-                elseif  config(jj,ii)==3
-                    %go kart 3
-                     [output3,exitflag3,info3] = MPCPathFollowing_3v_IBR(problem3);
-                    solvetimes3(end+1)=info3.solvetime;
-                    if(exitflag3==0)
-                        a3 =a3+ 1;
-                        IND3=[IND3;i];
-                    end
-                    if(exitflag3~=1 && exitflag3 ~=0)
-                        iter
-                        config(jj,ii)
-                        keyboard           
-                    end
-
-                    outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
-
-                    problem.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                        outputM3(:,index_IBR.x);
-                    problem.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                        outputM3(:,index_IBR.y);
-                    problem2.all_parameters(index_IBR.xComp3:model.npar:end)=...
-                        outputM3(:,index_IBR.x);
-                    problem2.all_parameters(index_IBR.yComp3:model.npar:end)=...
-                        outputM3(:,index_IBR.y);
-                   
-                end
-            end
-            distanceX=outputM(:,index_IBR.x)-outputMold(:,index_IBR.x);
-            distanceY=outputM(:,index_IBR.y)-outputMold(:,index_IBR.y);
-            distanceX2=outputM2(:,index_IBR.x)-outputMold2(:,index_IBR.x);
-            distanceY2=outputM2(:,index_IBR.y)-outputMold2(:,index_IBR.y);
-            distanceX3=outputM3(:,index_IBR.x)-outputMold3(:,index_IBR.x);
-            distanceY3=outputM3(:,index_IBR.y)-outputMold3(:,index_IBR.y);
-
-%                     distanceXold=outputMold(:,index_IBR.x)-outputMold(:,index_IBR.x);
-%                     distanceYold=outputMold(:,index_IBR.y)-outputMold(:,index_IBR.y);
-%                     distanceX2old=outputMold2(:,index_IBR.x)-outputMold2(:,index_IBR.x);
-%                     distanceY2old=outputMold2(:,index_IBR.y)-outputMold2(:,index_IBR.y);
-%                     distanceX3old=outputMold3(:,index_IBR.x)-outputMold3(:,index_IBR.x);
-%                     distanceY3old=outputMold3(:,index_IBR.y)-outputMold3(:,index_IBR.y);
-%                     
-            squared_distance_arrayX    = sum((distanceX).^2);
-            squared_distance_arrayY    = sum((distanceY).^2);
-            squared_distance_arrayX2    = sum((distanceX2).^2);
-            squared_distance_arrayY2    = sum((distanceY2).^2);
-            squared_distance_arrayX3    = sum((distanceX3).^2);
-            squared_distance_arrayY3    = sum((distanceY3).^2);
-            par=0.05;
-            if (squared_distance_arrayX<=par && squared_distance_arrayY<=par &&...
-                squared_distance_arrayX<=par && squared_distance_arrayY<=par && ...
-                squared_distance_arrayX<=par && squared_distance_arrayY<=par && ...
-                exitflag3==1 && exitflag2==1 && exitflag==1)
-                iter-1
-                iter=11;
-            else
-                outputMold=outputM;
-                outputMold2=outputM2;
-                outputMold3=outputM3;
-            end
-        end
-%         costT1(i)=info.pobj;
-%         costT2(i)=info2.pobj;
-%         costT3(i)=info3.pobj;
-        %outputM = reshape(output.alldata,[model.nvar,model.N])';
-               
-        x0 = outputM';
-        Metric.MaxACC(1,jj)=max(outputM(:,index_IBR.ab));
-        Metric.MinACC(1,jj)=min(outputM(:,index_IBR.ab));
-        SteerEFF=cumsum(abs(outputM(:,index_IBR.dotbeta)));
-        Metric.SteerEff(1,jj)=SteerEFF(end);
-        Metric.MaxACC(2,jj)=max(outputM2(:,index_IBR.ab));
-        Metric.MinACC(2,jj)=min(outputM2(:,index_IBR.ab));
-        SteerEFF2=cumsum(abs(outputM2(:,index_IBR.dotbeta)));
-        Metric.SteerEff(2,jj)=SteerEFF2(end);
-        Metric.MaxACC(3,jj)=max(outputM3(:,index_IBR.ab));
-        Metric.MinACC(3,jj)=min(outputM3(:,index_IBR.ab));
-        SteerEFF3=cumsum(abs(outputM3(:,index_IBR.dotbeta)));
-        Metric.SteerEff(3,jj)=SteerEFF3(end);
-        u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
-%         [xhist,time] = euler(@(x,u)interstagedx_IBR(x,u),xs,u,...
-%             integrator_stepsize/eulersteps);
-%         xs = xhist(end,:);
-        %xs
-%         history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=...
-%             [time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
-%         planc = planc + 1;
-%         if(planc>planintervall)
-%            planc = 1; 
-%            plansx = [plansx; outputM(:,index_IBR.x)'];
-%            plansy = [plansy; outputM(:,index_IBR.y)'];
-%            planss = [planss; outputM(:,index_IBR.s)'];
-%            [tx,ty]=casadiDynamicBSPLINE(outputM(end,index_IBR.s),nextSplinePoints);
-%            targets = [targets;tx,ty];
+%             regAB1=regAB1+regAB;
+%             regBetaA=regBetaA+regBeta;
+%             latcostA=latcostA+latcost;
+%             lagcostA=lagcostA+lagcost;
+%             speedcostA=speedcostA+speedcost;
+%             speedcostA2=speedcostA2+speedcost2;
+%             optA = optA+ f;
+%             %slackA=slackA+pslack*slack;
+%             slackA=slackA+pslack2*slack2;
 %         end
-        Pos1=[outputM(2:end,index_IBR.x),outputM(2:end,index_IBR.y)];
-
-        %outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-        x02 = outputM2';
-        u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
-%         [xhist2,time2] = euler(@(x2,u2)interstagedx_IBR(x2,u2),...
-%             xs2,u2,integrator_stepsize/eulersteps);
-%         xs2 = xhist2(end,:);
-%         %xs2
-%         history2((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=...
-%             [time2(1:end-1)+(tstart-1)*integrator_stepsize,u2,...
-%             xhist2(1:end-1,:)];
-%         planc2 = planc2 + 1;
-%         if(planc2>planintervall)
-%            planc2 = 1; 
-%            plansx2 = [plansx2; outputM2(:,index_IBR.x)'];
-%            plansy2 = [plansy2; outputM2(:,index_IBR.y)'];
-%            planss2 = [planss2; outputM2(:,index_IBR.s)'];
-%            [tx2,ty2]=casadiDynamicBSPLINE(outputM2(end,index_IBR.s),nextSplinePoints2);
-%            targets2 = [targets2;tx2,ty2];
-%         end
-        Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
-
-        x03 = outputM3';
-        u3 = repmat(outputM3(1,1:index_IBR.nu),eulersteps,1);
-%         [xhist3,time3] = euler(@(x3,u3)interstagedx_IBR(x3,u3),...
-%             xs3,u3,integrator_stepsize/eulersteps);
-%         xs3 = xhist3(end,:);
-%         %xs3
-%         history3((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=...
-%             [time3(1:end-1)+(tstart-1)*integrator_stepsize,u3,...
-%             xhist3(1:end-1,:)];
-%         planc3 = planc3 + 1;
-%         if(planc3>planintervall)
-%            planc3 = 1; 
-%            plansx3 = [plansx3; outputM3(:,index_IBR.x)'];
-%            plansy3 = [plansy3; outputM3(:,index_IBR.y)'];
-%            planss3 = [planss3; outputM3(:,index_IBR.s)'];
-%            [tx3,ty3]=casadiDynamicBSPLINE(outputM3(end,index_IBR.s),nextSplinePoints3);
-%            targets3 = [targets3;tx3,ty3];
-%         end
-        cost1(jj,i)=info.pobj;
-        cost2(jj,i)=info2.pobj;
-        cost3(jj,i)=info3.pobj;
-        optA=0;
-        regAB1=0;
-        regBetaA=0;
-        latcostA=0;
-        lagcostA=0;
-        optB=0;
-        regAB2=0;
-        regBetaB=0;
-        latcostB=0;
-        lagcostB=0;
-        optC=0;
-        regAB3=0;
-        regBetaC=0;
-        latcostC=0;
-        lagcostC=0;
-        slackA=0;
-        slackB=0;
-        slackC=0;
-        speedcostA=0;
-        speedcostA2=0;
-        speedcostB=0;
-        speedcostB2=0;
-        speedcostC=0;
-        speedcostC2=0;
-        for uu=1:length(outputM)
-            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM(uu,:),points,targetSpeed, plagerror, platerror,...
-                               pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-
-            regAB1=regAB1+regAB;
-            regBetaA=regBetaA+regBeta;
-            latcostA=latcostA+latcost;
-            lagcostA=lagcostA+lagcost;
-            speedcostA=speedcostA+speedcost;
-            speedcostA2=speedcostA2+speedcost2;
-            optA = optA+ f;
-            %slackA=slackA+pslack*slack;
-            slackA=slackA+pslack2*slack2;
-        end
-        Steer1(jj,i)=regBetaA;
-        Jerk1(jj,i)=regAB1;
-        Speed1(jj,i)=speedcostA;
-        Speed1_1(jj,i)=speedcostA2;
-        LatError1(jj,i)=latcostA;
-        LagError1(jj,i)=lagcostA;
-        
-        for uu=1:length(outputM2)
-            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM2(uu,:),points2,targetSpeed, plagerror, platerror,...
-                               pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-
-            regAB2=regAB2+regAB;
-            regBetaB=regBetaB+regBeta;
-            latcostB=latcostB+latcost;
-            lagcostB=lagcostB+lagcost;
-            speedcostB=speedcostB+speedcost;
-            speedcostB2=speedcostB2+speedcost2;
-            optB = optB+ f;
-            %slackA=slackA+pslack*slack;
-            slackB=slackB+pslack2*slack2;
-        end
-        Steer2(jj,i)=regBetaB;
-        Jerk2(jj,i)=regAB2;
-        Speed2(jj,i)=speedcostB;
-        Speed2_1(jj,i)=speedcostB2;
-        LatError2(jj,i)=latcostB;
-        LagError2(jj,i)=lagcostB;
-        for uu=1:length(outputM3)
-            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM3(uu,:),points3,targetSpeed, plagerror, platerror,...
-                               pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-
-            regAB3=regAB3+regAB;
-            regBetaC=regBetaC+regBeta;
-            latcostC=latcostC+latcost;
-            lagcostC=lagcostC+lagcost;
-            speedcostC=speedcostC+speedcost;
-            speedcostC2=speedcostC2+speedcost2;
-            optC = optC+ f;
-            %slackA=slackA+pslack*slack;
-            slackC=slackC+pslack2*slack2;
-        end
-        Steer3(jj,i)=regBetaC; 
-        Jerk3(jj,i)=regAB3;
-        Speed3(jj,i)=speedcostC;
-        Speed3_1(jj,i)=speedcostC2;
-        LatError3(jj,i)=latcostC;
-        LagError3(jj,i)=lagcostC;
-        %costS(i)=costS;
-        Progress1(jj,i)=outputM(1,index_IBR.s);
-        Progress2(jj,i)=outputM2(1,index_IBR.s);
-        Progress3(jj,i)=outputM3(1,index_IBR.s);
-        % check
-        Pos3=[outputM3(2:end,index_IBR.x),outputM3(2:end,index_IBR.y)];
-
-%         distanceX=xs(1)-xs2(1);
-%         distanceY=xs(2)-xs2(2);
-%         distanceX2=xs(1)-xs3(1);
-%         distanceY2=xs(2)-xs3(2);
-%         distanceX3=xs2(1)-xs3(1);
-%         distanceY3=xs2(2)-xs3(2);
+%         Steer1(jj,i)=regBetaA;
+%         Jerk1(jj,i)=regAB1;
+%         Speed1(jj,i)=speedcostA;
+%         Speed1_1(jj,i)=speedcostA2;
+%         LatError1(jj,i)=latcostA;
+%         LagError1(jj,i)=lagcostA;
+%         
+%         for uu=1:length(outputM2)
+%             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM2(uu,:),points2,targetSpeed, plagerror, platerror,...
+%                                pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
 % 
-%         squared_distance_array    = sqrt(distanceX.^2 + distanceY.^2);
-%         squared_distance_array2   = sqrt(distanceX2.^2 + distanceY2.^2);
-%         squared_distance_array3   = sqrt(distanceX3.^2 + distanceY3.^2);
+%             regAB2=regAB2+regAB;
+%             regBetaB=regBetaB+regBeta;
+%             latcostB=latcostB+latcost;
+%             lagcostB=lagcostB+lagcost;
+%             speedcostB=speedcostB+speedcost;
+%             speedcostB2=speedcostB2+speedcost2;
+%             optB = optB+ f;
+%             %slackA=slackA+pslack*slack;
+%             slackB=slackB+pslack2*slack2;
+%         end
+%         Steer2(jj,i)=regBetaB;
+%         Jerk2(jj,i)=regAB2;
+%         Speed2(jj,i)=speedcostB;
+%         Speed2_1(jj,i)=speedcostB2;
+%         LatError2(jj,i)=latcostB;
+%         LagError2(jj,i)=lagcostB;
+%         for uu=1:length(outputM3)
+%             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM3(uu,:),points3,targetSpeed, plagerror, platerror,...
+%                                pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
 % 
-%         if squared_distance_array<=dist
-%             squared_distance_array
+%             regAB3=regAB3+regAB;
+%             regBetaC=regBetaC+regBeta;
+%             latcostC=latcostC+latcost;
+%             lagcostC=lagcostC+lagcost;
+%             speedcostC=speedcostC+speedcost;
+%             speedcostC2=speedcostC2+speedcost2;
+%             optC = optC+ f;
+%             %slackA=slackA+pslack*slack;
+%             slackC=slackC+pslack2*slack2;
 %         end
-%         if squared_distance_array2<=dist
-%             squared_distance_array2
-%         end
-%         if squared_distance_array3<=dist
-%             squared_distance_array3
-%         end
+%         Steer3(jj,i)=regBetaC; 
+%         Jerk3(jj,i)=regAB3;
+%         Speed3(jj,i)=speedcostC;
+%         Speed3_1(jj,i)=speedcostC2;
+%         LatError3(jj,i)=latcostC;
+%         LagError3(jj,i)=lagcostC;
+%         %costS(i)=costS;
+%         Progress1(jj,i)=outputM(1,index_IBR.s);
+%         Progress2(jj,i)=outputM2(1,index_IBR.s);
+%         Progress3(jj,i)=outputM3(1,index_IBR.s);
+%         % check
+%         Pos3=[outputM3(2:end,index_IBR.x),outputM3(2:end,index_IBR.y)];
+
     end
     %[t,ab,dotbeta,x,y,theta,v,beta,s]
     if tend==1
@@ -996,8 +609,8 @@ for jj=1:length(config(:,1))
             [W, map1, alphachannel1]=imread('warning_1.png');
             w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
             th = 0:pi/50:2*pi;
-            xunit = dist * cos(th) + 53;
-            yunit = dist * sin(th) + 58;
+            xunit = params.dist * cos(th) + 53;
+            yunit = params.dist * sin(th) + 58;
             plot(xunit, yunit,'k--');
             axis equal
             CP=0:0.01:2*pi;
@@ -1056,8 +669,8 @@ for jj=1:length(config(:,1))
             scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index_IBR.v),'bx','Linewidth',2)
             scatter(int:int*3:length(outputM(:,1))*int,outputM2(1:3:end,index_IBR.v),'r*','Linewidth',2)
             scatter(int:int*3:length(outputM(:,1))*int,outputM3(1:3:end,index_IBR.v),'go','Linewidth',2)
-            line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
-            line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+            line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+            line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
             xlim([0,6])
             hold off
             %legend ('Vehicle 1','V 2','V 3','Location','southeast')
@@ -1334,4 +947,4 @@ if Plotta==1 && Plotta1==1
     saveas(gcf,'figures/3v_IBR_TotCost1','epsc')
 end
 
-save('Metric.mat','Metric','Metric1')
+%save('Metric.mat','Metric','Metric1')

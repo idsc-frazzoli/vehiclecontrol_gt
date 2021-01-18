@@ -36,6 +36,10 @@ function dx = interstagedx_IBR(x,u,p)
         dx = SX.zeros(index_IBR.ns,1);
     end
     
+    pslack=p(index_IBR.pslack);
+    pslack2=p(index_IBR.pslack2);
+    vmax=p(index_IBR.SpeedMax);
+    pspeedcostMax=p(index_IBR.pSpeedMax);
     % Update states
     dx(index_IBR.x-index_IBR.nu)=v*cos(theta);
     dx(index_IBR.y-index_IBR.nu)=v*sin(theta);
@@ -44,8 +48,8 @@ function dx = interstagedx_IBR(x,u,p)
     dx(index_IBR.ab-index_IBR.nu)=dotab;
     dx(index_IBR.beta-index_IBR.nu)=dotbeta;
     dx(index_IBR.s-index_IBR.nu)=ds;
-    dx(index_IBR.laterror-index_IBR.nu)=latErrorPunisher(laterror);
-    dx(index_IBR.slack_s-index_IBR.nu)=slack;
+    dx(index_IBR.laterror-index_IBR.nu)=pslack*latErrorPunisher(laterror)+pspeedcostMax*max(x(index_IBR.v-index_IBR.nu)-vmax,0)^2;
+    dx(index_IBR.slack_s-index_IBR.nu)=pslack2*slack;
     %dx = [v*cos(theta);
     %v*sin(theta);
     %v/l*tan(ackermannAngle);
