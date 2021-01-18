@@ -5,10 +5,10 @@ params.targetSpeed=8.3;
 params.posX4=53;
 
 % cost function parameters
-params.plagerror=0.3;       % proj error param cost
+params.plagerror=1;       % proj error param cost
 params.platerror=2;    % lateral error param cost
 params.pprog=0.8;         % progress parameter cost
-params.pab=0.06;        % acc parameter cost
+params.pab=0.006;        % acc parameter cost
 params.pdotbeta=4;      % steering velocity parameter cost
 params.pspeedcost=2;    % parameter for cost that occurs when max_speed is exceeded
 params.pSpeedMax=1;

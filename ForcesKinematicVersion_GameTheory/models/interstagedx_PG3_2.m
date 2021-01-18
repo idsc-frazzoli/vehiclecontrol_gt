@@ -68,7 +68,7 @@ function dx = interstagedx_PG3_2(x,u)
     dx(index1.beta-index1.nu)=dotbeta;
     dx(index1.s-index1.nu)=ds;
     dx(index1.ab-index1.nu)=dotab;
-    
+        
     dx(index1.x_k2-index1.nu)=v_k2*cos(theta_k2);
     dx(index1.y_k2-index1.nu)=v_k2*sin(theta_k2);
     dx(index1.theta_k2-index1.nu)=v_k2/l*tan(beta_k2);

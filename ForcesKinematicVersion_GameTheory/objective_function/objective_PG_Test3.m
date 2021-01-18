@@ -1,6 +1,6 @@
-function [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
-          latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
-          latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3] =...
+function [lagcost,latcost,latcost1,regAB,regBeta,speedcost,speedcost1,speedcost2,lagcost_k2,...
+          latcost_k2,latcost1_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,speedcost2_k2,lagcost_k3,...
+          latcost_k3,latcost1_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,speedcost2_k3,f,f1,f2,f3] =...
           objective_PG_Test3(z,points,points2,points3,params)
     global index
     vdes=params.targetSpeed;
@@ -20,7 +20,7 @@ function [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
     
     forward = [spldx;spldy];
     sidewards = [splsx;splsy];
-    r=1.5;
+    r=3.5;
     realPos = z([index.x,index.y])';
     centerOffset = 0.4*gokartforward(z(index.theta))';
     centerPos = realPos+centerOffset;%+0.4*forward;
@@ -73,7 +73,7 @@ function [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
     speedcost1= min(z(index.v)-vdes,0)^2*params.pprog;
     speedcost2 = max(z(index.v)-vmax,0)^2*params.pSpeedMax;
     lagcost = params.plagerror*lagerror^2;
-    latcost1 = params.platerror*laterror^2;
+    latcost1 = params.platerror*laterror1^2;
     latcost = params.pslack*latErrorPunisher(laterror);
     %prog = -pprog*z(index.ds);
     regAB = z(index.dotab).^2*params.pab;
@@ -83,7 +83,7 @@ function [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
     speedcost1_k2= min(z(index.v_k2)-vdes,0)^2*params.pprog;
     speedcost2_k2 = max(z(index.v_k2)-vmax,0)^2*params.pSpeedMax;
     lagcost_k2 = params.plagerror*lagerror_k2^2;
-    latcost1_k2 = params.platerror*laterror_k2^2;
+    latcost1_k2 = params.platerror*laterror1_k2^2;
     latcost_k2 = params.pslack*latErrorPunisher(laterror_k2);
     regAB_k2 = z(index.dotab_k2).^2*params.pab;
     regBeta_k2= z(index.dotbeta_k2).^2*params.pdotbeta;
@@ -92,7 +92,7 @@ function [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
     speedcost1_k3= min(z(index.v_k3)-vdes,0)^2*params.pprog;
     speedcost2_k3 = max(z(index.v_k3)-vmax,0)^2*params.pSpeedMax;
     lagcost_k3 = params.plagerror*lagerror_k3^2;
-    latcost1_k3 = params.platerror*laterror_k3^2;
+    latcost1_k3 = params.platerror*laterror1_k3^2;
     latcost_k3 = params.pslack*latErrorPunisher(laterror_k3);
     regAB_k3 = z(index.dotab_k3).^2*params.pab;
     regBeta_k3= z(index.dotbeta_k3).^2*params.pdotbeta;
@@ -104,7 +104,7 @@ function [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
         (lagcost_k2+latcost_k2+latcost1_k2+regAB_k2+regBeta_k2+speedcost1_k2+speedcost_k2+speedcost2_k2)+...+prog_k2+pslack*slack_k2+
         (lagcost_k3+latcost_k3+latcost1_k3+regAB_k3+regBeta_k3+speedcost1_k3+speedcost_k3+speedcost2_k3)+...
          params.pslack2*slack2+params.pslack2*slack3+params.pslack2*slack4;
-    f1 = lagcost   +latcost   +regAB   +regBeta   +speedcost   +speedcost1;
-    f2 = lagcost_k2+latcost_k2+regAB_k2+regBeta_k2+speedcost_k2+speedcost1_k2;
-    f3 = lagcost_k3+latcost_k3+regAB_k3+regBeta_k3+speedcost_k3+speedcost1_k3;
+    f1 = (lagcost   +latcost   +latcost1   +regAB   +regBeta   +speedcost1   +speedcost   +speedcost2);
+    f2 = (lagcost_k2+latcost_k2+latcost1_k2+regAB_k2+regBeta_k2+speedcost1_k2+speedcost_k2+speedcost2_k2);
+    f3 = (lagcost_k3+latcost_k3+latcost1_k3+regAB_k3+regBeta_k3+speedcost1_k3+speedcost_k3+speedcost2_k3);
 end

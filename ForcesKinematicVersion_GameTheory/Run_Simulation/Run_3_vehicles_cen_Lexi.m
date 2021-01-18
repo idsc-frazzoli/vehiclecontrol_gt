@@ -2,7 +2,7 @@
 % addpath('..');
 % userDir = getuserdir;
 % addpath('casadi');
-% addpath('models');  
+% addpath('models');
 % addpath('draw_files');
 % addpath('parameters_vector');
 % addpath('objective_function');
@@ -13,7 +13,7 @@ close all
 %parameters_3_vehicles
 Plotta=1;
 %% Initialization for simulation
-global index index1
+global index index
 %indexes_3_vehicles
 
 dis=1.75;0;0;0;
@@ -26,10 +26,12 @@ pangle = atan2(pdir(2),pdir(1));
 xs(index.x-index.nu)=pstart(1);
 xs(index.y-index.nu)=pstart(2)+dis;
 xs(index.theta-index.nu)=pangle;
-xs(index.v-index.nu)=targetSpeed;
+xs(index.v-index.nu)=params.targetSpeed;
 xs(index.ab-index.nu)=0;
 xs(index.beta-index.nu)=0;
 xs(index.s-index.nu)=0.01;
+xs(index.laterror-index.nu)=0;
+xs(index.slack_s-index.nu)=0;
 plansx = [];
 plansy = [];
 planss = [];
@@ -43,10 +45,12 @@ pangle2 = atan2(pdir2(2),pdir2(1));
 xs(index.x_k2-index.nu)=pstart2(1)+dis;
 xs(index.y_k2-index.nu)=pstart2(2);
 xs(index.theta_k2-index.nu)=pangle2;
-xs(index.v_k2-index.nu)=targetSpeed;
+xs(index.v_k2-index.nu)=params.targetSpeed;
 xs(index.ab_k2-index.nu)=0;
 xs(index.beta_k2-index.nu)=0;
 xs(index.s_k2-index.nu)=0.01;
+xs(index.laterror_k2-index.nu)=0;
+xs(index.slack_s_k2-index.nu)=0;
 plansx2 = [];
 plansy2 = [];
 planss2 = [];
@@ -61,10 +65,12 @@ pangle3 = atan2(pdir3(2),pdir3(1));
 xs(index.x_k3-index.nu)=pstart3(1)-dis;
 xs(index.y_k3-index.nu)=pstart3(2);
 xs(index.theta_k3-index.nu)=pangle3;
-xs(index.v_k3-index.nu)=targetSpeed;
+xs(index.v_k3-index.nu)=params.targetSpeed;
 xs(index.ab_k3-index.nu)=0;
 xs(index.beta_k3-index.nu)=0;
 xs(index.s_k3-index.nu)=0.01;
+xs(index.laterror_k3-index.nu)=0;
+xs(index.slack_s_k3-index.nu)=0;
 plansx3 = [];
 plansy3 = [];
 planss3 = [];
@@ -74,6 +80,12 @@ planc = 10;
 tstart = 1;
 %load InitializationPG.mat
 load IBR_init.mat
+x0(12,:)=zeros(1,60);
+x0(13,:)=zeros(1,60);
+x02(12,:)=zeros(1,60);
+x02(13,:)=zeros(1,60);
+x03(12,:)=zeros(1,60);
+x03(13,:)=zeros(1,60);
 x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
 %x01=x0;
 %x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
@@ -100,7 +112,8 @@ speedcostA1=0;
 speedcostB1=0;
 speedcostC1=0;
 %% Simulation
-history = zeros(tend*eulersteps,model.nvar+1);
+%history = zeros(tend*eulersteps,model.nvar+1);
+tend=1;
 splinepointhist = zeros(tend,pointsN*3+pointsN2*3+pointsN3*3+1);
 a=0;
 for i =1:tend
@@ -121,7 +134,7 @@ for i =1:tend
             xs(index.s_k2-index.nu)=xs(index.s_k2-index.nu)-1;
         end
     end
-        if(1)
+    if(1)
         if xs(index.s_k3-index.nu)>1
             %nextSplinePoints_k2;
             %spline step forward
@@ -136,10 +149,9 @@ for i =1:tend
     % go kart 3
     xs(index.ab_k3-index.nu)=min(casadiGetMaxAcc(xs(index.v_k3-index.nu))-0.0001,xs(index.ab_k3-index.nu));
     problem.xinit = xs';
-    xs1=xs;
-    xs1(index1.laterror_k2-index.nu)=0;
-    problem1.xinit = xs';
-    problem2.xinit = xs1';
+    problem2.xinit = xs';
+    problem3.xinit = xs';
+    
     ip = splinestart;
     ip2 = splinestart2;
     ip3 = splinestart3;
@@ -150,121 +162,104 @@ for i =1:tend
     nextSplinePoints_k2 = zeros(pointsN2,3);
     nextSplinePoints_k3 = zeros(pointsN3,3);
     for jj=1:pointsN
-       while ip>nkp
+        while ip>nkp
             ip = ip -nkp;
-       end
-       nextSplinePoints(jj,:)=points(ip,:);
-       ip = ip + 1;
+        end
+        nextSplinePoints(jj,:)=points(ip,:);
+        ip = ip + 1;
     end
     for jj=1:pointsN2
-       while ip2>nkp2
+        while ip2>nkp2
             ip2 = ip2 -nkp2;
-       end
-       nextSplinePoints_k2(jj,:)=points2(ip2,:);
-       ip2 = ip2 + 1;
+        end
+        nextSplinePoints_k2(jj,:)=points2(ip2,:);
+        ip2 = ip2 + 1;
     end
     for jj=1:pointsN3
-       while ip3>nkp3
+        while ip3>nkp3
             ip3 = ip3 -nkp3;
-       end
-       nextSplinePoints_k3(jj,:)=points3(ip3,:);
-       ip3 = ip3 + 1;
+        end
+        nextSplinePoints_k3(jj,:)=points3(ip3,:);
+        ip3 = ip3 + 1;
     end
     splinepointhist(i,:)=[xs(index.s-index.nu),[nextSplinePoints(:);nextSplinePoints_k2(:);nextSplinePoints_k3(:)]'];
     
     % parameters
-    problem.all_parameters = repmat(getParameters_PG3(targetSpeed,maxxacc,...
-        maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
-        plagerror,platerror,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
-    problem.x0 = x0(:);       
+    problem.all_parameters = repmat(getParameters_PG3(0,...
+        0,0,0,params.PprogMax,0,...
+        params.posX4,params.plagerror,0,0,0,0,...
+        0,0,params.pslack2,params.dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
+    problem.x0 = x0(:);
     % solve mpc
     [output,exitflag,info] = MPCPathFollowing_3v(problem);
     solvetimes(end+1)=info.solvetime;
     if(exitflag==0)
-       a = a + 1; 
-    end
-%     if(exitflag~=1 && exitflag ~=0)
-%         draw3
-%         keyboard
-%     end
-    %nextSplinePoints
-    %get output
-    outputM = reshape(output.alldata,[model.nvar,model.N])';
-    x0 = outputM';
-    u = repmat(outputM(1,1:index.nu),eulersteps,1);
-    [xhist,time] = euler(@(x,u)interstagedx_PG3(x,u),xs,u,integrator_stepsize/eulersteps);
-    xs = xhist(end,:);
-    %% second controller
-%     nextSplinePoints = zeros(pointsN,3);
-%     nextSplinePoints_k2 = zeros(pointsN2,3);
-%     nextSplinePoints_k3 = zeros(pointsN3,3);
-%     for jj=1:pointsN
-%        while ip>nkp
-%             ip = ip -nkp;
-%        end
-%        nextSplinePoints(jj,:)=points_1(ip,:);
-%        ip = ip + 1;
-%     end
-%     for jj=1:pointsN2
-%        while ip2>nkp2
-%             ip2 = ip2 -nkp2;
-%        end
-%        nextSplinePoints_k2(jj,:)=points2_1(ip2,:);
-%        ip2 = ip2 + 1;
-%     end
-%     for jj=1:pointsN3
-%        while ip3>nkp3
-%             ip3 = ip3 -nkp3;
-%        end
-%        nextSplinePoints_k3(jj,:)=points3_1(ip3,:);
-%        ip3 = ip3 + 1;
-%     end
-%     splinepointhist(i,:)=[xs(index.s-index.nu),[nextSplinePoints(:);nextSplinePoints_k2(:);nextSplinePoints_k3(:)]'];
-%     
-    % parameters
-    problem1.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
-        maxyacc,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
-        plagerror_1,platerror_1*0.001,pprog,pab,pdotbeta,...
-        pspeedcost,pslack,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
-    problem1.x0 = x0(:);       
-    % solve mpc
-    [output1,exitflag1,info1] = MPCPathFollowing_3v_1(problem1);
-    solvetimes(end+1)=info1.solvetime;
-    if(exitflag1==0)
-       a = a + 1; 
+        a = a + 1;
     end
     
-    outputM1 = reshape(output1.alldata,[model1.nvar,model1.N])';
-    %x01 = outputM1';
-    x01=x0;
-    x01(34,:)=zeros(1,60);
-    u1 = repmat(outputM1(1,1:index1.nu),eulersteps,1);
-%     [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
-%     xs1 = xhist1(end,:);
-        %% Evaluation cost function
-    for jj=1:length(outputM1)
-        [lagcost,latcost,regAB,regBeta,speedcost,speedcost1,lagcost_k2,...
-        latcost_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,lagcost_k3,...
-        latcost_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,f,f1,f2,f3]  =...
-        objective_PG_Test3(outputM1(jj,:),points,points2,points3,targetSpeed,plagerror_1,...
-        platerror_1, pprog, pab, pdotbeta, pspeedcost,pslack,pslack2_1);
-      
+    outputM = reshape(output.alldata,[model.nvar,model.N])';
+    x0 = outputM';
+    
+    %% second controller
+    SlackCost=outputM(60,index.slack_s)+outputM(60,index.slack_s_k2)+outputM(60,index.slack_s_k3);
+    problem2.all_parameters = repmat(getParameters_PG3(0,...
+        SlackCost+0.01,0,params.maxSpeed,params.PprogMax,params.pSpeedMax,...
+        params.posX4,params.plagerror,0,0,0,0,...
+        0,params.pslack,params.pslack2,params.dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
+    problem2.x0 = x0(:);
+    % solve mpc
+    [output2,exitflag2,info2] = MPCPathFollowing_3v_2(problem2);
+    solvetimes(end+1)=info2.solvetime;
+    if(exitflag2==0)
+        a = a + 1;
+    end
+    
+    outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+    x02 = outputM2';
+    %     x01=x0;
+    %     x01(34,:)=zeros(1,60);
+    %    u1 = repmat(outputM2(1,1:index.nu),eulersteps,1);
+    %     [xhist1,time1] = euler(@(x,u)interstagedx_PG3_1(x,u),xs,u1,integrator_stepsize/eulersteps);
+    %     xs1 = xhist1(end,:);
+    %         %% Evaluation cost function
+    %
+    latcostA=outputM2(60,index.laterror)+outputM2(60,index.laterror_k2)+outputM2(60,index.laterror_k3);
+    % parameters
+    problem3.all_parameters = repmat(getParameters_PG3(params.targetSpeed,...
+        SlackCost+0.001,latcostA+0.1,params.maxSpeed,params.PprogMax,params.pSpeedMax,...
+        params.posX4,params.plagerror,params.platerror,params.pprog,params.pab,params.pdotbeta,...
+        params.pspeedcost,params.pslack,params.pslack2,params.dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
+    problem3.x0 = x02(:);
+    % solve mpc
+    [output3,exitflag3,info3] = MPCPathFollowing_3v_3(problem3);
+    solvetimes(end+1)=info3.solvetime;
+    if(exitflag3==0)
+        a = a + 1;
+    end
+    
+    outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
+    
+    for jj=1:length(outputM3)
+        [lagcost,latcost,latcost1,regAB,regBeta,speedcost,speedcost1,speedcost2,lagcost_k2,...
+            latcost_k2,latcost1_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,speedcost2_k2,lagcost_k3,...
+            latcost_k3,latcost1_k3,regAB_k3,regBeta_k3,speedcost_k3,speedcost1_k3,speedcost2_k3,f,f1,f2,f3] =...
+            objective_PG_Test3(outputM3(jj,:),points,points2,points3,params)
+        
         regABA=regABA+regAB;
         regABB=regABB+regAB_k2;
         regABC=regABC+regAB_k3;
         regBetaA=regBetaA+regBeta;
         regBetaB=regBetaB+regBeta_k2;
         regBetaC=regBetaC+regBeta_k3;
-        latcostA=latcostA+latcost;
-        latcostB=latcostB+latcost_k2;
-        latcostC=latcostC+latcost_k3;
+        latcostA=latcostA+latcost+latcost1;
+        latcostB=latcostB+latcost_k2+latcost1_k2;
+        latcostC=latcostC+latcost_k3+latcost1_k3;
         lagcostA=lagcostA+lagcost;
         lagcostB=lagcostB+lagcost_k2;
         lagcostC=lagcostC+lagcost_k3;
-        speedcostA=speedcostA+speedcost;
-        speedcostB=speedcostB+speedcost_k2;
-        speedcostC=speedcostC+speedcost_k3;
+        speedcostA=speedcostA+speedcost+speedcost1+speedcost2;
+        speedcostB=speedcostB+speedcost_k2+speedcost1_k2+speedcost2_k2;
+        speedcostC=speedcostC+speedcost_k3+speedcost1_k3+speedcost2_k3;
         speedcostA1=speedcostA1+speedcost1;
         speedcostB1=speedcostB1+speedcost1_k2;
         speedcostC1=speedcostC1+speedcost1_k3;
@@ -273,65 +268,50 @@ for i =1:tend
         optC = optC+ f3;
         opt  = opt+ f;
     end
-
-    % parameters
-    problem2.all_parameters = repmat(getParameters_PG3(targetSpeed,info.pobj,...
-        latcostB+0.02,latacclim,rotacceffect,torqueveceffect,brakeeffect,...
-        plagerror_1,platerror_1,pprog_1,pab_1,pdotbeta_1,...
-        pspeedcost_1,pslack_1,pslack2_1,dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
-    problem2.x0 = x01(:);       
-    % solve mpc
-    [output2,exitflag2,info2] = MPCPathFollowing_3v_2(problem2);
-    solvetimes(end+1)=info2.solvetime;
-    if(exitflag1==0)
-       a = a + 1; 
-    end
-    
-    outputM2 = reshape(output2.alldata,[model2.nvar,model2.N])';
     %x01 = outputM2';
-    u2 = repmat(outputM2(1,1:index1.nu),eulersteps,1);
-    [xhist2,time2] = euler(@(x,u)interstagedx_PG3_2(x,u),xs1,u2,integrator_stepsize/eulersteps);
-    xs2 = xhist2(end,:);
-    
+    %     u2 = repmat(outputM3(1,1:index.nu),eulersteps,1);
+    %     [xhist2,time2] = euler(@(x,u)interstagedx_PG3(x,u),xs1,u2,integrator_stepsize/eulersteps);
+    %     xs2 = xhist2(end,:);
+    %
     % xs
-%     history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=[time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
-%     planc = planc + 1;
-%     if(planc>planintervall)
-%         planc = 1;
-%         plansx = [plansx; outputM(:,index.x)'];
-%         plansy = [plansy; outputM(:,index.y)'];
-%         planss = [planss; outputM(:,index.s)'];
-%         plansx2 = [plansx2; outputM(:,index.x_k2)'];
-%         plansy2 = [plansy2; outputM(:,index.y_k2)'];
-%         planss2 = [planss2; outputM(:,index.s_k2)'];
-%         plansx3 = [plansx3; outputM(:,index.x_k3)'];
-%         plansy3 = [plansy3; outputM(:,index.y_k3)'];
-%         planss3 = [planss3; outputM(:,index.s_k3)'];
-%         [tx,ty]=casadiDynamicBSPLINE(outputM(end,index.s),nextSplinePoints);
-%         targets = [targets;tx,ty];
-%         [tx2,ty2]=casadiDynamicBSPLINE(outputM(end,index.s_k2),nextSplinePoints_k2);
-%         targets2 = [targets2;tx2,ty2];
-%         [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
-%         targets3 = [targets3;tx3,ty3];
-%     end      
-%    if tend==1
-% %     save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
-% %         'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
-% %         'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
-% %         'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1')
-%      end
-%     MetricPG.MaxACC(1)=max(outputM(:,index.ab));
-%     MetricPG.MinACC(1)=min(outputM(:,index.ab));
-%     SteerEFF=cumsum(abs(outputM(:,index.dotbeta)));
-%     MetricPG.SteerEff(1)=SteerEFF(end);
-%     MetricPG.MaxACC(2)=max(outputM(:,index.ab_k2));
-%     MetricPG.MinACC(2)=min(outputM(:,index.ab_k2));
-%     SteerEFF2=cumsum(abs(outputM(:,index.dotbeta_k2)));
-%     MetricPG.SteerEff(2)=SteerEFF2(end);
-%     MetricPG.MaxACC(3)=max(outputM(:,index.ab_k3));
-%     MetricPG.MinACC(3)=min(outputM(:,index.ab_k3));
-%     SteerEFF3=cumsum(abs(outputM(:,index.dotbeta_k3)));
-%     MetricPG.SteerEff(3)=SteerEFF3(end);
+    %     history((tstart-1)*eulersteps+1:(tstart)*eulersteps,:)=[time(1:end-1)+(tstart-1)*integrator_stepsize,u,xhist(1:end-1,:)];
+    %     planc = planc + 1;
+    %     if(planc>planintervall)
+    %         planc = 1;
+    %         plansx = [plansx; outputM(:,index.x)'];
+    %         plansy = [plansy; outputM(:,index.y)'];
+    %         planss = [planss; outputM(:,index.s)'];
+    %         plansx2 = [plansx2; outputM(:,index.x_k2)'];
+    %         plansy2 = [plansy2; outputM(:,index.y_k2)'];
+    %         planss2 = [planss2; outputM(:,index.s_k2)'];
+    %         plansx3 = [plansx3; outputM(:,index.x_k3)'];
+    %         plansy3 = [plansy3; outputM(:,index.y_k3)'];
+    %         planss3 = [planss3; outputM(:,index.s_k3)'];
+    %         [tx,ty]=casadiDynamicBSPLINE(outputM(end,index.s),nextSplinePoints);
+    %         targets = [targets;tx,ty];
+    %         [tx2,ty2]=casadiDynamicBSPLINE(outputM(end,index.s_k2),nextSplinePoints_k2);
+    %         targets2 = [targets2;tx2,ty2];
+    %         [tx3,ty3]=casadiDynamicBSPLINE(outputM(end,index.s_k3),nextSplinePoints_k3);
+    %         targets3 = [targets3;tx3,ty3];
+    %     end
+    if tend==1
+        save('PG.mat','optA','optB','optC','opt','regBetaA','regBetaB',...
+            'regBetaC','regABA','regABB','regABC','latcostA','latcostB',...
+            'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
+            'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1');
+    end
+    MetricPG.MaxACC(1)=max(outputM(:,index.ab));
+    MetricPG.MinACC(1)=min(outputM(:,index.ab));
+    SteerEFF=cumsum(abs(outputM(:,index.dotbeta)));
+    MetricPG.SteerEff(1)=SteerEFF(end);
+    MetricPG.MaxACC(2)=max(outputM(:,index.ab_k2));
+    MetricPG.MinACC(2)=min(outputM(:,index.ab_k2));
+    SteerEFF2=cumsum(abs(outputM(:,index.dotbeta_k2)));
+    MetricPG.SteerEff(2)=SteerEFF2(end);
+    MetricPG.MaxACC(3)=max(outputM(:,index.ab_k3));
+    MetricPG.MinACC(3)=min(outputM(:,index.ab_k3));
+    SteerEFF3=cumsum(abs(outputM(:,index.dotbeta_k3)));
+    MetricPG.SteerEff(3)=SteerEFF3(end);
     Percentage=i/tend*100
 end
 %save('MetricPG.mat','MetricPG')
@@ -341,25 +321,25 @@ if tend==1 && Plotta==1
     I=imread('road06.png');
     h=image([20 80],[80 20],I);
     %title('Trajectory')
-
+    
     figure(3)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[maxSpeed,maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
-    line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
     %set(gca,'yticklabel',[])
     grid on
     ylim([3,9.2])
-
+    
     figure(2)
-%         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
-%         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
-%         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
+    %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
+    %         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
+    %         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
     maxxacc=max(abs(outputM(:,index.ab)));
     maxxacc2=max(abs(outputM(:,index.ab_k2)));
     maxxacc3=max(abs(outputM(:,index.ab_k3)));
-
+    
     for ii=1:length(outputM(1:P_H_length,index.x))-1
         vc = outputM(ii,index.ab)/maxxacc;
         vc2 = outputM(ii,index.ab_k2)/maxxacc2;
@@ -392,28 +372,28 @@ if tend==1 && Plotta==1
     gklx = 1.5*cos(CP);
     gkly = 1.5*sin(CP);
     gklp = [gklx;gkly];
-%         gklx = [-0.8,2,2,-0.8,-0.8];
-%         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
-%         gklp = [gklx;gkly];
-%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-%         hold on
-%         plot(leftline(:,1),leftline(:,2),'k')
-%         plot(middleline(:,1),middleline(:,2),'k--')
-%         plot(rightline(:,1),rightline(:,2),'k')
-%         plot(leftline2(:,1),leftline2(:,2),'k')
-%         plot(middleline2(:,1),middleline2(:,2),'k--')
-%         plot(rightline2(:,1),rightline2(:,2),'k')
-%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
-%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
-%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
-%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+    %         gklx = [-0.8,2,2,-0.8,-0.8];
+    %         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
+    %         gklp = [gklx;gkly];
+    %         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+    %         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+    %         hold on
+    %         plot(leftline(:,1),leftline(:,2),'k')
+    %         plot(middleline(:,1),middleline(:,2),'k--')
+    %         plot(rightline(:,1),rightline(:,2),'k')
+    %         plot(leftline2(:,1),leftline2(:,2),'k')
+    %         plot(middleline2(:,1),middleline2(:,2),'k--')
+    %         plot(rightline2(:,1),rightline2(:,2),'k')
+    %         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
+    %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
+    %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
+    %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
     idx=[P_H_length/2,P_H_length-1];
     for jjj=1:length(idx)
         iff= idx(jjj);
-%             vc = outputM(iff,index_IBR.ab)/maxxacc;
-%             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
-%             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
+        %             vc = outputM(iff,index_IBR.ab)/maxxacc;
+        %             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
+        %             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
         theta = atan2(outputM(iff+1,index.y)-outputM(iff,index.y),outputM(iff+1,index.x)-outputM(iff,index.x)); % to rotate 90 counterclockwise
         R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
         rgklp = [outputM(iff+1,index.x);outputM(iff+1,index.y)]+R*gklp;
@@ -423,25 +403,26 @@ if tend==1 && Plotta==1
         R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
         rgklp = [outputM(iff+1,index.x_k2);outputM(iff+1,index.y_k2)]+R*gklp;
         BBB=fill(rgklp(1,:),rgklp(2,:),[1,0,0]);
-    %     
+        %
         theta3 = atan2(outputM(iff+1,index.y_k3)-outputM(iff,index.y_k3),outputM(iff+1,index.x_k3)-outputM(iff,index.x_k3)); % to rotate 90 counterclockwise
         R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
         rgklp = [outputM(iff+1,index.x_k3);outputM(iff+1,index.y_k3)]+R*gklp;
         CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     end
     th = 0:pi/50:2*pi;
-    xunit = dist * cos(th) + 53;
-    yunit = dist * sin(th) + 58;
+    xunit = params.dist * cos(th) + 53;
+    yunit = params.dist * sin(th) + 58;
     plot(xunit, yunit,'k--');
     axis equal
+    set(gcf, 'Color', 'None')
     savefig('figures/3v_PG_intersection')
-    saveas(gcf,'figures/3v_PG_intersection','epsc')
+    saveas(gcf,'figures/3v_PG_intersection','svg')
     int=integrator_stepsize;
-%         figure(2)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
-%         legend('Kart1','Kart2','Kart3')
+    %         figure(2)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
+    %         legend('Kart1','Kart2','Kart3')
     figure(3)
     plot(int:int:length(outputM(:,1))*int,outputM(:,index.v),'b','Linewidth',2)
     plot(int:int:length(outputM(:,1))*int,outputM(:,index.v_k2),'r','Linewidth',2)
@@ -452,7 +433,7 @@ if tend==1 && Plotta==1
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed')
-    saveas(gcf,'figures/3v_PG_speed','epsc')
+    saveas(gcf,'figures/3v_PG_speed','svg')
     
     
     figure(4)
@@ -460,36 +441,36 @@ if tend==1 && Plotta==1
     I=imread('road06.png');
     h=image([20 80],[80 20],I);
     %title('Trajectory')
-
+    
     figure(5)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[maxSpeed_1,maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
-    line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.maxSpeed_1,params.maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
     %set(gca,'yticklabel',[])
     grid on
     ylim([3,9.2])
-
+    
     figure(4)
-%         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
-%         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
-%         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
-    maxxacc=max(abs(outputM1(:,index1.ab)));
-    maxxacc2=max(abs(outputM1(:,index1.ab_k2)));
-    maxxacc3=max(abs(outputM1(:,index1.ab_k3)));
-
-    for ii=1:length(outputM1(1:P_H_length,index1.x))-1
-        vc = outputM1(ii,index1.ab)/maxxacc;
-        vc2 = outputM1(ii,index1.ab_k2)/maxxacc2;
-        vc3 = outputM1(ii,index1.ab_k3)/maxxacc3;
+    %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
+    %         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
+    %         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
+    maxxacc=max(abs(outputM2(:,index.ab)));
+    maxxacc2=max(abs(outputM2(:,index.ab_k2)));
+    maxxacc3=max(abs(outputM2(:,index.ab_k3)));
+    
+    for ii=1:length(outputM2(1:P_H_length,index.x))-1
+        vc = outputM2(ii,index.ab)/maxxacc;
+        vc2 = outputM2(ii,index.ab_k2)/maxxacc2;
+        vc3 = outputM2(ii,index.ab_k3)/maxxacc3;
         next = ii+1;
-        x = [outputM1(ii,index1.x),outputM1(next,index1.x)];
-        y = [outputM1(ii,index1.y),outputM1(next,index1.y)];
-        x2 = [outputM1(ii,index1.x_k2),outputM1(next,index1.x_k2)];
-        y2 = [outputM1(ii,index1.y_k2),outputM1(next,index1.y_k2)];
-        x3 = [outputM1(ii,index1.x_k3),outputM1(next,index1.x_k3)];
-        y3 = [outputM1(ii,index1.y_k3),outputM1(next,index1.y_k3)];
+        x = [outputM2(ii,index.x),outputM2(next,index.x)];
+        y = [outputM2(ii,index.y),outputM2(next,index.y)];
+        x2 = [outputM2(ii,index.x_k2),outputM2(next,index.x_k2)];
+        y2 = [outputM2(ii,index.y_k2),outputM2(next,index.y_k2)];
+        x3 = [outputM2(ii,index.x_k3),outputM2(next,index.x_k3)];
+        y3 = [outputM2(ii,index.y_k3),outputM2(next,index.y_k3)];
         line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',3)
         line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',3)
         line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
@@ -511,71 +492,72 @@ if tend==1 && Plotta==1
     gklx = 1.5*cos(CP);
     gkly = 1.5*sin(CP);
     gklp = [gklx;gkly];
-%         gklx = [-0.8,2,2,-0.8,-0.8];
-%         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
-%         gklp = [gklx;gkly];
-%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-%         hold on
-%         plot(leftline(:,1),leftline(:,2),'k')
-%         plot(middleline(:,1),middleline(:,2),'k--')
-%         plot(rightline(:,1),rightline(:,2),'k')
-%         plot(leftline2(:,1),leftline2(:,2),'k')
-%         plot(middleline2(:,1),middleline2(:,2),'k--')
-%         plot(rightline2(:,1),rightline2(:,2),'k')
-%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
-%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
-%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
-%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+    %         gklx = [-0.8,2,2,-0.8,-0.8];
+    %         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
+    %         gklp = [gklx;gkly];
+    %         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+    %         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+    %         hold on
+    %         plot(leftline(:,1),leftline(:,2),'k')
+    %         plot(middleline(:,1),middleline(:,2),'k--')
+    %         plot(rightline(:,1),rightline(:,2),'k')
+    %         plot(leftline2(:,1),leftline2(:,2),'k')
+    %         plot(middleline2(:,1),middleline2(:,2),'k--')
+    %         plot(rightline2(:,1),rightline2(:,2),'k')
+    %         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
+    %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
+    %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
+    %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
     idx=[P_H_length/2,P_H_length-1];
     for jjj=1:length(idx)
         iff= idx(jjj);
-%             vc = outputM(iff,index_IBR.ab)/maxxacc;
-%             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
-%             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
-        theta = atan2(outputM1(iff+1,index1.y)-outputM1(iff,index1.y),outputM1(iff+1,index1.x)-outputM1(iff,index1.x)); % to rotate 90 counterclockwise
+        %             vc = outputM(iff,index_IBR.ab)/maxxacc;
+        %             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
+        %             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
+        theta = atan2(outputM2(iff+1,index.y)-outputM2(iff,index.y),outputM2(iff+1,index.x)-outputM2(iff,index.x)); % to rotate 90 counterclockwise
         R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-        rgklp = [outputM1(iff+1,index1.x);outputM1(iff+1,index1.y)]+R*gklp;
+        rgklp = [outputM2(iff+1,index.x);outputM2(iff+1,index.y)]+R*gklp;
         AAA=fill(rgklp(1,:),rgklp(2,:),[0,0,1]);%,'Color','b'
         %AAA.Color=[0,0,0.5];
-        theta2 = atan2(outputM1(iff+1,index1.y_k2)-outputM1(iff,index1.y_k2),outputM1(iff+1,index1.x_k2)-outputM1(iff,index1.x_k2)); % to rotate 90 counterclockwise
+        theta2 = atan2(outputM2(iff+1,index.y_k2)-outputM2(iff,index.y_k2),outputM2(iff+1,index.x_k2)-outputM2(iff,index.x_k2)); % to rotate 90 counterclockwise
         R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
-        rgklp = [outputM1(iff+1,index1.x_k2);outputM1(iff+1,index1.y_k2)]+R*gklp;
+        rgklp = [outputM2(iff+1,index.x_k2);outputM2(iff+1,index.y_k2)]+R*gklp;
         BBB=fill(rgklp(1,:),rgklp(2,:),[1,0,0]);
-    %     
-        theta3 = atan2(outputM1(iff+1,index1.y_k3)-outputM1(iff,index1.y_k3),outputM1(iff+1,index1.x_k3)-outputM1(iff,index1.x_k3)); % to rotate 90 counterclockwise
+        %
+        theta3 = atan2(outputM2(iff+1,index.y_k3)-outputM2(iff,index.y_k3),outputM2(iff+1,index.x_k3)-outputM2(iff,index.x_k3)); % to rotate 90 counterclockwise
         R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
-        rgklp = [outputM1(iff+1,index1.x_k3);outputM1(iff+1,index1.y_k3)]+R*gklp;
+        rgklp = [outputM2(iff+1,index.x_k3);outputM2(iff+1,index.y_k3)]+R*gklp;
         CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     end
     th = 0:pi/50:2*pi;
-    xunit = dist * cos(th) + 53;
-    yunit = dist * sin(th) + 58;
+    xunit = params.dist * cos(th) + 53;
+    yunit = params.dist * sin(th) + 58;
     plot(xunit, yunit,'k--');
-%     theta4 = atan2(58-outputM1(iff,index1.y_k3),outputM1(iff+1,index1.x_k3)-outputM1(iff,index1.x_k3)); % to rotate 90 counterclockwise
-%     R = [cos(theta4) -sin(theta4); sin(theta4) cos(theta4)];
-%     rgklp = [outputM1(iff+1,index1.x_k3);outputM1(iff+1,index1.y_k3)]+R*gklp;
-%     CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
+    %     theta4 = atan2(58-outputM1(iff,index.y_k3),outputM1(iff+1,index.x_k3)-outputM1(iff,index.x_k3)); % to rotate 90 counterclockwise
+    %     R = [cos(theta4) -sin(theta4); sin(theta4) cos(theta4)];
+    %     rgklp = [outputM1(iff+1,index.x_k3);outputM1(iff+1,index.y_k3)]+R*gklp;
+    %     CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     axis equal
+    %set(gcf, 'Color', 'None')
     savefig('figures/3v_PG_intersection_B')
-    saveas(gcf,'figures/3v_PG_intersection_B','epsc')
+    saveas(gcf,'figures/3v_PG_intersection_B','svg')
     int=integrator_stepsize;
-%         figure(2)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
-%         legend('Kart1','Kart2','Kart3')
+    %         figure(2)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
+    %         legend('Kart1','Kart2','Kart3')
     figure(5)
-    plot(int:int:length(outputM1(:,1))*int,outputM1(:,index1.v),'b','Linewidth',2)
-    plot(int:int:length(outputM1(:,1))*int,outputM1(:,index1.v_k2),'r','Linewidth',2)
-    plot(int:int:length(outputM1(:,1))*int,outputM1(:,index1.v_k3),'g','Linewidth',2)
-    scatter(int:int*3:length(outputM1(:,1))*int,outputM1(1:3:end,index1.v),'bx','Linewidth',2)
-    scatter(int:int*3:length(outputM1(:,1))*int,outputM1(1:3:end,index1.v_k2),'r*','Linewidth',2)
-    scatter(int:int*3:length(outputM1(:,1))*int,outputM1(1:3:end,index1.v_k3),'go','Linewidth',2)
+    plot(int:int:length(outputM2(:,1))*int,outputM2(:,index.v),'b','Linewidth',2)
+    plot(int:int:length(outputM2(:,1))*int,outputM2(:,index.v_k2),'r','Linewidth',2)
+    plot(int:int:length(outputM2(:,1))*int,outputM2(:,index.v_k3),'g','Linewidth',2)
+    scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index.v),'bx','Linewidth',2)
+    scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index.v_k2),'r*','Linewidth',2)
+    scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed_B')
-    saveas(gcf,'figures/3v_PG_speed_B','epsc')
+    saveas(gcf,'figures/3v_PG_speed_B','svg')
     
     
     figure(6)
@@ -583,36 +565,36 @@ if tend==1 && Plotta==1
     I=imread('road06.png');
     h=image([20 80],[80 20],I);
     %title('Trajectory')
-
+    
     figure(7)
     hold on
     %xlabel('Time [s]')
-    line([0,6],[maxSpeed_1,maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
-    line([0,6],[targetSpeed,targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.maxSpeed_1,params.maxSpeed_1],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
+    line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     %title('Speed')
     %set(gca,'yticklabel',[])
     grid on
     ylim([3,9.2])
-
+    
     figure(6)
-%         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
-%         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
-%         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
-    maxxacc=max(abs(outputM2(:,index1.ab)));
-    maxxacc2=max(abs(outputM2(:,index1.ab_k2)));
-    maxxacc3=max(abs(outputM2(:,index1.ab_k3)));
-
-    for ii=1:length(outputM2(1:P_H_length,index1.x))-1
-        vc = outputM2(ii,index1.ab)/maxxacc;
-        vc2 = outputM2(ii,index1.ab_k2)/maxxacc2;
-        vc3 = outputM2(ii,index1.ab_k3)/maxxacc3;
+    %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
+    %         plot(outputM(:,index.x_k2),outputM(:,index.y_k2),'Color',[1,0,0],'Linewidth',3)
+    %         plot(outputM(:,index.x_k3),outputM(:,index.y_k3),'Color',[0,1,0],'Linewidth',3)
+    maxxacc=max(abs(outputM3(:,index.ab)));
+    maxxacc2=max(abs(outputM3(:,index.ab_k2)));
+    maxxacc3=max(abs(outputM3(:,index.ab_k3)));
+    
+    for ii=1:length(outputM3(1:P_H_length,index.x))-1
+        vc = outputM3(ii,index.ab)/maxxacc;
+        vc2 = outputM3(ii,index.ab_k2)/maxxacc2;
+        vc3 = outputM3(ii,index.ab_k3)/maxxacc3;
         next = ii+1;
-        x = [outputM2(ii,index1.x),outputM2(next,index1.x)];
-        y = [outputM2(ii,index1.y),outputM2(next,index1.y)];
-        x2 = [outputM2(ii,index1.x_k2),outputM2(next,index1.x_k2)];
-        y2 = [outputM2(ii,index1.y_k2),outputM2(next,index1.y_k2)];
-        x3 = [outputM2(ii,index1.x_k3),outputM2(next,index1.x_k3)];
-        y3 = [outputM2(ii,index1.y_k3),outputM2(next,index1.y_k3)];
+        x = [outputM3(ii,index.x),outputM3(next,index.x)];
+        y = [outputM3(ii,index.y),outputM3(next,index.y)];
+        x2 = [outputM3(ii,index.x_k2),outputM3(next,index.x_k2)];
+        y2 = [outputM3(ii,index.y_k2),outputM3(next,index.y_k2)];
+        x3 = [outputM3(ii,index.x_k3),outputM3(next,index.x_k3)];
+        y3 = [outputM3(ii,index.y_k3),outputM3(next,index.y_k3)];
         line(x,y,'Color',[0,0,0.5+0.5*vc],'Linewidth',3)
         line(x2,y2,'Color',[0.5+0.5*vc2,0,0],'Linewidth',3)
         line(x3,y3,'Color',[0,0.5+0.5*vc3,0],'Linewidth',3)
@@ -627,85 +609,87 @@ if tend==1 && Plotta==1
     k=image([53-1.5,53+1.5],[58+2.5,58-2.5],K,'AlphaData', alphachannel);
     [W, map1, alphachannel1]=imread('warning_1.png');
     w=image([54-1.5,54+1.5],[56+1.5,56-1.5],W,'AlphaData', alphachannel1);
-    
+    set(gcf, 'Color', 'None');
     set(gca,'visible','off')
     axis equal
     CP=0:0.01:2*pi;
     gklx = 1.5*cos(CP);
     gkly = 1.5*sin(CP);
     gklp = [gklx;gkly];
-%         gklx = [-0.8,2,2,-0.8,-0.8];
-%         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
-%         gklp = [gklx;gkly];
-%         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
-%         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
-%         hold on
-%         plot(leftline(:,1),leftline(:,2),'k')
-%         plot(middleline(:,1),middleline(:,2),'k--')
-%         plot(rightline(:,1),rightline(:,2),'k')
-%         plot(leftline2(:,1),leftline2(:,2),'k')
-%         plot(middleline2(:,1),middleline2(:,2),'k--')
-%         plot(rightline2(:,1),rightline2(:,2),'k')
-%         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
-%         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
-%         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
-%         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
+    %         gklx = [-0.8,2,2,-0.8,-0.8];
+    %         gkly = [-0.8,-0.8,0.8,0.8,-0.8];
+    %         gklp = [gklx;gkly];
+    %         [leftline,middleline,rightline] = drawTrack(points(:,1:2),points(:,3));
+    %         [leftline2,middleline2,rightline2] = drawTrack(points2(:,1:2),points2(:,3));
+    %         hold on
+    %         plot(leftline(:,1),leftline(:,2),'k')
+    %         plot(middleline(:,1),middleline(:,2),'k--')
+    %         plot(rightline(:,1),rightline(:,2),'k')
+    %         plot(leftline2(:,1),leftline2(:,2),'k')
+    %         plot(middleline2(:,1),middleline2(:,2),'k--')
+    %         plot(rightline2(:,1),rightline2(:,2),'k')
+    %         plot([10,80],[pstarty-3.5,pstarty-3.5],'--k','Linewidth',1)
+    %         plot([10,80],[pstarty+3.5,pstarty+3.5],'--k','Linewidth',1)
+    %         plot([pstartx2-3.5,pstartx2-3.5],[20,80],'--k','Linewidth',1)
+    %         plot([pstartx2+3.5,pstartx2+3.5],[20,80],'--k','Linewidth',1)
     idx=[P_H_length/2,P_H_length-1];
     for jjj=1:length(idx)
         iff= idx(jjj);
-%             vc = outputM(iff,index_IBR.ab)/maxxacc;
-%             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
-%             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
-        theta = atan2(outputM2(iff+1,index1.y)-outputM2(iff,index1.y),outputM2(iff+1,index1.x)-outputM2(iff,index1.x)); % to rotate 90 counterclockwise
+        %             vc = outputM(iff,index_IBR.ab)/maxxacc;
+        %             vc2 = outputM2(iff,index_IBR.ab)/maxxacc2;
+        %             vc3 = outputM3(iff,index_IBR.ab)/maxxacc3;
+        theta = atan2(outputM3(iff+1,index.y)-outputM3(iff,index.y),outputM3(iff+1,index.x)-outputM3(iff,index.x)); % to rotate 90 counterclockwise
         R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-        rgklp = [outputM2(iff+1,index1.x);outputM2(iff+1,index1.y)]+R*gklp;
+        rgklp = [outputM3(iff+1,index.x);outputM3(iff+1,index.y)]+R*gklp;
         AAA=fill(rgklp(1,:),rgklp(2,:),[0,0,1]);%,'Color','b'
         %AAA.Color=[0,0,0.5];
-        theta2 = atan2(outputM2(iff+1,index1.y_k2)-outputM2(iff,index1.y_k2),outputM2(iff+1,index1.x_k2)-outputM2(iff,index1.x_k2)); % to rotate 90 counterclockwise
+        theta2 = atan2(outputM3(iff+1,index.y_k2)-outputM3(iff,index.y_k2),outputM3(iff+1,index.x_k2)-outputM3(iff,index.x_k2)); % to rotate 90 counterclockwise
         R = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
-        rgklp = [outputM2(iff+1,index1.x_k2);outputM2(iff+1,index1.y_k2)]+R*gklp;
+        rgklp = [outputM3(iff+1,index.x_k2);outputM3(iff+1,index.y_k2)]+R*gklp;
         BBB=fill(rgklp(1,:),rgklp(2,:),[1,0,0]);
-    %     
-        theta3 = atan2(outputM2(iff+1,index1.y_k3)-outputM2(iff,index1.y_k3),outputM2(iff+1,index1.x_k3)-outputM2(iff,index1.x_k3)); % to rotate 90 counterclockwise
+        %
+        theta3 = atan2(outputM3(iff+1,index.y_k3)-outputM3(iff,index.y_k3),outputM3(iff+1,index.x_k3)-outputM3(iff,index.x_k3)); % to rotate 90 counterclockwise
         R = [cos(theta3) -sin(theta3); sin(theta3) cos(theta3)];
-        rgklp = [outputM2(iff+1,index1.x_k3);outputM2(iff+1,index1.y_k3)]+R*gklp;
+        rgklp = [outputM3(iff+1,index.x_k3);outputM3(iff+1,index.y_k3)]+R*gklp;
         CCC=fill(rgklp(1,:),rgklp(2,:),[0,1,0]);
     end
     th = 0:pi/50:2*pi;
-    xunit = dist * cos(th) + 53;
-    yunit = dist * sin(th) + 58;
+    xunit = params.dist * cos(th) + 53;
+    yunit = params.dist * sin(th) + 58;
     plot(xunit, yunit,'k--');
     axis equal
+    
     savefig('figures/3v_PG_intersection_C')
-    saveas(gcf,'figures/3v_PG_intersection_C','epsc')
+    %set(gcf, 'Color', 'None');
+    saveas(gcf,'figures/3v_PG_intersection_C','svg')
     int=integrator_stepsize;
-%         figure(2)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
-%         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
-%         legend('Kart1','Kart2','Kart3')
+    %         figure(2)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta),'b.-','Linewidth',1)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k2),'r.-','Linewidth',1)
+    %         plot(int:int:length(outputM(:,1))*int,outputM(:,index.theta_k3),'g.-','Linewidth',1)
+    %         legend('Kart1','Kart2','Kart3')
     figure(7)
-    plot(int:int:length(outputM2(:,1))*int,outputM2(:,index1.v),'b','Linewidth',2)
-    plot(int:int:length(outputM2(:,1))*int,outputM2(:,index1.v_k2),'r','Linewidth',2)
-    plot(int:int:length(outputM2(:,1))*int,outputM2(:,index1.v_k3),'g','Linewidth',2)
-    scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index1.v),'bx','Linewidth',2)
-    scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index1.v_k2),'r*','Linewidth',2)
-    scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index1.v_k3),'go','Linewidth',2)
+    plot(int:int:length(outputM3(:,1))*int,outputM3(:,index.v),'b','Linewidth',2)
+    plot(int:int:length(outputM3(:,1))*int,outputM3(:,index.v_k2),'r','Linewidth',2)
+    plot(int:int:length(outputM3(:,1))*int,outputM3(:,index.v_k3),'g','Linewidth',2)
+    scatter(int:int*3:length(outputM3(:,1))*int,outputM3(1:3:end,index.v),'bx','Linewidth',2)
+    scatter(int:int*3:length(outputM3(:,1))*int,outputM3(1:3:end,index.v_k2),'r*','Linewidth',2)
+    scatter(int:int*3:length(outputM3(:,1))*int,outputM3(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed_C')
-    saveas(gcf,'figures/3v_PG_speed_C','epsc')
-    %saveas(gcf,'figures/3v_PG_speed_C','epsc')
-        % drawAnimation_P3_PH
-%         figure(1)
-%         hold on
-%         plot(optA,'b*','Linewidth',2)
-%         plot(optB,'r*','Linewidth',2)
-%         plot(optC,'g*','Linewidth',2)
-%         plot(opt/3,'c*','Linewidth',2)
-%         set(gca,'Fontsize',15)
-% elseif (tend~=1)
-%     draw3
+    saveas(gcf,'figures/3v_PG_speed_C','svg')
+    %saveas(gcf,'figures/3v_PG_speed_C','svg')
+    % drawAnimation_P3_PH
+    %         figure(1)
+    %         hold on
+    %         plot(optA,'b*','Linewidth',2)
+    %         plot(optB,'r*','Linewidth',2)
+    %         plot(optC,'g*','Linewidth',2)
+    %         plot(opt/3,'c*','Linewidth',2)
+    %         set(gca,'Fontsize',15)
+    % elseif (tend~=1)
+    %     draw3
 end
 
 % figure(1000)
@@ -721,6 +705,6 @@ end
 % r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
 % set(gca,'visible','off')
 % savefig('figures/3v_IBR_intall')
-% saveas(gcf,'figures/3v_IBR_intall','epsc')
+% saveas(gcf,'figures/3v_IBR_intall','svg')
 
 %figure(100)

@@ -98,60 +98,8 @@ error_k3 = centerPos_k3-wantedpos_k3;
 % lagerror_k3 = forward_k3'*error_k3;
 laterror_k3 = sidewards_k3'*error_k3;
 
-% %parameters
-% vmax =  p(index.ps);
-% maxxacc = p(index.pax);
-% maxyacc = p(index.pay);
-% latacclim = p(index.pll);
-% rotacceffect = p(index.prae);
-% torqueveceffect = p(index.ptve);
-% brakeeffect = p(index.pbre);
-% 
-% ackermannAngle = -0.58*beta*beta*beta+0.93*beta;
-% dAckermannAngle = -0.58*3*beta*beta*dotbeta+0.93*dotbeta;
-% tangentspeed = z(index.v);
-% latacc = (tan(ackermannAngle)*tangentspeed^2)/l;
-% %avoid oversteer
-% accnorm = ((latacc/maxyacc)^2+(z(index.ab)/maxxacc)^2);
-
-%avoid understeer
-% rotacc = dAckermannAngle*tangentspeed/l;
-% frontaxlelatacc = latacc+rotacc*rotacceffect;
-% 
-% %simplified 
-% accbudget = (1.8-forwardacc)/1.6;
-% torquevectoringcapability = accbudget*torqueveceffect;
-
-% ackermannAngle_k2 = -0.58*beta_k2*beta_k2*beta_k2+0.93*beta_k2;
-% dAckermannAngle_k2 = -0.58*3*beta_k2*beta_k2*dotbeta_k2+0.93*dotbeta_k2;
-% tangentspeed_k2 = z(index.v_k2);
-% latacc_k2 = (tan(ackermannAngle_k2)*tangentspeed_k2^2)/l;
-% %avoid oversteer
-% accnorm_k2 = ((latacc_k2/maxyacc)^2+(z(index.ab_k2)/maxxacc)^2);
-
-%avoid understeer
-% rotacc_k2 = dAckermannAngle_k2*tangentspeed_k2/l;
-% frontaxlelatacc_k2 = latacc_k2+rotacc_k2*rotacceffect;
-% 
-% %simplified 
-% accbudget_k2 = (1.8-forwardacc_k2)/1.6;
-% torquevectoringcapability_k2 = accbudget_k2*torqueveceffect;
-
-% ackermannAngle_k3 = -0.58*beta_k3*beta_k3*beta_k3+0.93*beta_k3;
-% dAckermannAngle_k3 = -0.58*3*beta_k3*beta_k3*dotbeta_k3+0.93*dotbeta_k3;
-% tangentspeed_k3 = z(index.v_k3);
-% latacc_k3 = (tan(ackermannAngle_k3)*tangentspeed_k3^2)/l;
-%avoid oversteer
-% accnorm_k3 = ((latacc_k3/maxyacc)^2+(z(index.ab_k3)/maxxacc)^2);
-
-%avoid understeer
-% rotacc_k3 = dAckermannAngle_k3*tangentspeed_k3/l;
-% frontaxlelatacc_k3 = latacc_k3+rotacc_k3*rotacceffect;
-% 
-% %simplified 
-% accbudget_k3 = (1.8-forwardacc_k3)/1.6;
-% torquevectoringcapability_k3 = accbudget_k3*torqueveceffect;
-% %torquevectoringcapability = torqueveccapsmooth(forwardacc)*torqueveceffect;
+xVehicle4 = p(index.ppos4);
+yVehicle4 = p(index.ppos4)+5;
 distance_X=(z(index.x)-z(index.x_k2));
 distance_Y=(z(index.y)-z(index.y_k2));
 
@@ -161,12 +109,18 @@ distance_Y2=(z(index.y)-z(index.y_k3));
 distance_X3=(z(index.x_k2)-z(index.x_k3));
 distance_Y3=(z(index.y_k2)-z(index.y_k3));
 
-distance_X4=(z(index.x_k2)-53);
-distance_Y4=(z(index.y_k2)-58);
+distance_X4=(z(index.x)-xVehicle4);
+distance_Y4=(z(index.y)-yVehicle4);
+distance_X5=(z(index.x_k2)-xVehicle4);
+distance_Y5=(z(index.y_k2)-yVehicle4);
+distance_X6=(z(index.x_k3)-xVehicle4);
+distance_Y6=(z(index.y_k3)-yVehicle4);
 squared_distance_array = sqrt(distance_X.^2+distance_Y.^2);
 squared_distance_array2 = sqrt(distance_X2.^2+distance_Y2.^2);
 squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 squared_distance_array4 = sqrt(distance_X4.^2+distance_Y4.^2);
+squared_distance_array5 = sqrt(distance_X5.^2+distance_Y5.^2);
+squared_distance_array6 = sqrt(distance_X6.^2+distance_Y6.^2);
 
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
@@ -198,7 +152,9 @@ v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 v20 = -squared_distance_array+dist-slack2;%;%
 v21 = -squared_distance_array2+dist-slack3;%;%
 v22 = -squared_distance_array3+dist-slack4;%;%-
-v23 = -squared_distance_array4+dist-slack3;
-v = [v2;v4;v5;v8;v10;v11;v14;v16;v17;v20;v21;v22;v23];%
+v23 = -squared_distance_array4+dist-slack2;
+v24 = -squared_distance_array5+dist-slack3;
+v25 = -squared_distance_array6+dist-slack4;
+v = [v2;v4;v5;v8;v10;v11;v14;v16;v17;v20;v21;v22;v23;v24;v25];%
 end
 

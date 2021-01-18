@@ -1,7 +1,7 @@
-function [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(z,points,vmax, plagerror, platerror,...
-                           pprog, pab, pdotbeta, pspeedcost,pslack,pslack2)
+function [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,speedcost3,f] = objective_IBR_LE_Test(z,points,params)
      global index_IBR
-
+    vdes=params.targetSpeed;
+    vmax=params.maxSpeed;
     %get the fancy spline
     [splx,sply] = casadiDynamicBSPLINE(z(index_IBR.s),points);
     [spldx, spldy] = casadiDynamicBSPLINEforward(z(index_IBR.s),points);
@@ -25,14 +25,15 @@ function [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objecti
     %slack = z(index_IBR.slack);
     slack2= z(index_IBR.slack2);
     
-    speedcost = max(z(index_IBR.v)-vmax,0)^2*pspeedcost;
-    speedcost2 = min(z(index_IBR.v)-vmax,0)^2*pprog;
-    lagcost = plagerror*lagerror^2;
-    latcost = pslack*latErrorPunisher(laterror);
-    latcost1 = platerror*laterror1^2;
+    speedcost = max(z(index_IBR.v)-vdes,0)^2*params.pspeedcost;
+    speedcost2 = min(z(index_IBR.v)-vdes,0)^2*params.pprog;
+    speedcost3 = max(z(index_IBR.v)-vmax,0)^2*params.pSpeedMax;
+    lagcost = params.plagerror*lagerror^2;
+    latcost = params.pslack*latErrorPunisher(laterror);
+    latcost1 = params.platerror*laterror1^2;
     %prog = -pprog*z(index_IBR.ds);
-    regAB = z(index_IBR.dotab).^2*pab;
-    regBeta=z(index_IBR.dotbeta).^2*pdotbeta;
+    regAB = z(index_IBR.dotab).^2*params.pab;
+    regBeta=z(index_IBR.dotbeta).^2*params.pdotbeta;
    
-    f = lagcost+latcost+latcost1+regAB+regBeta+speedcost+speedcost2+pslack2*slack2;%+prog
+    f = lagcost+latcost+latcost1+regAB+regBeta+speedcost+speedcost2+speedcost3+params.pslack2*slack2;%+prog
 end

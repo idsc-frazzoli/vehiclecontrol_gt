@@ -152,6 +152,8 @@ laterror_k3 = sidewards_k3'*error_k3;
 % accbudget_k3 = (1.8-forwardacc_k3)/1.6;
 % torquevectoringcapability_k3 = accbudget_k3*torqueveceffect;
 % %torquevectoringcapability = torqueveccapsmooth(forwardacc)*torqueveceffect;
+xVehicle4 = p(index.ppos4);
+yVehicle4 = p(index.ppos4)+5;
 distance_X=(z(index.x)-z(index.x_k2));
 distance_Y=(z(index.y)-z(index.y_k2));
 
@@ -161,18 +163,24 @@ distance_Y2=(z(index.y)-z(index.y_k3));
 distance_X3=(z(index.x_k2)-z(index.x_k3));
 distance_Y3=(z(index.y_k2)-z(index.y_k3));
 
-distance_X4=(z(index.x_k2)-53);
-distance_Y4=(z(index.y_k2)-58);
+distance_X4=(z(index.x)-xVehicle4);
+distance_Y4=(z(index.y)-yVehicle4);
+distance_X5=(z(index.x_k2)-xVehicle4);
+distance_Y5=(z(index.y_k2)-yVehicle4);
+distance_X6=(z(index.x_k3)-xVehicle4);
+distance_Y6=(z(index.y_k3)-yVehicle4);
 squared_distance_array = sqrt(distance_X.^2+distance_Y.^2);
 squared_distance_array2 = sqrt(distance_X2.^2+distance_Y2.^2);
 squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 squared_distance_array4 = sqrt(distance_X4.^2+distance_Y4.^2);
+squared_distance_array5 = sqrt(distance_X5.^2+distance_Y5.^2);
+squared_distance_array6 = sqrt(distance_X6.^2+distance_Y6.^2);
 
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
 %v1=(tan(z(8))*z(7)^2/l);
 v2 = z(index.ab)-casadiGetSmoothMaxAcc(z(index.v));
-v3 = z(index.x);
+v3 = -z(index.s)+p(index.pProgMax);
 v4 = laterror-r;%-0.5*slack
 v5 = -laterror-r;%-0.5*slack
 %understeerright
@@ -183,14 +191,14 @@ v5 = -laterror-r;%-0.5*slack
 % v7 = -frontaxlelatacc -torquevectoringcapability - latacclim-slack;
 
 v8 = z(index.ab_k2)-casadiGetSmoothMaxAcc(z(index.v_k2));
-v9 = z(index.y_k2);
+v9 = -z(index.s_k2)+p(index.pProgMax);
 v10 = laterror_k2-r_k2;%-0.5*slack_k2
 v11 = -laterror_k2-r_k2;%-0.5*slack_k2
 % v12 = frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 % v13 = -frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 
 v14 = z(index.ab_k3)-casadiGetSmoothMaxAcc(z(index.v_k3));
-v15 = z(index.x_k3);
+v15 = -z(index.s_k3)+p(index.pProgMax);
 v16 = laterror_k3-r_k3;%-0.5*slack_k3
 v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 % v18 = frontaxlelatacc_k3-torquevectoringcapability_k3-latacclim-slack_k3;
@@ -198,7 +206,9 @@ v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 v20 = -squared_distance_array+dist-slack2;%;%
 v21 = -squared_distance_array2+dist-slack3;%
 v22 = -squared_distance_array3+dist-slack4;%;%
-v23 = -squared_distance_array4+dist-slack3;
-v = [v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22;v23];%v9;%v15;v18;v15;
+v23 = -squared_distance_array4+dist-slack2;
+v24 = -squared_distance_array5+dist-slack3;
+v25 = -squared_distance_array6+dist-slack4;
+v = [v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22;v23;v24;v25];%v9;%v15;v18;v15;
 end
 

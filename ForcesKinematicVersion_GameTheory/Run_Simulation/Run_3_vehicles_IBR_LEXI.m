@@ -438,122 +438,126 @@ for jj=1:length(config(:,1))
         problem2,problem3,params,model,nextSplinePoints,nextSplinePoints2,...
         nextSplinePoints3,outputMold,outputMold2,outputMold3);
     
-%         x0 = outputM';
-%         Metric.MaxACC(1,jj)=max(outputM(:,index_IBR.ab));
-%         Metric.MinACC(1,jj)=min(outputM(:,index_IBR.ab));
-%         SteerEFF=cumsum(abs(outputM(:,index_IBR.dotbeta)));
-%         Metric.SteerEff(1,jj)=SteerEFF(end);
-%         Metric.MaxACC(2,jj)=max(outputM2(:,index_IBR.ab));
-%         Metric.MinACC(2,jj)=min(outputM2(:,index_IBR.ab));
-%         SteerEFF2=cumsum(abs(outputM2(:,index_IBR.dotbeta)));
-%         Metric.SteerEff(2,jj)=SteerEFF2(end);
-%         Metric.MaxACC(3,jj)=max(outputM3(:,index_IBR.ab));
-%         Metric.MinACC(3,jj)=min(outputM3(:,index_IBR.ab));
-%         SteerEFF3=cumsum(abs(outputM3(:,index_IBR.dotbeta)));
-%         Metric.SteerEff(3,jj)=SteerEFF3(end);
-%         u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
-%         Pos1=[outputM(2:end,index_IBR.x),outputM(2:end,index_IBR.y)];
-% 
-%         %outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
-%         x02 = outputM2';
-%         u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
-%         Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
-%         x03 = outputM3';
-%         u3 = repmat(outputM3(1,1:index_IBR.nu),eulersteps,1);
-%         cost1(jj,i)=info.pobj;
-%         cost2(jj,i)=info2.pobj;
-%         cost3(jj,i)=info3.pobj;
-%         optA=0;
-%         regAB1=0;
-%         regBetaA=0;
-%         latcostA=0;
-%         lagcostA=0;
-%         optB=0;
-%         regAB2=0;
-%         regBetaB=0;
-%         latcostB=0;
-%         lagcostB=0;
-%         optC=0;
-%         regAB3=0;
-%         regBetaC=0;
-%         latcostC=0;
-%         lagcostC=0;
-%         slackA=0;
-%         slackB=0;
-%         slackC=0;
-%         speedcostA=0;
-%         speedcostA2=0;
-%         speedcostB=0;
-%         speedcostB2=0;
-%         speedcostC=0;
-%         speedcostC2=0;
-%         for uu=1:length(outputM)
-%             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM(uu,:),points,targetSpeed, plagerror, platerror,...
-%                                pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-% 
-%             regAB1=regAB1+regAB;
-%             regBetaA=regBetaA+regBeta;
-%             latcostA=latcostA+latcost;
-%             lagcostA=lagcostA+lagcost;
-%             speedcostA=speedcostA+speedcost;
-%             speedcostA2=speedcostA2+speedcost2;
-%             optA = optA+ f;
-%             %slackA=slackA+pslack*slack;
-%             slackA=slackA+pslack2*slack2;
-%         end
-%         Steer1(jj,i)=regBetaA;
-%         Jerk1(jj,i)=regAB1;
-%         Speed1(jj,i)=speedcostA;
-%         Speed1_1(jj,i)=speedcostA2;
-%         LatError1(jj,i)=latcostA;
-%         LagError1(jj,i)=lagcostA;
-%         
-%         for uu=1:length(outputM2)
-%             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM2(uu,:),points2,targetSpeed, plagerror, platerror,...
-%                                pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-% 
-%             regAB2=regAB2+regAB;
-%             regBetaB=regBetaB+regBeta;
-%             latcostB=latcostB+latcost;
-%             lagcostB=lagcostB+lagcost;
-%             speedcostB=speedcostB+speedcost;
-%             speedcostB2=speedcostB2+speedcost2;
-%             optB = optB+ f;
-%             %slackA=slackA+pslack*slack;
-%             slackB=slackB+pslack2*slack2;
-%         end
-%         Steer2(jj,i)=regBetaB;
-%         Jerk2(jj,i)=regAB2;
-%         Speed2(jj,i)=speedcostB;
-%         Speed2_1(jj,i)=speedcostB2;
-%         LatError2(jj,i)=latcostB;
-%         LagError2(jj,i)=lagcostB;
-%         for uu=1:length(outputM3)
-%             [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,f] = objective_IBR_LE_Test(outputM3(uu,:),points3,targetSpeed, plagerror, platerror,...
-%                                pprog, pab, pdotbeta, pspeedcost,pslack,pslack2);
-% 
-%             regAB3=regAB3+regAB;
-%             regBetaC=regBetaC+regBeta;
-%             latcostC=latcostC+latcost;
-%             lagcostC=lagcostC+lagcost;
-%             speedcostC=speedcostC+speedcost;
-%             speedcostC2=speedcostC2+speedcost2;
-%             optC = optC+ f;
-%             %slackA=slackA+pslack*slack;
-%             slackC=slackC+pslack2*slack2;
-%         end
-%         Steer3(jj,i)=regBetaC; 
-%         Jerk3(jj,i)=regAB3;
-%         Speed3(jj,i)=speedcostC;
-%         Speed3_1(jj,i)=speedcostC2;
-%         LatError3(jj,i)=latcostC;
-%         LagError3(jj,i)=lagcostC;
-%         %costS(i)=costS;
-%         Progress1(jj,i)=outputM(1,index_IBR.s);
-%         Progress2(jj,i)=outputM2(1,index_IBR.s);
-%         Progress3(jj,i)=outputM3(1,index_IBR.s);
-%         % check
-%         Pos3=[outputM3(2:end,index_IBR.x),outputM3(2:end,index_IBR.y)];
+        x0 = outputM';
+        Metric.MaxACC(1,jj)=max(outputM(:,index_IBR.ab));
+        Metric.MinACC(1,jj)=min(outputM(:,index_IBR.ab));
+        SteerEFF=cumsum(abs(outputM(:,index_IBR.dotbeta)));
+        Metric.SteerEff(1,jj)=SteerEFF(end);
+        Metric.MaxACC(2,jj)=max(outputM2(:,index_IBR.ab));
+        Metric.MinACC(2,jj)=min(outputM2(:,index_IBR.ab));
+        SteerEFF2=cumsum(abs(outputM2(:,index_IBR.dotbeta)));
+        Metric.SteerEff(2,jj)=SteerEFF2(end);
+        Metric.MaxACC(3,jj)=max(outputM3(:,index_IBR.ab));
+        Metric.MinACC(3,jj)=min(outputM3(:,index_IBR.ab));
+        SteerEFF3=cumsum(abs(outputM3(:,index_IBR.dotbeta)));
+        Metric.SteerEff(3,jj)=SteerEFF3(end);
+        u = repmat(outputM(1,1:index_IBR.nu),eulersteps,1);
+        Pos1=[outputM(2:end,index_IBR.x),outputM(2:end,index_IBR.y)];
+
+        %outputM2 = reshape(output2.alldata,[model.nvar,model.N])';
+        x02 = outputM2';
+        u2 = repmat(outputM2(1,1:index_IBR.nu),eulersteps,1);
+        Pos2=[outputM2(2:end,index_IBR.x),outputM2(2:end,index_IBR.y)];
+        x03 = outputM3';
+        u3 = repmat(outputM3(1,1:index_IBR.nu),eulersteps,1);
+        cost1(jj,i)=info.pobj;
+        cost2(jj,i)=info2.pobj;
+        cost3(jj,i)=info3.pobj;
+        optA=0;
+        regAB1=0;
+        regBetaA=0;
+        latcostA=0;
+        lagcostA=0;
+        optB=0;
+        regAB2=0;
+        regBetaB=0;
+        latcostB=0;
+        lagcostB=0;
+        optC=0;
+        regAB3=0;
+        regBetaC=0;
+        latcostC=0;
+        lagcostC=0;
+        slackA=0;
+        slackB=0;
+        slackC=0;
+        speedcostA=0;
+        speedcostA2=0;
+        speedcostA3=0;
+        speedcostB=0;
+        speedcostB2=0;
+        speedcostB3=0;
+        speedcostC=0;
+        speedcostC2=0;
+        speedcostC3=0;
+        for uu=1:length(outputM)
+            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,...
+                speedcost3,f] = objective_IBR_LE_Test(outputM(uu,:),points,params);
+
+            regAB1=regAB1+regAB;
+            regBetaA=regBetaA+regBeta;
+            latcostA=latcostA+latcost;
+            lagcostA=lagcostA+lagcost;
+            speedcostA=speedcostA+speedcost;
+            speedcostA2=speedcostA2+speedcost2;
+            speedcostA3=speedcostA3+speedcost3;
+            optA = optA+ f;
+            %slackA=slackA+pslack*slack;
+            slackA=slackA+params.pslack2*slack2;
+        end
+        Steer1(jj,i)=regBetaA;
+        Jerk1(jj,i)=regAB1;
+        Speed1(jj,i)=speedcostA;
+        Speed1_1(jj,i)=speedcostA2;
+        LatError1(jj,i)=latcostA;
+        LagError1(jj,i)=lagcostA;
+        
+        for uu=1:length(outputM2)
+            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,...
+                speedcost3,f] = objective_IBR_LE_Test(outputM2(uu,:),points,params);
+            regAB2=regAB2+regAB;
+            regBetaB=regBetaB+regBeta;
+            latcostB=latcostB+latcost;
+            lagcostB=lagcostB+lagcost;
+            speedcostB=speedcostB+speedcost;
+            speedcostB2=speedcostB2+speedcost2;
+            speedcostB3=speedcostB3+speedcost3;
+            optB = optB+ f;
+            %slackA=slackA+pslack*slack;
+            slackB=slackB+params.pslack2*slack2;
+        end
+        Steer2(jj,i)=regBetaB;
+        Jerk2(jj,i)=regAB2;
+        Speed2(jj,i)=speedcostB;
+        Speed2_1(jj,i)=speedcostB2;
+        LatError2(jj,i)=latcostB;
+        LagError2(jj,i)=lagcostB;
+        for uu=1:length(outputM3)
+            [lagcost,latcost,regAB,regBeta,slack2,speedcost,speedcost2,...
+                speedcost3,f] = objective_IBR_LE_Test(outputM3(uu,:),points,params);
+            regAB3=regAB3+regAB;
+            regBetaC=regBetaC+regBeta;
+            latcostC=latcostC+latcost;
+            lagcostC=lagcostC+lagcost;
+            speedcostC=speedcostC+speedcost;
+            speedcostC2=speedcostC2+speedcost2;
+            speedcostC3=speedcostC3+speedcost3;
+            optC = optC+ f;
+            %slackA=slackA+pslack*slack;
+            slackC=slackC+params.pslack2*slack2;
+        end
+        Steer3(jj,i)=regBetaC; 
+        Jerk3(jj,i)=regAB3;
+        Speed3(jj,i)=speedcostC;
+        Speed3_1(jj,i)=speedcostC2;
+        LatError3(jj,i)=latcostC;
+        LagError3(jj,i)=lagcostC;
+        %costS(i)=costS;
+        Progress1(jj,i)=outputM(1,index_IBR.s);
+        Progress2(jj,i)=outputM2(1,index_IBR.s);
+        Progress3(jj,i)=outputM3(1,index_IBR.s);
+        % check
+        Pos3=[outputM3(2:end,index_IBR.x),outputM3(2:end,index_IBR.y)];
 
     end
     %[t,ab,dotbeta,x,y,theta,v,beta,s]

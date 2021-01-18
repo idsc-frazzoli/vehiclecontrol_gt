@@ -3,8 +3,6 @@ global index
 %NLCONST Summary of this function goes here
 %   Detailed explanation goes here
 dist=p(index.dist);
-pslack2=p(index.pslack2);
-plagerror=p(index.plag);
 % l = 1.19;
 % beta  = z(index.beta);
 % dotbeta = z(index.dotbeta);
@@ -41,21 +39,21 @@ points_k3 = getPointsFromParameters(p, pointsO+3*pointsN+3*pointsN2, pointsN3);
 radii_k3 = getRadiiFromParameters(p, pointsO+3*pointsN+3*pointsN2, pointsN3);
 % Splines
 [splx,sply] = casadiDynamicBSPLINE(z(index.s),points);
-[spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
+% [spldx, spldy] = casadiDynamicBSPLINEforward(z(index.s),points);
 [splsx, splsy] = casadiDynamicBSPLINEsidewards(z(index.s),points);
 r = casadiDynamicBSPLINERadius(z(index.s),radii);
 
 [splx_k2,sply_k2] = casadiDynamicBSPLINE(z(index.s_k2),points_k2);
-[spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points_k2);
+% [spldx_k2, spldy_k2] = casadiDynamicBSPLINEforward(z(index.s_k2),points_k2);
 [splsx_k2, splsy_k2] = casadiDynamicBSPLINEsidewards(z(index.s_k2),points_k2);
 r_k2 = casadiDynamicBSPLINERadius(z(index.s_k2),radii_k2);
 
 [splx_k3,sply_k3] = casadiDynamicBSPLINE(z(index.s_k3),points_k3);
-[spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points_k3);
+% [spldx_k3, spldy_k3] = casadiDynamicBSPLINEforward(z(index.s_k3),points_k3);
 [splsx_k3, splsy_k3] = casadiDynamicBSPLINEsidewards(z(index.s_k3),points_k3);
 r_k3 = casadiDynamicBSPLINERadius(z(index.s_k3),radii_k3);
 
-forward = [spldx;spldy];
+% forward = [spldx;spldy];
 sidewards = [splsx;splsy];
 
 realPos = z([index.x,index.y]);
@@ -67,10 +65,10 @@ wantedpos = [splx;sply];
 error = centerPos-wantedpos;
 
 % Projection errors
-lagerror = forward'*error;
+% lagerror = forward'*error;
 laterror = sidewards'*error;
 
-forward_k2 = [spldx_k2;spldy_k2];
+% forward_k2 = [spldx_k2;spldy_k2];
 sidewards_k2 = [splsx_k2;splsy_k2];
 
 realPos_k2 = z([index.x_k2,index.y_k2]);
@@ -82,10 +80,10 @@ wantedpos_k2 = [splx_k2;sply_k2];
 error_k2 = centerPos_k2-wantedpos_k2;
 
 % Projection errors
-lagerror_k2 = forward_k2'*error_k2;
+% lagerror_k2 = forward_k2'*error_k2;
 laterror_k2 = sidewards_k2'*error_k2;
 
-forward_k3 = [spldx_k3;spldy_k3];
+% forward_k3 = [spldx_k3;spldy_k3];
 sidewards_k3 = [splsx_k3;splsy_k3];
 
 realPos_k3 = z([index.x_k3,index.y_k3]);
@@ -97,11 +95,9 @@ wantedpos_k3 = [splx_k3;sply_k3];
 error_k3 = centerPos_k3-wantedpos_k3;
 
 % Projection errors
-lagerror_k3 = forward_k3'*error_k3;
+% lagerror_k3 = forward_k3'*error_k3;
 laterror_k3 = sidewards_k3'*error_k3;
-plagcost = plagerror*lagerror^2;
-plagcost_k2 = plagerror*lagerror_k2^2;
-plagcost_k3 = plagerror*lagerror_k3^2;
+
 % %parameters
 % vmax =  p(index.ps);
 % maxxacc = p(index.pax);
@@ -156,6 +152,8 @@ plagcost_k3 = plagerror*lagerror_k3^2;
 % accbudget_k3 = (1.8-forwardacc_k3)/1.6;
 % torquevectoringcapability_k3 = accbudget_k3*torqueveceffect;
 % %torquevectoringcapability = torqueveccapsmooth(forwardacc)*torqueveceffect;
+xVehicle4 = p(index.ppos4);
+yVehicle4 = p(index.ppos4)+5;
 distance_X=(z(index.x)-z(index.x_k2));
 distance_Y=(z(index.y)-z(index.y_k2));
 
@@ -165,20 +163,24 @@ distance_Y2=(z(index.y)-z(index.y_k3));
 distance_X3=(z(index.x_k2)-z(index.x_k3));
 distance_Y3=(z(index.y_k2)-z(index.y_k3));
 
-distance_X4=(z(index.x_k2)-53);
-distance_Y4=(z(index.y_k2)-58);
-
+distance_X4=(z(index.x)-xVehicle4);
+distance_Y4=(z(index.y)-yVehicle4);
+distance_X5=(z(index.x_k2)-xVehicle4);
+distance_Y5=(z(index.y_k2)-yVehicle4);
+distance_X6=(z(index.x_k3)-xVehicle4);
+distance_Y6=(z(index.y_k3)-yVehicle4);
 squared_distance_array = sqrt(distance_X.^2+distance_Y.^2);
 squared_distance_array2 = sqrt(distance_X2.^2+distance_Y2.^2);
 squared_distance_array3 = sqrt(distance_X3.^2+distance_Y3.^2);
 squared_distance_array4 = sqrt(distance_X4.^2+distance_Y4.^2);
+squared_distance_array5 = sqrt(distance_X5.^2+distance_Y5.^2);
+squared_distance_array6 = sqrt(distance_X6.^2+distance_Y6.^2);
 
 %% Constraints
 %v1 = (tan(z(index.beta))*z(index.v)^2/l)^2+z(index.ab)^2;
-%v1=(tan(z(8))*z(7)^2/l);
-v1 = pslack2*slack2+pslack2*slack3+pslack2*slack4-0;
+v1=  z(index.slack_s)+z(index.slack_s_k2)+z(index.slack_s_k3)-p(index.pSlackCost);
 v2 = z(index.ab)-casadiGetSmoothMaxAcc(z(index.v));
-v3 = z(index.x);
+v3 = -z(index.s)+p(index.pProgMax);
 v4 = laterror-r;%-0.5*slack
 v5 = -laterror-r;%-0.5*slack
 %understeerright
@@ -187,16 +189,16 @@ v5 = -laterror-r;%-0.5*slack
 % %understeerleft
 % %v7 = -frontaxlelatacc - latacclim-torquevectoringcapability-slack;
 % v7 = -frontaxlelatacc -torquevectoringcapability - latacclim-slack;
-
+%v7 = z(index.slack_s_k2)-p(index.pSlackCost);
 v8 = z(index.ab_k2)-casadiGetSmoothMaxAcc(z(index.v_k2));
-v9 = z(index.y_k2);
+v9 = -z(index.s_k2)+p(index.pProgMax);
 v10 = laterror_k2-r_k2;%-0.5*slack_k2
 v11 = -laterror_k2-r_k2;%-0.5*slack_k2
 % v12 = frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
 % v13 = -frontaxlelatacc_k2-torquevectoringcapability_k2-latacclim-slack_k2;
-
+%v13 = z(index.slack_s_k3)-p(index.pSlackCost);
 v14 = z(index.ab_k3)-casadiGetSmoothMaxAcc(z(index.v_k3));
-v15 = z(index.x_k3);
+v15 = -z(index.s_k3)+p(index.pProgMax);
 v16 = laterror_k3-r_k3;%-0.5*slack_k3
 v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 % v18 = frontaxlelatacc_k3-torquevectoringcapability_k3-latacclim-slack_k3;
@@ -204,8 +206,9 @@ v17 = -laterror_k3-r_k3;%-0.5*slack_k3
 v20 = -squared_distance_array+dist-slack2;%;%
 v21 = -squared_distance_array2+dist-slack3;%
 v22 = -squared_distance_array3+dist-slack4;%;%
-v23 = -squared_distance_array4+dist-slack3;
-
-v = [v1;v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22;v23];%v9;%v15;v18;v15;
+v23 = -squared_distance_array4+dist-slack2;
+v24 = -squared_distance_array5+dist-slack3;
+v25 = -squared_distance_array6+dist-slack4;
+v = [v1;v2;v3;v4;v5;v8;v9;v10;v11;v14;v15;v16;v17;v20;v21;v22;v23;v24;v25];%v9;%v15;v18;v15;
 end
 

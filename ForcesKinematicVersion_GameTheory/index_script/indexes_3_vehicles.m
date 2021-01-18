@@ -32,24 +32,30 @@ index.v = 16;
 index.ab = 17;
 index.beta = 18;
 index.s = 19;
+index.laterror=20;
+index.slack_s=21;
 % states kart 2
-index.x_k2 = 20;
-index.y_k2 = 21;
-index.theta_k2 = 22;
-index.v_k2 = 23;
-index.ab_k2 = 24;
-index.beta_k2 = 25;
-index.s_k2 = 26;
+index.x_k2 = 22;
+index.y_k2 = 23;
+index.theta_k2 = 24;
+index.v_k2 = 25;
+index.ab_k2 = 26;
+index.beta_k2 = 27;
+index.s_k2 = 28;
+index.laterror_k2=29;
+index.slack_s_k2=30;
 % states kart 3
-index.x_k3 = 27;
-index.y_k3 = 28;
-index.theta_k3 = 29;
-index.v_k3 = 30;
-index.ab_k3 = 31;
-index.beta_k3 = 32;
-index.s_k3 = 33;
+index.x_k3 = 31;
+index.y_k3 = 32;
+index.theta_k3 = 33;
+index.v_k3 = 34;
+index.ab_k3 = 35;
+index.beta_k3 = 36;
+index.s_k3 = 37;
+index.laterror_k3=38;
+index.slack_s_k3=39;
 % Number of States
-index.ns = 21;
+index.ns = 27;
 
 % Number of Inputs
 index.nu = 12;
@@ -60,12 +66,12 @@ index.sb = index.nu+1;
 
 % Parameters
 index.ps = 1;
-index.pax = 2;
-index.pay = 3;
-index.pll = 4;
-index.prae = 5;
-index.ptve = 6;
-index.pbre = 7;
+index.pSlackCost = 2;
+index.pLaterrorCost = 3;
+index.SpeedMax = 4;
+index.pProgMax = 5;
+index.pSpeedMax = 6;
+index.ppos4 = 7;
 
 %% ADDED
 
@@ -90,8 +96,8 @@ model.nvar = index.nv;
 model.neq = index.ns;
 model.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;
 
-%% model initialization
-model1.N = P_H_length;
-model1.nvar = index.nv;
-model1.neq = index.ns;
-model1.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;
+% %% model initialization
+% model1.N = P_H_length;
+% model1.nvar = index.nv;
+% model1.neq = index.ns;
+% model1.npar = pointsO + 3*pointsN + 3*pointsN2 + 3*pointsN3;
