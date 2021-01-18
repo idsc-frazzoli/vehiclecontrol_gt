@@ -304,7 +304,7 @@ for jj=1:length(config(:,1))
             hold on
             I=imread('road06.png');
             h=image([20 80],[80 20],I);
-            %set(gca,'visible','off')
+            set(gca,'visible','off')
 %            plot(outputMA(:,index_IBR.x),outputMA(:,index_IBR.y),'Color',[0,0,1],'Linewidth',3)
 %            plot(outputMB(:,index_IBR.x),outputMB(:,index_IBR.y),'Color',[1,0,0],'Linewidth',3)
 %            plot(outputMC(:,index_IBR.x),outputMC(:,index_IBR.y),'Color',[0,1,0],'Linewidth',3)
