@@ -298,7 +298,7 @@ if tend==1 && Plotta==1
     %title('Speed')
     %set(gca,'yticklabel',[])
     grid on
-    ylim([3,9.2])
+    ylim([7.75,9.25])
     
     figure(2)
     %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
@@ -400,7 +400,7 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM(:,1))*int,outputM(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
     ylabel('Speed [m/s]','interpreter','latex')
-    ylim([7 9.5])
+    ylim([7.75 9.25])
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed')
     saveas(gcf,'figures/3v_PG_speed','epsc')
@@ -420,7 +420,7 @@ if tend==1 && Plotta==1
     %title('Speed')
     set(gca,'yticklabel',[])
     grid on
-    ylim([7,9.5])
+    ylim([7.75,9.25])
     
     figure(4)
     %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
@@ -545,7 +545,7 @@ if tend==1 && Plotta==1
     %title('Speed')
     set(gca,'yticklabel',[])
     grid on
-    ylim([7,9.5])
+    ylim([7.75,9.25])
     
     figure(6)
     %         plot(outputM(:,index.x),outputM(:,index.y),'Color',[0,0,1],'Linewidth',3)
