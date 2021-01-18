@@ -1,7 +1,7 @@
 %% Initialization for simulation
 global index_IBR
 Plotta=1;
-Plotta1=0;
+Plotta1=1;
 dis=1.75;
 
 %% Simulation

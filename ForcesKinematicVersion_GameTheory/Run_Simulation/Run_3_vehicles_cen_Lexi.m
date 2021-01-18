@@ -268,21 +268,21 @@ for i =1:tend
             'latcostC','lagcostA','lagcostB','lagcostC','speedcostA',...
             'speedcostB','speedcostC','speedcostA1','speedcostB1','speedcostC1');
     end
-    MetricPG.MaxACC(1)=max(outputM(:,index.ab));
-    MetricPG.MinACC(1)=min(outputM(:,index.ab));
-    SteerEFF=cumsum(abs(outputM(:,index.dotbeta)));
+    MetricPG.MaxACC(1)=max(outputM3(:,index.ab));
+    MetricPG.MinACC(1)=min(outputM3(:,index.ab));
+    SteerEFF=cumsum(abs(outputM3(:,index.dotbeta)));
     MetricPG.SteerEff(1)=SteerEFF(end);
-    MetricPG.MaxACC(2)=max(outputM(:,index.ab_k2));
-    MetricPG.MinACC(2)=min(outputM(:,index.ab_k2));
-    SteerEFF2=cumsum(abs(outputM(:,index.dotbeta_k2)));
+    MetricPG.MaxACC(2)=max(outputM3(:,index.ab_k2));
+    MetricPG.MinACC(2)=min(outputM3(:,index.ab_k2));
+    SteerEFF2=cumsum(abs(outputM3(:,index.dotbeta_k2)));
     MetricPG.SteerEff(2)=SteerEFF2(end);
-    MetricPG.MaxACC(3)=max(outputM(:,index.ab_k3));
-    MetricPG.MinACC(3)=min(outputM(:,index.ab_k3));
-    SteerEFF3=cumsum(abs(outputM(:,index.dotbeta_k3)));
-    MetricPG.SteerEff(3)=SteerEFF3(end);
+    MetricPG.MaxACC(3)=max(outputM3(:,index.ab_k3));
+    MetricPG.MinACC(3)=min(outputM3(:,index.ab_k3));
+    SteerEFF=cumsum(abs(outputM3(:,index.dotbeta_k3)));
+    MetricPG.SteerEff(3)=SteerEFF(end);
     Percentage=i/tend*100
 end
-%save('MetricPG.mat','MetricPG')
+save('MetricPG.mat','MetricPG')
 if tend==1 && Plotta==1
     figure(2)
     hold on
@@ -403,7 +403,7 @@ if tend==1 && Plotta==1
     ylim([7 9.5])
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed')
-    saveas(gcf,'figures/3v_PG_speed','svg')
+    saveas(gcf,'figures/3v_PG_speed','epsc')
     
     
     figure(4)
@@ -527,7 +527,7 @@ if tend==1 && Plotta==1
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed_B')
-    saveas(gcf,'figures/3v_PG_speed_B','svg')
+    saveas(gcf,'figures/3v_PG_speed_B','epsc')
     
     
     figure(6)
@@ -649,7 +649,7 @@ if tend==1 && Plotta==1
     %legend('Vehicle 1','V 2','V 3')
     set(gca,'FontSize',18)
     savefig('figures/3v_PG_speed_C')
-    saveas(gcf,'figures/3v_PG_speed_C','svg')
+    saveas(gcf,'figures/3v_PG_speed_C','epsc')
     %saveas(gcf,'figures/3v_PG_speed_C','svg')
     % drawAnimation_P3_PH
     %         figure(1)

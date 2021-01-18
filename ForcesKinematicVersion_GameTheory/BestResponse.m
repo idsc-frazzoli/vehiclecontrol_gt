@@ -31,15 +31,6 @@ problem.all_parameters(index_IBR.yComp3:model.npar:end)=Y3;
 [output,exitflag,info] = MPCPathFollowing_3v_IBR_2(problem);
 outputM = reshape(output.alldata,[model.nvar,model.N])';
 x0 = outputM';
-optA=0;
-regAB1=0;
-regBetaA=0;
-latcostA=0;
-lagcostA=0;
-speedcostA=0;
-speedcostA2=0;
-speedcostA3=0;
-slackA=0;
 
 problem.x0 = x0(:);
 latcostA=outputM(60,12);
