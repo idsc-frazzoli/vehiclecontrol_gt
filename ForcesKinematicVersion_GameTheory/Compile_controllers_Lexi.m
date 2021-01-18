@@ -39,7 +39,7 @@ TestAlpha1shot='no';% 'yes' or 'no', yes if you want to test alpha.
 LEPunisher  = 'yes'; % 'yes' or 'no' % Lateral Error Punisher (It Penalizes
                                     % only the left side of the centerline)
 Condition   = 'cen'; % 'cen','dec'; 'dec' for 2 vehicles only
-Game        = 'IBR'; % 'PG'; 'IBR';
+Game        = 'PG'; % 'PG'; 'IBR';
 Alpha       = 'no'; % 'yes' (2 vehicles, 'cen' condition and PG only), 'no';
 Stack       = 0;
 if (strcmp(Alpha,'yes') || strcmp(TestAlpha1shot,'yes')) && NUM_Vehicles~=2
@@ -671,7 +671,7 @@ switch NUM_Vehicles
         switch Game
             case 'PG'
                 %Run_3_vehicles_cen_1
-                Run_3_vehicles_cen;%_1 ;%
+                Run_3_vehicles_cen_Lexi;%_1 ;%
             case 'IBR'
                 if Stack==1
                     Run_3_vehicles_IBR_st
