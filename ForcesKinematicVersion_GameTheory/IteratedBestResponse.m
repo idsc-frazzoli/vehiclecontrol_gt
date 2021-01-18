@@ -1,4 +1,4 @@
-function [outputM,outputM2,outputM3] = IteratedBestResponse(jj,config,problem,...
+function [outputM,outputM2,outputM3,info1,info2,info3] = IteratedBestResponse(jj,config,problem,...
     problem2,problem3,params,model,nextSplinePoints,nextSplinePoints2,...
     nextSplinePoints3,outputMold,outputMold2,outputMold3)
 
@@ -14,7 +14,7 @@ while iter<=10
     iter=iter+1;
     for ii=1:length(config(1,:))
         if config(jj,ii)==1
-            outputM = BestResponse(problem,X2,Y2,X3,Y3,params,nextSplinePoints,model);
+            [outputM,info1,info1_1,info1_2] = BestResponse(problem,X2,Y2,X3,Y3,params,nextSplinePoints,model);
             X1=outputM(:,index_IBR.x);
             Y1=outputM(:,index_IBR.y);
             x0=outputM';
@@ -22,7 +22,7 @@ while iter<=10
          
         elseif  config(jj,ii)==2
             
-            outputM2 = BestResponse(problem2,X1,Y1,X3,Y3,params,nextSplinePoints2,model);
+            [outputM2,info2,info2_1,info2_2] = BestResponse(problem2,X1,Y1,X3,Y3,params,nextSplinePoints2,model);
             X2=outputM2(:,index_IBR.x);
             Y2=outputM2(:,index_IBR.y);
             x02=outputM2';
@@ -30,7 +30,7 @@ while iter<=10
             
         elseif  config(jj,ii)==3
             
-            outputM3 = BestResponse(problem3,X1,Y1,X2,Y2,params,nextSplinePoints3,model);
+            [outputM3,info3,info3_1,info3_2] = BestResponse(problem3,X1,Y1,X2,Y2,params,nextSplinePoints3,model);
             X3=outputM3(:,index_IBR.x);
             Y3=outputM3(:,index_IBR.y);
             x03=outputM3';

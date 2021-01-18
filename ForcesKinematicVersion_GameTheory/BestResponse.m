@@ -1,4 +1,4 @@
-function [outputM] = BestResponse(problem,X2,Y2,X3,Y3,params,nextSplinePoints,model)
+function [outputM,info,info_1,info_2] = BestResponse(problem,X2,Y2,X3,Y3,params,nextSplinePoints,model)
 
 global index_IBR
 problem.all_parameters = repmat (getParameters_IBR_3(params.targetSpeed,...
@@ -28,7 +28,7 @@ problem.all_parameters(index_IBR.yComp2:model.npar:end)=Y2;
 problem.all_parameters(index_IBR.xComp3:model.npar:end)=X3;
 problem.all_parameters(index_IBR.yComp3:model.npar:end)=Y3;
 
-[output,exitflag,info] = MPCPathFollowing_3v_IBR_2(problem);
+[output,exitflag,info_1] = MPCPathFollowing_3v_IBR_2(problem);
 outputM = reshape(output.alldata,[model.nvar,model.N])';
 x0 = outputM';
 
@@ -44,7 +44,7 @@ problem.all_parameters(index_IBR.yComp2:model.npar:end)=Y2;
 problem.all_parameters(index_IBR.xComp3:model.npar:end)=X3;
 problem.all_parameters(index_IBR.yComp3:model.npar:end)=Y3;
 
-[output,exitflag,info] = MPCPathFollowing_3v_IBR_3(problem);
+[output,exitflag,info_2] = MPCPathFollowing_3v_IBR_3(problem);
 outputM = reshape(output.alldata,[model.nvar,model.N])';
 
 end

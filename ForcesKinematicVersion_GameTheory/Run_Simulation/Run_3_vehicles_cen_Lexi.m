@@ -87,6 +87,7 @@ x02(13,:)=zeros(1,60);
 x03(12,:)=zeros(1,60);
 x03(13,:)=zeros(1,60);
 x0=[x0(1:4,:);x02(1:4,:);x03(1:4,:);x0(5:end,:);x02(5:end,:);x03(5:end,:)];
+
 %x01=x0;
 %x0 = [zeros(model.N,index.nu),repmat(xs,model.N,1)]';
 optA = 0;
@@ -204,7 +205,7 @@ for i =1:tend
     SlackCost=outputM(60,index.slack_s)+outputM(60,index.slack_s_k2)+outputM(60,index.slack_s_k3);
     problem2.all_parameters = repmat(getParameters_PG3(0,...
         SlackCost+0.01,0,params.maxSpeed,params.PprogMax,params.pSpeedMax,...
-        params.posX4,params.plagerror,0,0,0,0,...
+        params.posX4,params.plagerror,0.01,0,0,0,...
         0,params.pslack,params.pslack2,params.dist,nextSplinePoints,nextSplinePoints_k2,nextSplinePoints_k3), model.N ,1);
     problem2.x0 = x0(:);
     % solve mpc
@@ -231,7 +232,9 @@ for i =1:tend
     end
     
     outputM3 = reshape(output3.alldata,[model.nvar,model.N])';
-    
+    speedcostA2=0;
+    speedcostB2=0;
+    speedcostC2=0;
     for jj=1:length(outputM3)
         [lagcost,latcost,latcost1,regAB,regBeta,speedcost,speedcost1,speedcost2,lagcost_k2,...
             latcost_k2,latcost1_k2,regAB_k2,regBeta_k2,speedcost_k2,speedcost1_k2,speedcost2_k2,lagcost_k3,...
@@ -256,6 +259,9 @@ for i =1:tend
         speedcostA1=speedcostA1+speedcost1;
         speedcostB1=speedcostB1+speedcost1_k2;
         speedcostC1=speedcostC1+speedcost1_k3;
+        speedcostA2=speedcostA2+speedcost2;
+        speedcostB2=speedcostB2+speedcost2_k2;
+        speedcostC2=speedcostC2+speedcost2_k3;
         optA = optA+ f1;
         optB = optB+ f2;
         optC = optC+ f3;
@@ -402,7 +408,7 @@ if tend==1 && Plotta==1
     %legend('Vehicle 1','V 2','V 3')
     ylabel('Speed [m/s]','interpreter','latex')
     ylim([7.75 9.25])
-    set(gca,'FontSize',18)
+    set(gca,'FontSize',24)
     savefig('figures/3v_PG_speed')
     saveas(gcf,'figures/3v_PG_speed','epsc')
     
@@ -528,7 +534,7 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM2(:,1))*int,outputM2(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
     set(gcf, 'Position',  [200, 200, 800, 300])
-    set(gca,'FontSize',18)
+    set(gca,'FontSize',24)
     savefig('figures/3v_PG_speed_B')
     saveas(gcf,'figures/3v_PG_speed_B','epsc')
     
@@ -542,11 +548,12 @@ if tend==1 && Plotta==1
     
     figure(7)
     hold on
+    set(gca,'yticklabel',[])
     %xlabel('Time [s]')
     line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
     line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
     set(gcf, 'Position',  [200, 200, 800, 300])
-    set(gca,'yticklabel',[])
+    set(gca,'FontSize',24)
     grid on
     ylim([7.75,9.25])
     
@@ -650,7 +657,7 @@ if tend==1 && Plotta==1
     scatter(int:int*3:length(outputM3(:,1))*int,outputM3(1:3:end,index.v_k2),'r*','Linewidth',2)
     scatter(int:int*3:length(outputM3(:,1))*int,outputM3(1:3:end,index.v_k3),'go','Linewidth',2)
     %legend('Vehicle 1','V 2','V 3')
-    set(gca,'FontSize',18)
+    set(gca,'FontSize',24)
     savefig('figures/3v_PG_speed_C')
     saveas(gcf,'figures/3v_PG_speed_C','epsc')
     %saveas(gcf,'figures/3v_PG_speed_C','svg')

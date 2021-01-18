@@ -394,7 +394,7 @@ for jj=1:length(config(:,1))
             figure(401)
             hold on
             grid on
-            ylim([7,9.2])
+            ylim([7.25,9.5])
             plot(int:int:length(outputMA(:,1))*int,outputMA(:,index_IBR.v),'b','Linewidth',2)
             plot(int:int:length(outputMB(:,1))*int,outputMB(:,index_IBR.v),'r','Linewidth',2)
             plot(int:int:length(outputMC(:,1))*int,outputMC(:,index_IBR.v),'g','Linewidth',2)
@@ -408,11 +408,12 @@ for jj=1:length(config(:,1))
             hold off
             %legend ('Vehicle 1','V 2','V 3','Location','southeast')
             %xlabel('Time [s]')
+
             ylabel('Speed [m/s]','interpreter','latex')
             %set(gca,'yticklabel',[])
             grid on
 
-            set(gca,'FontSize',18)
+            set(gca,'FontSize',24)
             savefig('figures/3v_IBR_speed_NC')
             saveas(gcf,'figures/3v_IBR_speed_NC','svg')
         end
@@ -434,7 +435,7 @@ for jj=1:length(config(:,1))
         problem2.x0 = x02(:);
         problem3.x0 = x03(:);
                       
-        [outputM,outputM2,outputM3] = IteratedBestResponse(jj,config,problem,...
+        [outputM,outputM2,outputM3,info1,info2,info3] = IteratedBestResponse(jj,config,problem,...
         problem2,problem3,params,model,nextSplinePoints,nextSplinePoints2,...
         nextSplinePoints3,outputMold,outputMold2,outputMold3);
     
@@ -570,7 +571,7 @@ for jj=1:length(config(:,1))
             figure(6+(jj-1)*2)
             hold on
             grid on
-            ylim([7,9.2])
+            ylim([7.5,9.25])
             xlim([0,6])
 
             figure(5+(jj-1)*2)
@@ -676,6 +677,8 @@ for jj=1:length(config(:,1))
             line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
             line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
             xlim([0,6])
+            %set(gca,'FontSize',24)
+            set(gcf, 'Position',  [200, 200, 800, 300])
             hold off
             %legend ('Vehicle 1','V 2','V 3','Location','southeast')
             %xlabel('Time [s]','interpreter','latex')
@@ -687,7 +690,7 @@ for jj=1:length(config(:,1))
                grid on
             %end
 
-            set(gca,'FontSize',18)
+            set(gca,'FontSize',24)
             if isequal(order,[1,2,3])
                 savefig('figures/3v_IBR_speed_brg')
                 saveas(gcf,'figures/3v_IBR_speed_brg','epsc')
