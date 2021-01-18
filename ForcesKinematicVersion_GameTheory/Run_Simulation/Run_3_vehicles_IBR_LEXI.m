@@ -401,7 +401,7 @@ for jj=1:length(config(:,1))
             plot(int:int*3:length(outputMA(:,1))*int,outputMA(1:3:end,index_IBR.v),'bx','Linewidth',2)
             plot(int:int*3:length(outputMB(:,1))*int,outputMB(1:3:end,index_IBR.v),'r*','Linewidth',2)
             plot(int:int*3:length(outputMC(:,1))*int,outputMC(1:3:end,index_IBR.v),'go','Linewidth',2)
-            
+            set(gcf, 'Position',  [200, 200, 800, 300])
             line([0,6],[params.maxSpeed,params.maxSpeed],'Color',[0.2,0.2,0.2],'LineStyle','--','Linewidth',2)
             line([0,6],[params.targetSpeed,params.targetSpeed],'Color',[0.8,0.8,0],'LineStyle','--','Linewidth',2)
 
