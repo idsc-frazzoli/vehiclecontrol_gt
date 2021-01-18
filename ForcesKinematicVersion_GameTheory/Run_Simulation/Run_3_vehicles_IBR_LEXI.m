@@ -388,7 +388,7 @@ for jj=1:length(config(:,1))
             %legend ('Trajectory 1','T 2','T 3','Vehicle 1','V 2','V 3')
             set(gca,'FontSize',12)
             savefig('figures/3v_IBR_intersection_NC')
-            saveas(gcf,'figures/3v_IBR_intersection_NC','epsc')
+            saveas(gcf,'figures/3v_IBR_intersection_NC','svg')
             int=integrator_stepsize;
 
             figure(401)
@@ -414,7 +414,7 @@ for jj=1:length(config(:,1))
 
             set(gca,'FontSize',18)
             savefig('figures/3v_IBR_speed_NC')
-            saveas(gcf,'figures/3v_IBR_speed_NC','epsc')
+            saveas(gcf,'figures/3v_IBR_speed_NC','svg')
         end
         %% IBR
         
@@ -643,22 +643,22 @@ for jj=1:length(config(:,1))
             set(gca,'FontSize',12)
             if isequal(order,[1,2,3])
                 savefig('figures/3v_IBR_intersection_brg')
-                saveas(gcf,'figures/3v_IBR_intersection_brg','epsc')
+                saveas(gcf,'figures/3v_IBR_intersection_brg','svg')
             elseif isequal(order,[1,3,2])
                 savefig('figures/3v_IBR_intersection_bgr')
-                saveas(gcf,'figures/3v_IBR_intersection_bgr','epsc')
+                saveas(gcf,'figures/3v_IBR_intersection_bgr','svg')
             elseif isequal(order,[2,1,3])
                 savefig('figures/3v_IBR_intersection_rbg')
-                saveas(gcf,'figures/3v_IBR_intersection_rbg','epsc')
+                saveas(gcf,'figures/3v_IBR_intersection_rbg','svg')
             elseif isequal(order,[2,3,1])
                 savefig('figures/3v_IBR_intersection_rgb')
-                saveas(gcf,'figures/3v_IBR_intersection_rgb','epsc')
+                saveas(gcf,'figures/3v_IBR_intersection_rgb','svg')
             elseif isequal(order,[3,1,2])
                 savefig('figures/3v_IBR_intersection_gbr')
-                saveas(gcf,'figures/3v_IBR_intersection_gbr','epsc')
+                saveas(gcf,'figures/3v_IBR_intersection_gbr','svg')
             elseif isequal(order,[3,2,1])
                 savefig('figures/3v_IBR_intersection_grb')
-                saveas(gcf,'figures/3v_IBR_intersection_grb','epsc')
+                saveas(gcf,'figures/3v_IBR_intersection_grb','svg')
             end
             int=integrator_stepsize;
 
@@ -686,22 +686,22 @@ for jj=1:length(config(:,1))
             set(gca,'FontSize',18)
             if isequal(order,[1,2,3])
                 savefig('figures/3v_IBR_speed_brg')
-                saveas(gcf,'figures/3v_IBR_speed_brg','epsc')
+                saveas(gcf,'figures/3v_IBR_speed_brg','svg')
             elseif isequal(order,[1,3,2])
                 savefig('figures/3v_IBR_speed_bgr')
-                saveas(gcf,'figures/3v_IBR_speed_bgr','epsc')
+                saveas(gcf,'figures/3v_IBR_speed_bgr','svg')
             elseif isequal(order,[2,1,3])
                 savefig('figures/3v_IBR_speed_rbg')
-                saveas(gcf,'figures/3v_IBR_speed_rbg','epsc')
+                saveas(gcf,'figures/3v_IBR_speed_rbg','svg')
             elseif isequal(order,[2,3,1])
                 savefig('figures/3v_IBR_speed_rgb')
-                saveas(gcf,'figures/3v_IBR_speed_rgb','epsc')
+                saveas(gcf,'figures/3v_IBR_speed_rgb','svg')
             elseif isequal(order,[3,1,2])
                 savefig('figures/3v_IBR_speed_gbr')
-                saveas(gcf,'figures/3v_IBR_speed_gbr','epsc')
+                saveas(gcf,'figures/3v_IBR_speed_gbr','svg')
             elseif isequal(order,[3,2,1])
                 savefig('figures/3v_IBR_speed_grb')
-                saveas(gcf,'figures/3v_IBR_speed_grb','epsc')
+                saveas(gcf,'figures/3v_IBR_speed_grb','svg')
             end
             pause(0.2)  
         end
@@ -729,7 +729,7 @@ for jj=1:length(config(:,1))
 %             R=imread('carr.png');
 %             r=image([pstart2(1)-1.5,pstart2(1)+1.5],[pstart2(2)+2.5,pstart2(2)-2.5],R);
 %             savefig('figures/3v_IBR_intall_v1')
-%             saveas(gcf,'figures/3v_IBR_intall_v1','epsc')
+%             saveas(gcf,'figures/3v_IBR_intall_v1','svg')
 %         end
         %drawAnimation_P3_PH_IBR
     else
@@ -772,7 +772,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_costs')
-    saveas(gcf,'figures/3v_IBR_costs','epsc')
+    saveas(gcf,'figures/3v_IBR_costs','svg')
 
     figure (200)
     SteerCost=[[1:7]',[Steer1,Steer2,Steer3;regBetaA,regBetaB,regBetaC]];
@@ -800,7 +800,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_steer')
-    saveas(gcf,'figures/3v_IBR_steer','epsc')
+    saveas(gcf,'figures/3v_IBR_steer','svg')
 
     figure (300)
     JerkCost=[[1:7]',[Jerk1,Jerk2,Jerk3;regABA,regABB,regABC]];
@@ -824,7 +824,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_jerk')
-    saveas(gcf,'figures/3v_IBR_jerk','epsc')
+    saveas(gcf,'figures/3v_IBR_jerk','svg')
 
     figure (500)
     SpeedCost=[[1:7]',[Speed1+Speed1_1,Speed2+Speed2_1,Speed3+Speed3_1;speedcostA+speedcostA1,speedcostB+speedcostB1,speedcostC+speedcostC1]];
@@ -848,7 +848,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_SpeedCost')
-    saveas(gcf,'figures/3v_IBR_SpeedCost','epsc')
+    saveas(gcf,'figures/3v_IBR_SpeedCost','svg')
 
     figure (600)
     SpeedCost1=[[1:7]',[Speed1_1,Speed2_1,Speed3_1;speedcostA1,speedcostB1,speedcostC1]];
@@ -872,7 +872,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_SpeedCost1')
-    saveas(gcf,'figures/3v_IBR_SpeedCost1','epsc')
+    saveas(gcf,'figures/3v_IBR_SpeedCost1','svg')
 
     figure (700)
     LatCost=[[1:7]',[LatError1,LatError2,LatError3;latcostA,latcostB,latcostC]];
@@ -896,7 +896,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_LatCost')
-    saveas(gcf,'figures/3v_IBR_LatCost1','epsc')
+    saveas(gcf,'figures/3v_IBR_LatCost1','svg')
 
     figure (800)
     LagCost=[[1:7]',[LagError1,LagError2,LagError3;lagcostA,lagcostB,lagcostC]];
@@ -920,7 +920,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_LagCost')
-    saveas(gcf,'figures/3v_IBR_LagCost1','epsc')
+    saveas(gcf,'figures/3v_IBR_LagCost1','svg')
     
     figure (900)
     TotCost=[[1:7]',[LagError1+LatError1,LagError2++LatError2,LagError3+LatError3;lagcostA+latcostA,lagcostB+latcostB,lagcostC+latcostC]];
@@ -944,7 +944,7 @@ if Plotta==1 && Plotta1==1
     hold off
     set(gca,'FontSize',15)
     savefig('figures/3v_IBR_TotCost')
-    saveas(gcf,'figures/3v_IBR_TotCost1','epsc')
+    saveas(gcf,'figures/3v_IBR_TotCost1','svg')
 end
 
 %save('Metric.mat','Metric','Metric1')

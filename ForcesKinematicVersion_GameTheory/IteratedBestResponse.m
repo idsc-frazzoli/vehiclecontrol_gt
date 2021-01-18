@@ -37,7 +37,7 @@ while iter<=10
             problem3.x0=x03(:);
         end
     end
-    MakeFig(jj,outputM,outputM2,outputM3,params)
+    
     distanceX=outputM(:,index_IBR.x)-outputMold(:,index_IBR.x);
     distanceY=outputM(:,index_IBR.y)-outputMold(:,index_IBR.y);
     distanceX2=outputM2(:,index_IBR.x)-outputMold2(:,index_IBR.x);
